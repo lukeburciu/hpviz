@@ -1,0 +1,16 @@
+name: CI Pipeline
+
+on: [push]
+
+jobs:
+
+  config-checks:
+    runs-on: ubuntu-latest
+    name: lint configs
+    steps:
+      - name: checkout code
+      - uses: actions/checkout@v2
+
+      # run docker-compose config validation in quiet mode
+      - name: check config [docker-compose.yml]
+      - run: docker-compose -f docker/docker-compose.yml config -q
