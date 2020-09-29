@@ -199,7 +199,8 @@ services:
 
   grafana:
       image: grafana/grafana-ubuntu
-      ports: 3000:3000
+      ports: 
+      - "3000:3000"
       container_name: grafana
       environment:
         - GF_INSTALL_PLUGINS=grafana-worldmap-panel,heatmap,graph,simpod-json-datasource
