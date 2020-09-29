@@ -200,7 +200,7 @@ services:
 
   grafana:
       image: grafana/grafana-ubuntu
-      ports: 
+      ports:
       - "3000:3000"
       container_name: grafana
       environment:
@@ -212,7 +212,7 @@ services:
     environment:
       - discovery.type=single-node
       - http.port=9200
-      - ELASTIC_PASSWORD= 
+      - ELASTIC_PASSWORD=
       - http.cors.enabled=true
       - http.cors.allow-origin=http://localhost:1358,http://127.0.0.1:1358
       - http.cors.allow-headers=X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization

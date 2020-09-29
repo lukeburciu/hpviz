@@ -19,6 +19,10 @@ MANUAL WAY:
 
 # Development Environment
 
+## Requirements
+
+1. install pre-commit from <https://pre-commit.com>, hook dependencies will be automatically downloaded when hooks are first run.
+
 ## Vagrant
 
 ## Docker
