@@ -19,7 +19,7 @@ ksqldb-server  | YES | Used with Kafka
 ksqldb-cli | YES | Used with Kafka
 ksql-datagen | YES | Used with Kafka
 rest-proxy | YES | Used with Kafka
-neo4j | YES | Graph-based visualisation [link](neo4j.com/) 
+neo4j | YES | Graph-based visualisation [link](https://neo4j.com/) 
 nifi | YES | N/A
 grafana | YES | ubuntu docker base image -ubuntu flag
 elasticsearch | YES | N/A
