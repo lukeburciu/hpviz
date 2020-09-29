@@ -1,0 +1,8 @@
+#
+# see https://github.com/ansible/ansible-lint
+#
+exclude_paths:
+  - ./docker
+  - ./grafana
+
+verbosity: 1
