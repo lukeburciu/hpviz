@@ -87,30 +87,30 @@ services:
       CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components"
       CONNECT_LOG4J_LOGGERS: org.apache.zookeeper=ERROR,org.I0Itec.zkclient=ERROR,org.reflections=ERROR
 
-  control-center:
-    image: confluentinc/cp-enterprise-control-center:5.5.1
-    hostname: control-center
-    container_name: control-center
-    depends_on:
-      - zookeeper
-      - broker
-      - schema-registry
-      - connect
-      - ksqldb-server
-    ports:
-      - "9021:9021"
-    environment:
-      CONTROL_CENTER_BOOTSTRAP_SERVERS: 'broker:29092'
-      CONTROL_CENTER_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      CONTROL_CENTER_CONNECT_CLUSTER: 'connect:8083'
-      CONTROL_CENTER_KSQL_KSQLDB1_URL: "http://ksqldb-server:8088"
-      CONTROL_CENTER_KSQL_KSQLDB1_ADVERTISED_URL: "http://localhost:8088"
-      CONTROL_CENTER_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
-      CONTROL_CENTER_REPLICATION_FACTOR: 1
-      CONTROL_CENTER_INTERNAL_TOPICS_PARTITIONS: 1
-      CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
-      CONFLUENT_METRICS_TOPIC_REPLICATION: 1
-      PORT: 9021
+  #control-center:
+  #  image: confluentinc/cp-enterprise-control-center:5.5.1
+  #  hostname: control-center
+  #  container_name: control-center
+  #  depends_on:
+  #    - zookeeper
+  #    - broker
+  #    - schema-registry
+  #    - connect
+  #    - ksqldb-server
+  #  ports:
+  #    - "9021:9021"
+  #  environment:
+  #    CONTROL_CENTER_BOOTSTRAP_SERVERS: 'broker:29092'
+  #    CONTROL_CENTER_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+  #    CONTROL_CENTER_CONNECT_CLUSTER: 'connect:8083'
+  #    CONTROL_CENTER_KSQL_KSQLDB1_URL: "http://ksqldb-server:8088"
+  #    CONTROL_CENTER_KSQL_KSQLDB1_ADVERTISED_URL: "http://localhost:8088"
+  #    CONTROL_CENTER_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
+  #    CONTROL_CENTER_REPLICATION_FACTOR: 1
+  #    CONTROL_CENTER_INTERNAL_TOPICS_PARTITIONS: 1
+  #    CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
+  #    CONFLUENT_METRICS_TOPIC_REPLICATION: 1
+  #    PORT: 9021
 
   ksqldb-server:
     image: confluentinc/cp-ksqldb-server:5.5.1
@@ -221,3 +221,37 @@ services:
         - ./nifi/content:/opt/nifi/nifi-current/content_repository
         - ./nifi/provenance:/opt/nifi/nifi-current/provenance_repository
         - ./nifi/logs:/opt/nifi/nifi-current/logs
+
+  grafana:
+      image: grafana/grafana-ubuntu
+      restart: unless-stopped
+      depends_on:
+      ports: 3000:3000
+      container_name: grafana
+      environment:
+        - GF_INSTALL_PLUGINS=grafana-worldmap-panel,heatmap,graph,simpod-json-datasource
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.0.1
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - http.port=9200
+      - ELASTIC_PASSWORD= 
+      - http.cors.enabled=true
+      - http.cors.allow-origin=http://localhost:1358,http://127.0.0.1:1358
+      - http.cors.allow-headers=X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization
+      - http.cors.allow-credentials=true
+      - bootstrap.memory_lock=true
+      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+    ports:
+      - '9200:9200'
+      - '9300:9300'
+  # elasticsearch browser
+  dejavu:
+    image: appbaseio/dejavu:3.2.3
+    container_name: dejavu
+    ports:
+      - '1358:1358'
+    links:
+      - elasticsearch
