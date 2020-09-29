@@ -199,8 +199,6 @@ services:
 
   grafana:
       image: grafana/grafana-ubuntu
-      restart: unless-stopped
-      depends_on:
       ports: 3000:3000
       container_name: grafana
       environment:
