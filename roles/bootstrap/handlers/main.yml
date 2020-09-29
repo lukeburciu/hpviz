@@ -1,0 +1,18 @@
+---
+# handlers file for bootstrap
+
+- name: reload service [ssh]
+  service:
+    name: ssh
+    state: reloaded
+    sleep: 2
+  ignore_errors: true
+
+- name: wait for ssh on host
+  become: no
+  wait_for: >
+    host={{ inventory_hostname }}
+    port=22
+    delay=15
+    timeout=600
+  delegate_to: localhost
