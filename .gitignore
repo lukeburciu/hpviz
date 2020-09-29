@@ -233,3 +233,4 @@ dmypy.json
 # ignore local persistant docker volumes used in dev
 docker/nifi/*
 docker/neo4j/*
+.vscode/settings.json

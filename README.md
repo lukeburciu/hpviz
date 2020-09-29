@@ -21,6 +21,4 @@ MANUAL WAY:
 
 ## Vagrant
 
-
-
 ## Docker
