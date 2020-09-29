@@ -10,7 +10,6 @@ This directory refers to configurations made for the docker-compose environment.
 
 Docker Image | Active | Comments
 ------------ | -------| --------
-
 kafka (broker) | [x] | N/A
 zookeeper | [x] | Used with Kafka, dependency
 schema-registry | [x] | Used with Kafka
