@@ -1,0 +1,16 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+molecule = "*"
+docker = {extras = ["molecule"], version = "*"}
+
+[packages]
+docker = {extras = ["molecule"], version = "*"}
+testinfra = "*"
+ansible = "*"
+
+[requires]
+python_version = "3.8"
