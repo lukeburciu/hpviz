@@ -1,0 +1,7 @@
+---
+- name: Checks ansible connectivity
+  hosts: all
+
+  tasks:
+    - name: ping remote hosts
+      ping:
