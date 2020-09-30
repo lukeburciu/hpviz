@@ -9,14 +9,13 @@ This directory is for information relating to dashboards, configurations etc for
 docker-compose base (intended to be a reference point. No changes to be made)
 
 ```yml
-grafana:
-      image: grafana/grafana-ubuntu #-<os> flag when omitted defaults to alpine
-      restart: unless-stopped
-      depends_on:
-      ports: 3000:3000
+  grafana:
+      image: grafana/grafana-ubuntu
+      ports:
+      - "3000:3000"
       container_name: grafana
       environment:
-        - GF_INSTALL_PLUGINS=grafana-worldmap-panel,heatmap,graph,simpod-json-datasource #Most grafana plugins are default
+        - GF_INSTALL_PLUGINS=grafana-worldmap-panel,heatmap,graph,simpod-json-datasource
 ```
 
 ## Version History
