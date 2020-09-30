@@ -11,28 +11,28 @@ Any pre-requisites that may not be covered by Ansible itself or the role should 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+CI automation user to add to remote server
+`bootstrap_ci_username: ansibleci`
 
-Dependencies
-------------
-
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+CpipI Automations public ssh key
+`bootstrap_ci_pubkey: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCsAK7JA+lFIAm9Wnj6x1graKajCi9Sis2M8gwDktRZ8sEPAK7ifFFvkG3T9jDTCnE9FXp6IaLtJlhsg5fqOFcJdwYtadyuCOoTGxL7SrPc5Kze9NbQJYNbXQPc6VQop04Rbj5eeh+kjpr0C8PAPw/lvOksKwIqqvZ5HykdQ7OXiP1WBCaA8bh6hEoi0+zMGem5/hOyWCkqtf3dnUC/2GPbTW8qSBzQxJpaQnMcnw/8dDYEDxQ9FC5m4j8cL/Ol1JIR8f3T5La2T990v18y/LY8JmNF7xsKqec6C2ImWmOKEMlUPUhN8BJLFPgTnAaR3JTVbQHMVukITDNRF+QmTipsUZfQnnnGjwtvuuPqu8ZQjue9itEQBEk7l+aC6ZRfyoEErWLownSDNG3lAqaQb+7qoTwOPrV7/ifeRX/8sEzyQERRaZXbPOv0ZFl2IyCUoq3FXKVlukDBv6zYwEqzQmRlCXK9E4SxCttur9RieGxHiDNEaBG26mvAEnrlpuFWs99SUuh0Jbu+e2bQhL8veR1p3iyLYGZ6YEE/jhe4ViyMlVNEmnrGuuTS229SDpykr+YLKhd42ND7b5WdEL9R47UzzuFdXvkk9Zv7KZ8TgOOwg4xMGmi4LH2phqc8NjxusLwJedmREQSs85YT3zOlHU1g7SIJx1dadRkTUz/XOEPDAQ== ansibleci"`
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
     - hosts: servers
+
       roles:
-         - { role: username.rolename, x: 42 }
+         - role: bootstrap
+           - bootstrap.ci.username: ci_user
+           - bootstrap.ci.pubkey: "ssh-rsa .... ci_users public key"
 
 License
 -------
 
-BSD
+MIT
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Stephen Eaton <sceaton@our.ecu.edu.au>

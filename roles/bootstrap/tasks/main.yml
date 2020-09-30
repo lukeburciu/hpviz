@@ -1,7 +1,7 @@
 ---
 # tasks file for bootstrap
 
-- name: Make sure we have a 'wheel' group
+- name: Make sure 'wheel' group exists
   group:
     name: wheel
     state: present
@@ -16,7 +16,7 @@
 
 - name: Add CI User to sudoers
   user:
-    name: "{{ bootstrap.username }}"
+    name: '{{ bootstrap_ci_username }}'
     comment: "Ansible CI Automation user"
     groups: wheel
     append: yes
@@ -25,5 +25,5 @@
 
 - name: Set up authorized key for the CI user
   ansible.posix.authorized_key:
-    user: "{{ bootstrap.username }}"
-    key: "{{ bootstrap.ci.pubkey }}"
+    user: '{{ bootstrap_ci_username }}'
+    key: '{{ bootstrap_ci_pubkey }}'

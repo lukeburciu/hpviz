@@ -4,6 +4,12 @@
 - name: Verify
   hosts: all
   tasks:
-  - name: Example assertion
+
+  - name: get user home directory
+    stat:
+      path: /home/ansibleci
+    register: p
+
+  - name: tests CI user home directory exists
     assert:
-      that: true
+      that: p.stat.exists and p.stat.isdir
