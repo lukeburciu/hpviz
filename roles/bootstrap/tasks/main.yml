@@ -1,12 +1,12 @@
 ---
 # tasks file for bootstrap
 
-- name: Make sure 'wheel' group exists
+- name: Make sure group exists ['wheel']
   group:
     name: wheel
     state: present
 
-- name: Allow 'wheel' group to have passwordless sudo
+- name: Allow group to have passwordless sudo ['wheel']
   lineinfile:
     dest: /etc/sudoers
     state: present
@@ -14,7 +14,7 @@
     line: '%wheel ALL=(ALL) NOPASSWD: ALL'
     validate: 'visudo -cf %s'
 
-- name: Add CI User to sudoers
+- name: Add CI User to sudoers ['{{ bootstrap_ci_username }}']
   user:
     name: '{{ bootstrap_ci_username }}'
     comment: "Ansible CI Automation user"
@@ -23,7 +23,7 @@
     state: present
     createhome: yes
 
-- name: Set up authorized key for the CI user
+- name: Set up authorized key for the CI user ['{{ bootstrap_ci_username }}']
   ansible.posix.authorized_key:
     user: '{{ bootstrap_ci_username }}'
     key: '{{ bootstrap_ci_pubkey }}'

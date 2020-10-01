@@ -11,7 +11,7 @@
 ##
 ##  'ansible-playbook -i "x.x.x.x," bootstrap.yml --extra-vars "user=root"'
 ##
-##  note the ',' in the '-i' parameter multiple IP address can be added, seperate with ',' and make sure trailing ',' exists
+##  note the ',' in the '-i' parameter multiple IP address can be added, seperated with ',' and make sure trailing ',' exists
 ##
 - name: Bootstrap remote server for CI
   hosts: all:!localhost

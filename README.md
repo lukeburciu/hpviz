@@ -2,6 +2,32 @@
 
 Running on RancherOS 2.4.8
 
+## Provisioning Servers
+
+### Bootstrap for the CI/CD pipeline
+
+new servers need to be bootstrapped for the CI/CD pipeline.
+
+#### pre-requisites
+
+* existing account with elevated privileges (example show root user)
+* your pub key in authorize_hosts file for that user
+
+#### Command
+
+'ansible-playbook -i "x.x.x.x," bootstrap.yml --extra-vars "user=root"'
+
+note the ',' in the '-i' parameter.  Multiple IP address can be added seperated with ',' and make sure trailing ',' still exists or will look for an inventory file of that name and fail.
+
+The following is performed by the bootstrap.yml playbook:
+
+1. 'hpviz-ci' is added as a user to the remote server(s)
+2. 'hpviz-ci' ssh pub key is added to users authorized keys file
+3. 'wheel' group is added if required
+4. 'wheel' group is added to sudo and set to NOPASS
+5. 'hpviz-ci' is added to wheel group
+
+
 ## neo4j container configurations
 
 To be added to docker file:
