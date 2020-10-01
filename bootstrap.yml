@@ -1,6 +1,20 @@
 ---
+##################
+## bootstrap.yml
+##
+## This playbook is run manually first time for new servers to provision them for CI.CD integration
+##  after this has been completed then everything is performed via the CI/CD pipeline.
+##
+##   Requirements:
+##     1) an initial account e.g. root or other user account with sudo access
+##     2) ssh added to remote authorized_keys
+##
+##  'ansible-playbook -i "x.x.x.x," bootstrap.yml --extra-vars "user=root"'
+##
+##  note the ',' in the '-i' parameter multiple IP address can be added, seperate with ',' and make sure trailing ',' exists
+##
 - name: Bootstrap remote server for CI
-  hosts: '{{ hosts }}'
+  hosts: all:!localhost
   remote_user: '{{ user }}'
   gather_facts: no
 
