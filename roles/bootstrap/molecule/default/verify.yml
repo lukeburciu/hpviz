@@ -7,7 +7,7 @@
 
   - name: get user home directory
     stat:
-      path: /home/ansibleci
+      path: /home/hpviz-ci
     register: p
 
   - name: tests CI user home directory exists
