@@ -1,16 +1,25 @@
-# hpviz-
+# HPViz
+
+Honeypot network Visualisation Project
 
 Running on RancherOS 2.4.8
 
-## Provisioning Servers
+## Team members
 
-### Bootstrap for the CI/CD pipeline
+- Luke Burciu <lukeb@our.ecu.edu.au>
+- Stephen Eaton <sceaton@our.ecu.edu.au>
+
+## Provisioning and Managing Server Configurations
+
+All servers are under config management so manual changes made on them may get overwritten
+
+### 1. Bootstrap for the CI/CD pipeline
 
 new servers need to be bootstrapped for the CI/CD pipeline.
 
 #### pre-requisites
 
-* existing account with elevated privileges (example show root user)
+* existing account with elevated privileges (example shows root user)
 * your pub key in authorize_hosts file for that user
 
 #### Command
@@ -27,6 +36,18 @@ The following is performed by the bootstrap.yml playbook:
 4. 'wheel' group is added to sudo and set to NOPASS
 5. 'hpviz-ci' is added to wheel group
 
+### 2. managing users
+
+Shell access to the project servers is only accessible via ssh with a valid key i.e. password authenticatiosn is disabled.
+
+All HPViz project server users are under config management and are managed the the group_vars/viz/vars.yml or group_vars/sink/vars.ymlin the `user_list` variable.
+
+1. users must have a public ssh key defined as password authentication is disabled
+2. To remove a user from all groups replace the group list with empty string ''
+3. Removing users change 'state: absent'  all their directories under /home/username will be removed
+4. pub_key must be present for active users
+5. all users are created with password login disabled
+6. multiple groups if the the user is a member of is added as a list (see roles\user_management\README.md).  These groups must already exist on the remote system.
 
 ## neo4j container configurations
 

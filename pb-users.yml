@@ -1,0 +1,13 @@
+---
+##################
+## pb-users.yml
+##
+## This playbook manages users on the remote servers
+##
+- name: Manages remote users
+  hosts: all:!localhost
+  gather_facts: no
+  become: True
+
+  roles:
+    - role: user_management
