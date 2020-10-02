@@ -1,0 +1,17 @@
+name: Ansible-lint
+
+on: [pull_request]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Lint Ansible Playbook
+      uses: ansible/ansible-lint-action@master
+      with:
+        targets: ""
+        override-deps: |
+          ansible==2.10
+          ansible-lint==4.3.5
+        args: ""
