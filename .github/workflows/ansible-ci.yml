@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - dev-stephen
   # run ever 15 minutes
   #schedule:
   #  - cron: '*/15 * * * *'
@@ -13,8 +14,9 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v2
+
       - name: Deploys HPViz Project to Production
-        uses: actions/checkout@v2
+        uses: arillso/action.playbook@master
         with:
           playbook: site.yml
           inventory: prod.ini

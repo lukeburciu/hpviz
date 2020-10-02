@@ -1,8 +1,8 @@
 ---
 # tasks file for user_management
 
-- name: include assert.yml
-  include: assert.yml
+- name: import assert.yml
+  import_tasks: assert.yml
 
 - name: remove retired user accounts
   user:
@@ -28,7 +28,7 @@
     - user_list | length > 0
 
 - name: manage users authorized_hosts
-  ansible.posix.authorized_key:
+  authorized_key:
     user: '{{ item.username }}'
     key: '{{ item.pub_key }}'
   loop: "{{ user_list }}"

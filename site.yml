@@ -4,5 +4,5 @@
 ##
 ##  defines HPViz Project site-wide playbook
 
-- name: include pb-users.yml
-  include: pb-users.yml
+- name: import pb-users.yml
+  import_playbook: pb-users.yml
