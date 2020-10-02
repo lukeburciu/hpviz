@@ -1,0 +1,23 @@
+name: Ansible-CI
+
+on:
+  push:
+    branches:
+      - master
+  # run ever 15 minutes
+  #schedule:
+  #  - cron: '*/15 * * * *'
+jobs:
+  deploy_to_prod:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: Deploys HPViz Project to Production
+        uses: actions/checkout@v2
+        with:
+          playbook: site.yml
+          inventory: prod.ini
+          galaxy_file: requirements.yml
+          vault_password: ${{ secrets.ANSIBLE_VAULT_KEY }}
+          private_key: ${{ secrets.ANSIBLE_CI_KEY }}
