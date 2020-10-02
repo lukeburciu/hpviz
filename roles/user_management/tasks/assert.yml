@@ -1,0 +1,35 @@
+---
+- name: test if user_list is set correctly
+  assert:
+    that:
+      - user_list is defined
+      - user_list | length > 0
+    quiet: yes
+
+- name: test if user_list users required fields are correct
+  assert:
+    that:
+      - item is defined
+      - item | length > 0
+      - item.username is defined
+      - item.username | length > 0
+      - item.pub_key is defined
+      - item.pub_key | length > 0
+    quiet: yes
+  loop: "{{ user_list }}"
+  when:
+    - item.state == 'present'
+    - user_list is defined
+
+- name: test if required fields are present for retired accounts
+  assert:
+    that:
+      - item is defined
+      - item | length > 0
+      - item.username is defined
+      - item.username | length > 0
+    quiet: yes
+  loop: "{{ user_list }}"
+  when:
+    - item.state != 'present'
+    - user_list is defined
