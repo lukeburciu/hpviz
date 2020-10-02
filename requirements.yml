@@ -1,0 +1,6 @@
+---
+# individual roles to get from galaxy
+roles: {}
+
+# collections to retrieve from Galaxy
+collections: {}
