@@ -3,7 +3,6 @@ name: Ansible-CI
 on:
   push:
     branches:
-      - master
       - dev-stephen
   # run ever 15 minutes
   #schedule:
