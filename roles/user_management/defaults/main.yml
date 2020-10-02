@@ -1,0 +1,9 @@
+---
+# defaults file for user_management
+# This role does not have any default user_list values and must be set in the playbook vars: or will fail
+# example:
+# user_list:
+#   - username: fred_smith
+#     comment: "Fred Smith"
+#     state: present
+#     pub_key: "valid ssh pub key"
