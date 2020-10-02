@@ -38,7 +38,7 @@ The following is performed by the bootstrap.yml playbook:
 
 ### 2. managing users
 
-Shell access to the project servers is only accessible via ssh with a valid key i.e. password authenticatiosn is disabled.
+Shell access to the project servers is only accessible via ssh with a valid key i.e. password authentication is disabled by default.
 
 All HPViz project server users are under config management and are managed the the group_vars/viz/vars.yml or group_vars/sink/vars.ymlin the `user_list` variable.
 

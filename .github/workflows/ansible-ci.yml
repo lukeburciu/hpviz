@@ -1,0 +1,30 @@
+name: Ansible-CI
+
+on: [pull_request]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Lint Ansible Playbook
+      uses: ansible/ansible-lint-action@master
+      with:
+        targets: ""
+        override-deps: |
+          ansible==2.10
+          ansible-lint==4.3.5
+        args: ""
+
+  deploy_to_prod:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploys HPViz Project to Production
+        uses: arillso/action.playbook@master
+        with:
+          playbook: site.yml
+          inventory: prod.ini
+          galaxy_file: requirements.yml
+          vault_password: ${{ secrets.ANSIBLE_VAULT_KEY }}
+          private_key: ${{ secrets.ANSIBLE_CI_KEY }}
