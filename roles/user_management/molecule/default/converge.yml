@@ -7,6 +7,7 @@
       - username: molecule_ed25519_user
         comment: "molecule test ssh-ed25519 user"
         state: present
+        shell: "/bin/bash"
         pub_key: "ssh-ed25519 testkey ed25519-key-20200929"
       - username: molecule_rsa_user
         comment: "molecule test RSA user"
