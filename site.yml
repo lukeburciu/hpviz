@@ -4,5 +4,11 @@
 ##
 ##  defines HPViz Project site-wide playbook
 
+- name: import pb-common.yml
+  import_playbook: pb-common.yml
+
 - name: import pb-users.yml
   import_playbook: pb-users.yml
+
+- name: import pb-deploy-docker.yml
+  import_playbook: pb-deploy-docker.yml
