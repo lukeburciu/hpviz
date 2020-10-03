@@ -3,13 +3,13 @@ version: '3'
 services:
 
 ## Reverse proxy
-  reverseproxy:
-    image: reverseproxy
-    ports:
-      - 80:80
-      - 443:443
-      - 7687:7687
-      - 
+  #reverseproxy:
+  #  image: reverseproxy
+  #  ports:
+  #    - 80:80
+  #    - 443:443
+  #    - 7687:7687
+  #    - 
   
 ## Kafka and dependencies  
   zookeeper:
