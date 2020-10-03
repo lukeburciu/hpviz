@@ -234,3 +234,7 @@ dmypy.json
 docker/nifi/*
 docker/neo4j/*
 .vscode/settings.json
+roles/*
+!roles/common_tasks/*
+!roles/user_management/*
+!roles/bootstrap/*
