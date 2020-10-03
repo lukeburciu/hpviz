@@ -1,0 +1,19 @@
+---
+##################
+## pb-sink_data.yml
+##
+## This playbook manages ingest data on sink
+##
+- name: Manages ingest data directory
+  hosts: sink:!localhost
+  gather_facts: yes
+  become: True
+
+  tasks:
+    - name: Checks directory permissions [/data]
+      file:
+        path: /data
+        owner: root
+        group: root
+        mode: 0764
+        recurse: yes
