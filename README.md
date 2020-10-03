@@ -1,5 +1,7 @@
 # HPViz
 
+![Ansible-CI](https://github.com/lukeburciu/hpviz/workflows/Ansible-CI/badge.svg)
+
 Honeypot network Visualisation Project
 
 Running on RancherOS 2.4.8
@@ -100,3 +102,49 @@ cd roles\role_to_test
 molecule test
 ````
 docker image will started and role will be tested.
+
+### Role development
+
+#### 1) Creating a new role
+
+````
+cd roles
+molecule init <new_role_name>
+````
+
+This will set up the directory structure of the role to best practices
+
+make sure to edit:
+1. meta/main.yml
+2. README.md
+3. molecule/molecule.yml and update to the following:
+
+````
+platforms:
+  - name: instance
+    image: geerlingguy/docker-ubuntu1804-ansible:latest
+    command: ""
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: true
+````
+
+#### 2) Development process
+
+Use molecule to start up the development / test environment and then develop the role as per normal.
+
+````
+cd roles\role_under_dev
+molecule converge
+````
+
+This will spin up the environment, rerun every time you wan to re-run/re-test the role against the VM, it does not 'clean' out your previous changes.
+
+To start with a fresh VM image:
+
+`molecule destroy`
+
+To login to the VM and troubleshoot:
+
+`molecule login`
