@@ -6,7 +6,7 @@
 ##
 - name: Manages ingest data directory
   hosts: sink:!localhost
-  gather_facts: yes
+  gather_facts: no
   become: True
 
   tasks:
