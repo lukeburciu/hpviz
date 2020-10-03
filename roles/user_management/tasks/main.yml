@@ -20,6 +20,7 @@
   user:
     name: "{{ item.username }}"
     comment: "{{ item.comment }}"
+    shell: "{{ item.shell }}"
     state: "{{ item.state }}"
   loop: "{{ user_list }}"
   when:
