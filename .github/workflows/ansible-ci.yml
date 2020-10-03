@@ -3,7 +3,8 @@ name: Ansible-CI
 on:
   push:
     branches:
-      - dev-stephen
+      # - dev-stephen
+      - master
   # run ever 15 minutes
   #schedule:
   #  - cron: '*/15 * * * *'
@@ -22,3 +23,6 @@ jobs:
           galaxy_file: requirements.yml
           vault_password: ${{ secrets.ANSIBLE_VAULT_KEY }}
           private_key: ${{ secrets.ANSIBLE_CI_KEY }}
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: 'false'
+          ANSIBLE_DEPRECATION_WARNINGS: 'false'
