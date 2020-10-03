@@ -92,8 +92,16 @@ To install packages in the environment you must be in the shell:
 pipenv shell
 pipenv install package-x
 ````
+## Ansible
 
-## Ansible testing
+
+### Installing dependencies
+
+To install galaxy roles into local development environment
+
+`ansible-galaxy role install --role-file requirements.yml`
+
+### Role development
 
 All roles use molecule to allow standalone development and testing.  see ansible molecule documentation for more details <https://molecule.readthedocs.io/en/latest/>
 

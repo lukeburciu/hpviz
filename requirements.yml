@@ -1,6 +1,10 @@
 ---
 # individual roles to get from galaxy
-roles: {}
+roles:
+  - name: geerlingguy.docker
+    src: geerlingguy.docker
+  - name: geerlingguy.pip
+    src: geerlingguy.pip
 
 # collections to retrieve from Galaxy
 collections: {}
