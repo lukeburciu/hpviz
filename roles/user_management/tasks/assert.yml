@@ -13,6 +13,8 @@
       - item | length > 0
       - item.username is defined
       - item.username | length > 0
+      - item.shell is defined
+      - item.shell | length > 0
       - item.pub_key is defined
       - item.pub_key | length > 0
     quiet: yes
