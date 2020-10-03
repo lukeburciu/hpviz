@@ -1,5 +1,7 @@
 # HPViz
 
+![Ansible-CI](https://github.com/lukeburciu/hpviz/workflows/Ansible-CI/badge.svg)
+
 Honeypot network Visualisation Project
 
 Running on RancherOS 2.4.8
