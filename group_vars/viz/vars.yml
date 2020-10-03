@@ -15,3 +15,11 @@ user_list:
 
 #### Example secret include_var
 hpviz_topsecret: '{{ vault_hpviz_topsecret }}'
+
+
+
+### Managed pip packages to install
+pip_install_packages:
+    - name: docker
+
+### Docker
