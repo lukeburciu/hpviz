@@ -1,0 +1,37 @@
+# Production configuration changes for docker-compose.yml are to be placed here.
+
+services:
+
+  reverseproxy:
+
+
+  broker:
+
+
+  connect:
+
+
+  schema_registry:
+
+
+  ksqldb-server:
+
+
+  ksqldb-cli:
+
+
+  rest-proxy:
+
+  neo4j:
+
+
+  nifi:
+
+
+  grafana:
+
+
+  elasticsearch:
+
+
+  dejavu:
