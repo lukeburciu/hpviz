@@ -51,6 +51,28 @@ All HPViz project server users are under config management and are managed the t
 5. all users are created with password login disabled
 6. multiple groups if the the user is a member of is added as a list (see roles\user_management\README.md).  These groups must already exist on the remote system.
 
+### 3. managing Firewall rules
+
+The serves use UFW for the firewall and is managed via the CICD process through group_vars
+
+#### [theSink]
+
+````
+firewall_services:
+  - name: ssh
+  - name: https
+  - name: 522
+````
+
+#### [viz001]
+
+````
+firewall_services:
+  - name: ssh
+  - name: https
+  - name: 522
+````
+
 ## neo4j container configurations
 
 To be added to docker file:
