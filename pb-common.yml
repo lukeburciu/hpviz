@@ -11,3 +11,4 @@
   roles:
     - role: common_tasks
     - role: geerlingguy.pip
+    - role: robertdebock.firewall
