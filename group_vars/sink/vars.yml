@@ -23,4 +23,10 @@ user_list:
     comment: "Werner Zietsman - added by hpviz-ci"
     shell: "/bin/bash"
     state: present
-    pub_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG4AE41i8FvJQTVwgSK8KXan4uGnDyHWa8ixKiuuV2uX ed25519-key-20201004"
+    pub_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMF6Mq096cKysrlgZ9kuvng7yZnnA2uUcPuFw9WY7HLh ed25519-key-20201004"
+
+### Firewall
+firewall_services:
+  - name: ssh
+  - name: https
+  - name: 522

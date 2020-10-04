@@ -24,3 +24,9 @@ pip_install_packages:
     - name: docker
 
 ### Docker
+
+### Firewall
+firewall_services:
+  - name: ssh
+  - name: https
+  - name: 522
