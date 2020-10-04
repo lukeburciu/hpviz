@@ -55,6 +55,8 @@ All HPViz project server users are under config management and are managed the t
 
 The serves use UFW for the firewall and is managed via the CICD process through group_vars
 
+`tcp` is the default protocol, `udp` needs to be specified with `protocol: udp`
+
 #### [theSink]
 
 ````
