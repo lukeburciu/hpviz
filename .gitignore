@@ -234,3 +234,5 @@ dmypy.json
 docker/nifi/*
 docker/neo4j/*
 .vscode/settings.json
+docker/nginx/*
+docker/dev/*
