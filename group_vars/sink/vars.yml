@@ -27,6 +27,6 @@ user_list:
 
 ### Firewall
 firewall_services:
-  - name: ssh
+  - name: ssh     # <- Do no remove will break CICD
   - name: https
   - name: 522
