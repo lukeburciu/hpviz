@@ -19,7 +19,8 @@ user_list:
     state: present
     pub_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBP1+PQmRdA6p2oCL9G6HgZHJ4kRwq677bgUiVbouGY4 ed25519-key-20200929"
 
-  # - username: wernerz
-  #  comment: "Werner Zietsmann"
-  #  state: present
-  #  pub_key:
+  - username: wernerz
+    comment: "Werner Zietsman - added by hpviz-ci"
+    shell: "/bin/bash"
+    state: present
+    pub_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG4AE41i8FvJQTVwgSK8KXan4uGnDyHWa8ixKiuuV2uX ed25519-key-20201004"
