@@ -1,0 +1,50 @@
+---
+# tasks file for user_management
+
+- name: import assert.yml
+  import_tasks: assert.yml
+
+- name: remove retired user accounts
+  user:
+    name: '{{ item.username }}'
+    groups: ''                  # remove from all groups
+    state: "absent"             # removes user
+    remove: yes                 # remove all users directories
+  loop: "{{ user_list }}"
+  when:
+    - item.state == "absent"    # only do for users being removed
+    - user_list is defined
+    - user_list | length > 0
+
+- name: manage user accounts changes
+  user:
+    name: "{{ item.username }}"
+    comment: "{{ item.comment }}"
+    shell: "{{ item.shell }}"
+    state: "{{ item.state }}"
+  loop: "{{ user_list }}"
+  when:
+    - item.state != "absent"    # don't do for users being removed
+    - user_list is defined
+    - user_list | length > 0
+
+- name: manage users authorized_hosts
+  authorized_key:
+    user: '{{ item.username }}'
+    key: '{{ item.pub_key }}'
+  loop: "{{ user_list }}"
+  when:
+    - item.state != "absent"    # don't do for removed users
+    - user_list is defined
+    - user_list | length > 0
+
+- name: manage users group memberships
+  user:
+    name: '{{ item.username }}'
+    groups: '{{ item.groups }}'
+  loop: "{{ user_list }}"
+  when:
+    - item.state != "absent"    # don't do for removed users
+    - item.groups is defined
+    - user_list is defined
+    - user_list | length > 0

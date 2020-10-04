@@ -1,0 +1,14 @@
+---
+########################
+## common.yml
+##
+## common playbook for all project hosts
+- name: Common Playbook
+  hosts: all:!localhost
+  gather_facts: yes
+  become: True
+
+  roles:
+    - role: common_tasks
+    - role: geerlingguy.pip
+    - role: robertdebock.firewall

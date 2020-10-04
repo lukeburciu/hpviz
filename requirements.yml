@@ -1,0 +1,12 @@
+---
+# individual roles to get from galaxy
+roles:
+  - name: geerlingguy.docker
+    src: geerlingguy.docker
+  - name: geerlingguy.pip
+    src: geerlingguy.pip
+  - name: robertdebock.firewall
+    src: robertdebock.firewall
+
+# collections to retrieve from Galaxy
+collections: {}

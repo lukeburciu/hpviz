@@ -1,0 +1,11 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: all
+  become: yes
+  gather_facts: no
+
+  tasks:
+  - name: Tests connectivity
+    ping:

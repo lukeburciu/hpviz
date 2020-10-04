@@ -1,0 +1,21 @@
+---
+- name: Converge
+  hosts: all
+
+  vars:
+    user_list:
+      - username: molecule_ed25519_user
+        comment: "molecule test ssh-ed25519 user"
+        state: present
+        shell: "/bin/bash"
+        pub_key: "ssh-ed25519 testkey ed25519-key-20200929"
+      - username: molecule_rsa_user
+        comment: "molecule test RSA user"
+        state: absent
+        groups: ''
+        pub_key: "ssh-rsa testkey rsa-key-20200929"
+
+  tasks:
+    - name: "Include user_management"
+      include_role:
+        name: "user_management"
