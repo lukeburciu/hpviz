@@ -9,14 +9,13 @@ This directory is for information relating to dashboards, configurations etc for
 docker-compose base (intended to be a reference point. No changes to be made)
 
 ```yml
-grafana:
-      image: grafana/grafana-ubuntu #-<os> flag when omitted defaults to alpine
-      restart: unless-stopped
-      depends_on:
-      ports: 3000:3000
+  grafana:
+      image: grafana/grafana-ubuntu
+      ports:
+      - "3000:3000"
       container_name: grafana
       environment:
-        - GF_INSTALL_PLUGINS=grafana-worldmap-panel,heatmap,graph,simpod-json-datasource #Most grafana plugins are default
+        - GF_INSTALL_PLUGINS=grafana-worldmap-panel,heatmap,graph,simpod-json-datasource
 ```
 
 ## Version History
@@ -30,10 +29,10 @@ docker-compose
 **Plugins**
 
 Default plugins required:
-- prometheus [link](https://grafana.com/grafana/plugins/prometheus)
-- elasticsearch [link](https://grafana.com/grafana/plugins/elasticsearch/)
-- graph [link](https://grafana.com/grafana/plugins/graph)
-- table [link](https://grafana.com/grafana/plugins/table)
+- prometheus - [link](https://grafana.com/grafana/plugins/prometheus)
+- elasticsearch - [link](https://grafana.com/grafana/plugins/elasticsearch/)
+- graph - [link](https://grafana.com/grafana/plugins/graph)
+- table - [link](https://grafana.com/grafana/plugins/table)
 
 
 **Dashboards**
@@ -41,7 +40,7 @@ Default plugins required:
 - kafka [link](https://grafana.com/grafana/dashboards/721)
     - Dependent on
         - [prometheus](https://grafana.com/grafana/plugins/prometheus)
-        - [graph] (https://grafana.com/grafana/plugins/graph)
+        - [graph](https://grafana.com/grafana/plugins/graph)
 - docker and system monitoring [link](https://grafana.com/grafana/dashboards/893)
     - Dependent on
         - [graph](https://grafana.com/grafana/plugins/graph)
