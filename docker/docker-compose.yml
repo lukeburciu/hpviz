@@ -2,6 +2,7 @@
 version: '3'
 services:
 
+# Proxy
   nginx-proxy:
     image: jwilder/nginx-proxy:alpine
     ports:
@@ -9,18 +10,7 @@ services:
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
 
-#  reverseproxy:
-#    image: nginx
-#    container_name: nginx
-#    ports:
-#      - "80:80"
-#      - "443:443"
-#      #- "17474:17474"
-#      #- "17687:17687"
-#    volumes:
-#      - ./reverseproxy/nginx.conf:/etc/nginx/nginx.conf
-#  #    - ./reverseproxy/ssl:/etc/nginx/conf.d/ssl
-  
+# RESTRICTED
   zookeeper:
     image: confluentinc/cp-zookeeper
     hostname: zookeeper
@@ -140,6 +130,24 @@ services:
       KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: 'true'
       KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: 'true'
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.0.1
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - http.port=9200
+      - ELASTIC_PASSWORD=password
+      - http.cors.enabled=true
+      - http.cors.allow-origin=http://localhost:1358,http://127.0.0.1:1358
+      - http.cors.allow-headers=X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization
+      - http.cors.allow-credentials=true
+      - bootstrap.memory_lock=true
+      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+
+
   ksqldb-cli:
     image: confluentinc/cp-ksqldb-cli:5.5.1
     container_name: ksqldb-cli
@@ -166,6 +174,14 @@ services:
       KAFKA_REST_LISTENERS: "http://0.0.0.0:8082"
       KAFKA_REST_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
 
+  nifi-registry:
+      container_name: nifi-registry
+      image: apache/nifi-registry
+      ports:
+        - "18080:18080"
+
+# EXPOSED TO INTERNET
+
   neo4j:
     image: neo4j:3.5
     hostname: neo4j
@@ -189,7 +205,7 @@ services:
       - NEO4J_dbms_connector_https_listen__address=:17473
       - NEO4J_dbms_connector_bolt_listen__address=:17687
       - NEO4JLABS_PLUGINS=["apoc"]
-      - VIRTUAL_HOST=neo4j.viz001
+
 
   nifi:
       image: apache/nifi:latest
@@ -198,34 +214,13 @@ services:
         - broker
         - zookeeper
       ports:
-        - "8080:8080"
-      environment:
-        - VIRTUAL_HOST=nifi.viz001
+        - "9090:8080"
 
   grafana:
       image: grafana/grafana
       ports:
       - 3000:3000
       container_name: grafana
-      environment:
-        - VIRTUAL_HOST=grafana.viz001
-
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.0.1
-    container_name: elasticsearch
-    environment:
-      - discovery.type=single-node
-      - http.port=9200
-      - ELASTIC_PASSWORD=password
-      - http.cors.enabled=true
-      - http.cors.allow-origin=http://localhost:1358,http://127.0.0.1:1358
-      - http.cors.allow-headers=X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization
-      - http.cors.allow-credentials=true
-      - bootstrap.memory_lock=true
-      - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
-    ports:
-      - "9200:9200"
-      - "9300:9300"
 
   dejavu:
     image: appbaseio/dejavu:3.2.3
@@ -234,7 +229,3 @@ services:
       - "1358:1358"
     links:
       - elasticsearch
-    environment:
-      - VIRTUAL_HOST=dejavu.viz001
-
-  
