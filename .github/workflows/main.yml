@@ -13,4 +13,5 @@ jobs:
 
       # run docker-compose config validation in quiet mode
       - name: Check config [docker-compose.yml]
-        run: docker-compose -f docker/docker-compose.yml config -q
+        run: docker-compose -f docker/docker-compose.yml -f docker/docker-compose.prod.yml config -q
+
