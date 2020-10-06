@@ -1,5 +1,5 @@
 ---
-version: '3'
+version: '3.2'
 services:
 
 # Proxy
@@ -7,8 +7,22 @@ services:
     image: jwilder/nginx-proxy:alpine
     ports:
       - "80:80"
+      - "443:443"
     volumes:
+      - nginx-data:/etc/nginx/certs
+      - nginx-data:/etc/nginx/vhost.d
+      - nginx-data:/usr/share/nginx/html
       - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  nginx-proxy-companion:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    volumes:
+      - nginx-data:/etc/nginx/certs
+      - nginx-data:/etc/nginx/vhost.d
+      - nginx-data:/usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    environment:
+      - DEFAULT_EMAIL=["lburciu@our.ecu.edu.au", "screaton@our.ecu.edu.au"]
 
 # RESTRICTED
   zookeeper:
@@ -51,6 +65,7 @@ services:
       CONFLUENT_METRICS_ENABLE: 'true'
       CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+
 
   connect:
     image: confluentinc/cp-kafka-connect
@@ -189,6 +204,8 @@ services:
     ports:
       - "17474:17474"
       - "17687:17687"
+    expose:
+      - "17474"
     depends_on:
       - broker
       - connect
@@ -205,6 +222,10 @@ services:
       - NEO4J_dbms_connector_https_listen__address=:17473
       - NEO4J_dbms_connector_bolt_listen__address=:17687
       - NEO4JLABS_PLUGINS=["apoc"]
+      - VIRTUAL_HOST=neo4j.viz001.ecu-sri.net
+      - LETSENCRYPT_HOST=neo4j.viz001.ecu-sri.net
+      - VIRTUAL_PROTO=https
+      - VIRTUAL_PORT=17474
 
 
   nifi:
@@ -215,17 +236,40 @@ services:
         - zookeeper
       ports:
         - "9090:8080"
+      expose:
+        - "9090"
+      environment:
+        - VIRTUAL_HOST=nifi.viz001.ecu-sri.net
+        - LETSENCRYPT_HOST=nifi.viz001.ecu-sri.net
+        - VIRTUAL_PROTO=https
+        - VIRTUAL_PORT=9090
 
   grafana:
       image: grafana/grafana
       ports:
       - 3000:3000
       container_name: grafana
+      environment:
+        - VIRTUAL_HOST=grafana.viz001.ecu-sri.net
+        - LETSENCRYPT_HOST=grafana.viz001.ecu-sri.net
+        - VIRTUAL_PROTO=https
+        - VIRTUAL_PORT=3000
 
   dejavu:
     image: appbaseio/dejavu:3.2.3
     container_name: dejavu
     ports:
       - "1358:1358"
+    expose:
+      - "1358"
     links:
       - elasticsearch
+    environment:
+      - VIRTUAL_HOST=dejavu.viz001.ecu-sri.net
+      - LETSENCRYPT_HOST=dejavu.viz001.ecu-sri.net
+      - VIRTUAL_PROTO=https
+      - VIRTUAL_PORT=1358
+
+
+volumes:
+  nginx-data:
