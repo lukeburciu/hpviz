@@ -2,13 +2,11 @@
 
 ![Ansible-CI](https://github.com/lukeburciu/hpviz/workflows/Ansible-CI/badge.svg)
 
-Honeypot network Visualisation Project
-
-Running on RancherOS 2.4.8
+Honeypot Data Visualisation Project.
 
 ## Team members
 
-- Luke Burciu <lukeb@our.ecu.edu.au>
+- Luke Burciu <lburciu@our.ecu.edu.au>
 - Stephen Eaton <sceaton@our.ecu.edu.au>
 
 ## Provisioning and Managing Server Configurations
@@ -74,21 +72,6 @@ firewall_services:
   - name: https
   - name: 522
 ````
-
-## neo4j container configurations
-
-To be added to docker file:
-- 1. way to automatically create ssl certificate.
-
-MANUAL WAY:
-
-- Based on: https://medium.com/neo4j/getting-certificates-for-neo4j-with-letsencrypt-a8d05c415bbd
-- apt-get update
-- apt-get install software-properties-common
-- apt install gpg-agent
-- add-apt-repository ppa:certbot/certbot
-- apt-get update
-- apt-get install -y certbot
 
 # Development Environment
 

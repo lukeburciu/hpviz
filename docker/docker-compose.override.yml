@@ -1,0 +1,33 @@
+# Production configuration changes for docker-compose.yml are to be placed here.
+# Solely used to push any configs that are desirable for prod
+
+version: '3.2'
+services:
+
+  broker:
+    environment:
+      - NETWORK_ACCESS=internal
+
+  connect:
+    environment:
+      - NETWORK_ACCESS=internal
+
+  schema_registry:
+    environment:
+      - NETWORK_ACCESS=internal
+
+  ksqldb-server:
+    environment:
+      - NETWORK_ACCESS=internal
+
+  ksqldb-cli:
+    environment:
+      - NETWORK_ACCESS=internal
+
+  elasticsearch:
+    environment:
+      - NETWORK_ACCESS=internal
+
+  rest-proxy:
+    environment:
+      - NETWORK_ACCESS=internal

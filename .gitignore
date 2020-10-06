@@ -238,3 +238,5 @@ roles/*
 !roles/common_tasks/*
 !roles/user_management/*
 !roles/bootstrap/*
+docker/nginx/*
+docker/dev/*
