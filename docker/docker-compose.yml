@@ -22,7 +22,7 @@ services:
       - nginx-data:/usr/share/nginx/html
       - /var/run/docker.sock:/tmp/docker.sock:ro
     environment:
-      - DEFAULT_EMAIL=["lburciu@our.ecu.edu.au", "screaton@our.ecu.edu.au"]
+      - DEFAULT_EMAIL=["lburciu@our.ecu.edu.au", "sceaton@our.ecu.edu.au"]
 
 # RESTRICTED
   zookeeper:
