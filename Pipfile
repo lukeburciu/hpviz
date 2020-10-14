@@ -11,6 +11,8 @@ docker = {extras = ["molecule"], version = "*"}
 docker = {extras = ["molecule"], version = "*"}
 testinfra = "*"
 ansible = "*"
+flake8 = "*"
+ansible-lint = "*"
 
 [requires]
 python_version = "3.8"

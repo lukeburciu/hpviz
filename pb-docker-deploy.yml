@@ -1,0 +1,60 @@
+---
+##################
+## pb-docker-deploy.yml
+##
+## This playbook manages and deploys docker services on the remote server using
+##  the docker-compose files located in the '/var/opt/hpviz/docker' directory
+##    docker-compose.override.yml is merged for production overrides
+##
+##  Remote Requirements:
+##    - docker container service running
+##    - docker-compose installed
+##
+- name: Deploy Docker Containers
+  hosts: viz
+  gather_facts: no
+  become: True
+
+  tasks:
+
+    - name: Check Project directory exist
+      file:
+        path: /var/opt/hpviz/docker
+        state: directory
+
+    - name: check docker-compose.yml exists
+      copy:
+        src: docker/docker-compose.yml
+        dest: /var/opt/hpviz/docker
+
+    - name: check docker-compose.override.yml exists
+      copy:
+        src: docker/docker-compose.override.yml
+        dest: /var/opt/hpviz/docker
+
+    - name: Check required Variables Exist
+      assert:
+        that:
+          - hpviz_nginx_etc_dir is defined
+          - hpviz_nginx_etc_dir | length > 0
+          - hpviz_nginx_html_dir is defined
+          - hpviz_nginx_html_dir | length > 0
+          - hpviz_nginx_sock_file is defined
+          - hpviz_nginx_sock_file | length > 0
+
+    - name: Tear down existing HPViz services
+      docker_compose:
+        project_name: hpviz
+        project_src: /var/opt/hpviz/docker
+        state: absent
+
+    # - name: Bring up HPViz services
+    #   docker_compose:
+    #     project_name: hpviz
+    #     project_src: /var/opt/hpviz/docker
+    #     files:
+    #       - docker-compose.yml
+    #       - docker-compose.override.yml
+    #     state: present
+    #     remove_orphans: yes
+    #   register: output

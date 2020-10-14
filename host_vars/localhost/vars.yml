@@ -1,0 +1,5 @@
+---
+### Docker
+hpviz_nginx_etc_dir: ./docker/nginx
+hpviz_nginx_html_dir: ./docker/nginx
+hpviz_nginx_sock_file: /var/run/docker.sock

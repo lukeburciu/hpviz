@@ -9,4 +9,5 @@ roles:
     src: robertdebock.firewall
 
 # collections to retrieve from Galaxy
-collections: {}
+collections:
+  - community.general
