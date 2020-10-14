@@ -1,0 +1,13 @@
+---
+##################
+## pb-install-packages.yml
+##
+## This playbook installs the required packages on the remote services
+##
+- name: Install packages
+  hosts: viz:!localhost
+  gather_facts: yes
+  become: True
+
+  roles:
+    - role: geerlingguy.docker

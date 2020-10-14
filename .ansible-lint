@@ -4,5 +4,8 @@
 exclude_paths:
   - ./docker
   - ./grafana
-
+  - .github
+  - ./roles/geerlingguy.docker
+  - ./roles/robertdebock.firewall
+skip_list: {}
 verbosity: 1
