@@ -20,7 +20,8 @@ hpviz_topsecret: '{{ vault_hpviz_topsecret }}'
 pip_install_packages:
     - name: docker
     - name: docker-compose
-    - name: syslogng_kafka # error building
+    - name: syslogng_kafka      # no longer required so remove
+      state: absent
 
 ### Docker
 hpviz_nginx_etc_dir: /etc/nginx
@@ -37,3 +38,4 @@ firewall_services:
   - name: https
   - name: 522
   - name: 9093    # kafka broker listener
+  - name: 9090
