@@ -21,16 +21,22 @@
       file:
         path: /var/opt/hpviz/docker
         state: directory
+      when:
+        ansible_host!="localhost"
 
     - name: check docker-compose.yml exists
       copy:
         src: docker/docker-compose.yml
         dest: /var/opt/hpviz/docker
+      when:
+        ansible_host!="localhost"
 
     - name: check docker-compose.override.yml exists
       copy:
         src: docker/docker-compose.override.yml
         dest: /var/opt/hpviz/docker
+      when:
+        ansible_host!="localhost"
 
     - name: Check required Variables Exist
       assert:
@@ -42,11 +48,13 @@
           - hpviz_nginx_sock_file is defined
           - hpviz_nginx_sock_file | length > 0
 
-    - name: Tear down existing HPViz services
-      docker_compose:
-        project_name: hpviz
-        project_src: /var/opt/hpviz/docker
-        state: absent
+    ## Docker Compose deploy below
+
+    # - name: Tear down existing HPViz services
+    #   docker_compose:
+    #     project_name: hpviz
+    #     project_src: /var/opt/hpviz/docker
+    #     state: absent
 
     # - name: Bring up HPViz services
     #   docker_compose:
@@ -58,3 +66,64 @@
     #     state: present
     #     remove_orphans: yes
     #   register: output
+
+    ## END Docker Compose deploy
+
+    ### Restricted
+    - name: Deploy Zookeeper container
+      docker_container:
+        name: zookeeper
+        image: confluentinc/cp-zookeeper
+        hostname: zookeeper
+        restart: yes
+        restart_policy: unless-stopped
+        state: started
+        #ports:
+        #  - "2181:2181"
+        expose:
+          - "2181"
+        env:
+          ZOOKEEPER_CLIENT_PORT: "2181"
+          ZOOKEEPER_TICK_TIME: "2000"
+      tags: zookeeper
+
+    - name: Deploy Kafka Broker
+      docker_container:
+        name: broker
+        image: confluentinc/cp-server:5.5.1
+        hostname: broker
+        restart: yes
+        restart_policy: unless-stopped
+        state: started
+        links:
+          - zookeeper:zookeeper
+        ports:
+          - "9092:9092"
+          - "9093:9093"
+        expose:
+          - "29092"
+        env:
+          KAFKA_BROKER_ID: "1"
+          KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+          KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "LISTENER_INTERNAL:PLAINTEXT,LISTENER_PLAINTEXT:PLAINTEXT,LISTENER_EXT:PLAINTEXT"
+          KAFKA_ADVERTISED_LISTENERS: "LISTENER_INTERNAL://broker:29092,LISTENER_PLAINTEXT://viz001.ecu-sri.net:9092,LISTENER_EXT://viz001.ecu-sri.net:9093"
+          KAFKA_LISTENERS: "LISTENER_INTERNAL://broker:29092,LISTENER_PLAINTEXT://0.0.0.0:9092, LISTENER_EXT://0.0.0.0:9093"
+          KAFKA_METRIC_REPORTERS: "io.confluent.metrics.reporter.ConfluentMetricsReporter"
+          KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+          KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
+          KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: "1"
+          KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: "1"
+          KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "1"
+          KAFKA_JMX_PORT: "9101"
+          KAFKA_CONFLUENT_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
+          CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: "broker:29092"
+          CONFLUENT_METRICS_REPORTER_ZOOKEEPER_CONNECT: "zookeeper:2181"
+          CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: "1"
+          CONFLUENT_METRICS_ENABLE: 'true'
+          CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
+          KAFKA_INTER_BROKER_LISTENER_NAME: "LISTENER_INTERNAL"
+      tags: broker
+
+    # - name: Deploy schema-registry
+    #   docker_container:
+    #     name:

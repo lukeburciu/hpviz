@@ -20,14 +20,20 @@ hpviz_topsecret: '{{ vault_hpviz_topsecret }}'
 pip_install_packages:
     - name: docker
     - name: docker-compose
+    - name: syslogng_kafka # error building
 
 ### Docker
 hpviz_nginx_etc_dir: /etc/nginx
 hpviz_nginx_html_dir: /usr/share/nginx
 hpviz_nginx_sock_file: /var/run/docker.sock
 
+# Kafka
+hpviz_kafka_ca_key: "{{ vault_hpviz_kafka_ca_key }}"
+hpviz_kafka_ca_key_pass: "{{ vault_hpviz_kafka_ca_key_pass }}"
+
 ### Firewall - defaults to tcp
 firewall_services:
   - name: ssh     # <- Do no remove will break CICD
   - name: https
   - name: 522
+  - name: 9093    # kafka broker listener

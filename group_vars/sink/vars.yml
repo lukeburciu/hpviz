@@ -30,3 +30,7 @@ firewall_services:
   - name: ssh     # <- Do no remove will break CICD
   - name: https
   - name: 522
+
+## Managed pip packages to install
+pip_install_packages:
+    - name: syslogng_kafka # error building
