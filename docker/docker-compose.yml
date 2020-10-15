@@ -24,6 +24,7 @@ services:
     environment:
       - DEFAULT_EMAIL=["lburciu@our.ecu.edu.au", "sceaton@our.ecu.edu.au"]
 
+
 # VECTOR CONFIGURATION\
 
   vector:
@@ -37,6 +38,7 @@ services:
     volumes:
       - /opt/hpviz/docker/viz001.vector.toml:/etc/vector/vector.toml:ro
       - /var/run/docker.sock:/var/run/docker.sock
+
 
 
 # RESTRICTED
