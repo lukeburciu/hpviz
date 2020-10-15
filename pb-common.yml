@@ -8,6 +8,16 @@
   gather_facts: yes
   become: True
 
+  pre_tasks:
+    - name: check common packages are installed
+      package:
+        name:
+          - kafkacat                # command line non jvm kafka cli producer and consumer
+          - syslog-ng
+          - openjdk-11-jre-headless # required for java keytool
+          - librdkafka-dev          # library required for syslogng_kafka pip install
+        state: present
+
   roles:
     - role: common_tasks
     - role: geerlingguy.pip
