@@ -34,3 +34,4 @@ firewall_services:
 ## Managed pip packages to install
 pip_install_packages:
     - name: syslogng_kafka # error building
+      state: absent

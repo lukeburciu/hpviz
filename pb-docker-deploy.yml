@@ -77,7 +77,7 @@
         hostname: zookeeper
         restart: yes
         restart_policy: unless-stopped
-        state: started
+        state: absent
         #ports:
         #  - "2181:2181"
         expose:
@@ -94,7 +94,7 @@
         hostname: broker
         restart: yes
         restart_policy: unless-stopped
-        state: started
+        state: absent
         links:
           - zookeeper:zookeeper
         ports:
@@ -116,6 +116,7 @@
           KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "1"
           KAFKA_JMX_PORT: "9101"
           KAFKA_CONFLUENT_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
+          KAFKA_CREATE_TOPICS: "logging.syslog.raw"
           CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: "broker:29092"
           CONFLUENT_METRICS_REPORTER_ZOOKEEPER_CONNECT: "zookeeper:2181"
           CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: "1"
@@ -124,6 +125,24 @@
           KAFKA_INTER_BROKER_LISTENER_NAME: "LISTENER_INTERNAL"
       tags: broker
 
-    # - name: Deploy schema-registry
-    #   docker_container:
-    #     name:
+    - name: Deploy NIFI container
+      docker_container:
+        name: nifi
+        image: apache/nifi:latest
+        restart: yes
+        restart_policy: unless-stopped
+        state: absent
+        links:
+          - zookeeper:zookeeper
+          - broker:broker
+        ports:
+          - "9090:8080"
+          - "514:514"
+        expose:
+          - "9090"
+        env:
+          VIRTUAL_HOST: "viz001.ecu-sri.net"
+          LETSENCRYPT_HOST: "viz001.ecu-sri.net"
+          VIRTUAL_PROTO: "http"
+          VIRTUAL_PORT: "9090"
+      tags: nifi

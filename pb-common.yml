@@ -13,10 +13,19 @@
       package:
         name:
           - kafkacat                # command line non jvm kafka cli producer and consumer
-          - syslog-ng
           - openjdk-11-jre-headless # required for java keytool
-          - librdkafka-dev          # library required for syslogng_kafka pip install
         state: present
+      when:
+        ansible_host!="localhost"
+
+    - name: Remove unwanted packages
+      package:
+        name:
+          - syslog-ng
+          - librdkafka-dev          # library required for syslogng_kafka pip install
+        state: absent
+      when:
+        ansible_host!="localhost"
 
   roles:
     - role: common_tasks
