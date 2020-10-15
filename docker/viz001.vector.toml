@@ -1,4 +1,4 @@
-[sources.syslog_thesink]
+[sources.thesink]
   # syslog from thesink via vector
   # General
   type = "vector" # Assuming the source is the Vector sink on 'thesink'
@@ -19,6 +19,10 @@
   type = "syslog" # required
   mode = "unix" # required, options 'udp', 'tcp', 'unix'
   path = "/var/log/syslog" # required, required when mode = "unix"
+  #max_length = 102400 # optional, default, bytes
+
+  # Context
+  host_key = "viz001.scu-sri.net"
 
 
 [sinks.kafka]
@@ -58,9 +62,9 @@
 
   # TLS
   # Make sure to mount volume in docker-compose '/etc/ca-certificates/certificate_authority.crt:/etc/ca-certificates/certificate_authority.crt'
-  tls.ca_file = "/etc/ca-certificates/certificate_authority.crt" # Local to the vector container.
-  tls.crt_file = "/etc/ca-certificates/host_certificate.crt" # as above
-  tls.enabled = true
-  tls.key_file = "/etc/ca-certificates/host_certificate.key" # as above
-  tls.key_pass = "${KEY_PASS_ENV_VAR}" # Configure GITHUB_SECRETS "KEY_PASS_ENV_VAR" !! - This needs to be configured on ansible
-  tls.verify_certificate = true
+  #tls.ca_file = "/etc/ca-certificates/certificate_authority.crt" # Local to the vector container.
+  #tls.crt_file = "/etc/ca-certificates/host_certificate.crt" # as above
+  #tls.enabled = true
+  #tls.key_file = "/etc/ca-certificates/host_certificate.key" # as above
+  #tls.key_pass = "${KEY_PASS_ENV_VAR}" # Configure GITHUB_SECRETS "KEY_PASS_ENV_VAR" !! - This needs to be configured on ansible
+  #tls.verify_certificate = true
