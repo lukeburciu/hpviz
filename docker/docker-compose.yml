@@ -26,17 +26,17 @@ services:
 
 # VECTOR CONFIGURATION\
 
-vector:
-  image: timberio/vector:latest-alpine
-  hostname: vector-viz001
-  container_name: vector
-  ports:
-    - "9000"
-  expose:
-    - "9000"
-  volumes:
-    - /opt/hpviz/docker/viz001.vector.toml:/etc/vector/vector.toml:ro
-    - /var/run/docker.sock:/var/run/docker.sock
+  vector:
+    image: timberio/vector:latest-alpine
+    hostname: vectorviz001
+    container_name: vector
+    ports:
+      - "9000"
+    expose:
+      - "9000"
+    volumes:
+      - /opt/hpviz/docker/viz001.vector.toml:/etc/vector/vector.toml:ro
+      - /var/run/docker.sock:/var/run/docker.sock
 
 
 # RESTRICTED
