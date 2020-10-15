@@ -25,6 +25,40 @@
   host_key = "viz001.scu-sri.net"
 
 
+[sinks.elasticsearch]
+
+  # General
+  type = "elasticsearch" # required
+  inputs = ["syslog_thesink", "syslog_viz001"] # required
+  compression = "none" # optional, default
+  doc_type = "_doc" # optional, default
+  healthcheck = true # optional, default
+  host = "http://elasticsearch:9200" # optional, no default
+
+  index = "vector-%F" # optional, default
+  pipeline = "syslog" # optional, no default
+
+  # Batch
+  batch.max_bytes = 10490000 # optional, default, bytes
+  batch.max_events = 1000 # optional, no default, events
+  batch.timeout_secs = 1 # optional, default, seconds
+
+  # Headers
+  #headers.Authorization = "${ELASTICSEARCH_TOKEN}" # token for es
+  headers.X-Powered-By = "Vector" # example
+
+  # Query
+  #query.X-Powered-By = "Vector" #
+
+  # Request
+  request.in_flight_limit = 5 # optional, default, requests
+  request.rate_limit_duration_secs = 1 # optional, default, seconds
+  request.rate_limit_num = 5 # optional, default
+  request.retry_attempts = 18446744073709551615 # optional, default
+  request.retry_initial_backoff_secs = 1 # optional, default, seconds
+  request.retry_max_duration_secs = 10 # optional, default, seconds
+  request.timeout_secs = 60 # optional, default, seconds
+
 [sinks.kafka]
   # General
   type = "kafka" # required
@@ -39,7 +73,7 @@
 
   # Advanced
   #librdkafka_options."client.id" = "${LIBRD_KAFKA_ENV_VAR}" # example: Configure GITHUB_SECRETS "LIBRD_KAFKA_ENV_VAR" !!
-  #librdkafka_options."fetch.error.backoff.ms" = "1000" # example
+  #librdkafka_options."fetch.error.backoff.ms" = "1000"  # example
   #librdkafka_options."socket.send.buffer.bytes" = "100" # example
 
   # Buffer
