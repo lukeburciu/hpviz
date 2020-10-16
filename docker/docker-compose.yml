@@ -270,21 +270,5 @@ services:
         - VIRTUAL_PROTO=https
         - VIRTUAL_PORT=3000
 
-  dejavu:
-    image: appbaseio/dejavu:3.2.3
-    container_name: dejavu
-    ports:
-      - "1358:1358"
-    expose:
-      - "1358"
-    links:
-      - elasticsearch
-    environment:
-      - VIRTUAL_HOST=dejavu.viz001.ecu-sri.net
-      - LETSENCRYPT_HOST=dejavu.viz001.ecu-sri.net
-      - VIRTUAL_PROTO=https
-      - VIRTUAL_PORT=1358
-
-
 volumes:
   nginx-data:
