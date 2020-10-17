@@ -15,6 +15,7 @@ Vagrant.configure("2") do |config|
         vb.customize ["modifyvm", :id, "--memory", 4096]
         vb.customize ["modifyvm", :id, "--cpus", 4]
     end
+    viz.vm.network "forwarded_port", id: "ssh", host: 20022, guest: 22
     viz.vm.provision "shell",
       path: "vagrant/scripts/provision.sh"
     #viz.vm.synced_folder "vagrant/viz/docker" , "/var/lib/docker"
@@ -28,6 +29,7 @@ Vagrant.configure("2") do |config|
         vb.customize ["modifyvm", :id, "--memory", 2048]
         vb.customize ["modifyvm", :id, "--cpus", 1]
     end
+    sink.vm.network "forwarded_port", id: "ssh", host: 20023, guest: 22
     sink.vm.provision "shell",
       path: "vagrant/scripts/provision.sh"
     #sink.vm.synced_folder "vagrant/sink/docker" , "/var/lib/docker"
