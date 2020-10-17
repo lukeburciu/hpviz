@@ -241,5 +241,7 @@ roles/*
 docker/nginx/*
 docker/dev/*
 .vagrant
-vagrant/shared/docker_images/*
-!vagrant/shared/docker_images/.placeholder
+vagrant/viz/docker/*
+!vagrant/viz/docker/.placeholder
+vagrant/sink/docker/*
+!vagrant/sink/docker/.placeholder

@@ -4,12 +4,13 @@
 .
 ├── README.md
 ├── scripts
+│   ├── deploy.sh
 │   └── provision.sh
-├── shared
-│   └── docker_images
 ├── sink
-│   └── data
+│   ├── data
+│   └── docker
 └── viz
+    └── docker
 ```
 
 These directories are shared with the relevant VM on startup
@@ -20,14 +21,12 @@ Custom directories can be added in the Vagrantfile under each VM config
 
 provisioning scripts used on VMs
 
-## shared
-
-- docker_images -> /var/lib/docker/image: so docker images don't have to be re-downloaded each time vm is re-provisioned
 
 ## viz
 
-none
+- docker -> /var/lib/docker: so docker images don't have to be re-downloaded each time vm is re-provisioned
 
 ## sink
 
-- data -> /data: log data for ingestion testing
+- data -> /data: log data: for ingestion testing
+- docker -> /var/lib/docker: so docker images don't have to be re-downloaded each time vm is re-provisioned
