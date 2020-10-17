@@ -240,3 +240,4 @@ roles/*
 !roles/bootstrap/*
 docker/nginx/*
 docker/dev/*
+.vagrant
