@@ -43,12 +43,11 @@ Stop all virtual machines
 
 ## Connecting to the VM environment
 
-vagrant ssh
+`vagrant ssh` defaults to viz vm
+`vagrant ssh sink` to login into ingestion sink
 
 
 ## deploying ansible script
-
-The complete project will re-deploy eachtime a vagrant up is completed, to cancel anytime hit **<ctrl-c>**
 
 Example that will deploy entire project
 
