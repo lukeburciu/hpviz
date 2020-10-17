@@ -12,7 +12,7 @@ services:
     environment:
       - NETWORK_ACCESS=internal
 
-  schema_registry:
+  schema-registry:
     environment:
       - NETWORK_ACCESS=internal
 
@@ -27,6 +27,7 @@ services:
   elasticsearch:
     environment:
       - NETWORK_ACCESS=internal
+      - 'ES_JAVA_OPTS=-Xms2048m -Xmx2048m'   # Should be set to half physical RAM as per documentation, initially set to 2GB
 
   rest-proxy:
     environment:

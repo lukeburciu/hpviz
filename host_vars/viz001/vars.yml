@@ -1,0 +1,4 @@
+---
+# TLS certificates for this host
+hpviz_vector_hostkey: '{{ vault_hpviz_vector_hostkey }}'                  # host private key
+hpviz_vector_hostkey_secret: '{{ vault_hpviz_vector_hostkey_secret }}'    # host private key secret

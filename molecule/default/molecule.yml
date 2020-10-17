@@ -1,0 +1,39 @@
+---
+dependency:
+  name: galaxy
+  role-file: ../../requirements.yml
+  requirements-file: ../../requirements.yml
+  group_vars: ../../group_vars
+  host_vars: ../../host_vars
+driver:
+  name: docker
+lint: |
+  set -e
+  yamllint .
+  ansible-lint
+  flake8
+platforms:
+  - name: viz
+    image: geerlingguy/docker-ubuntu1804-ansible:latest
+    command: ""
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: true
+  - name: sink
+    image: geerlingguy/docker-ubuntu1804-ansible:latest
+    command: ""
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: true
+provisioner:
+  name: ansible
+  options:
+    vault-password-file: ~/.hpviz-vault  ## outside of source branch
+  inventory:
+    links:
+      group_vars: ../../group_vars
+      host_vars: ../../host_vars
+verifier:
+  name: ansible

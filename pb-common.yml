@@ -8,6 +8,25 @@
   gather_facts: yes
   become: True
 
+  pre_tasks:
+    - name: check common packages are installed
+      package:
+        name:
+          - kafkacat                # command line non jvm kafka cli producer and consumer
+          - openjdk-11-jre-headless # required for java keytool
+        state: present
+      when:
+        ansible_host!="localhost"
+
+    - name: Remove unwanted packages
+      package:
+        name:
+          - syslog-ng
+          - librdkafka-dev          # library required for syslogng_kafka pip install
+        state: absent
+      when:
+        ansible_host!="localhost"
+
   roles:
     - role: common_tasks
     - role: geerlingguy.pip

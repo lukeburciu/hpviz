@@ -1,0 +1,3 @@
+---
+vault_hpviz_vector_hostkey: "some private key"
+vault_hpviz_vector_hostkey_secret: "some password"
