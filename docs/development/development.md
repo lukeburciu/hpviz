@@ -44,3 +44,22 @@ Stop all virtual machines
 ## Connecting to the VM environment
 
 vagrant ssh
+
+
+## deploying ansible script
+
+The complete project will re-deploy eachtime a vagrant up is completed, to cancel anytime hit **<ctrl-c>**
+
+Example that will deploy entire project
+
+`ansible-playbook -i dev.ini site.yml --vault-password-file ~/.hpviz-vault`
+
+Requires the vault password in a file, not under the project directory, in this case stored `~/.hpviz-vault`
+
+use tags to target specific tasks:
+
+`ansible-playbook -i dev.ini site.yml --vault-password-file ~/.hpviz-vault` --tags containers
+
+example will just deploy containers
+
+tags must be defined in the playbooks to work

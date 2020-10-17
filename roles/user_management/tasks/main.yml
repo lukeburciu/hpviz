@@ -4,6 +4,12 @@
 - name: import assert.yml
   import_tasks: assert.yml
 
+- name: check wheel system group exists
+  group:
+    name: wheel
+    state: present
+    system: yes
+
 - name: remove retired user accounts
   user:
     name: '{{ item.username }}'
