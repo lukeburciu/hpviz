@@ -17,36 +17,122 @@
 
   tasks:
 
-    - name: Check Project directory exist
-      file:
-        path: /var/opt/hpviz/docker
-        state: directory
-      when:
-        ansible_host!="localhost"
-
-    - name: check docker-compose.yml exists
-      copy:
-        src: docker/docker-compose.yml
-        dest: /var/opt/hpviz/docker
-      when:
-        ansible_host!="localhost"
-
-    - name: check docker-compose.override.yml exists
-      copy:
-        src: docker/docker-compose.override.yml
-        dest: /var/opt/hpviz/docker
-      when:
-        ansible_host!="localhost"
-
-    - name: Check required Variables Exist
+    - name: Check hpviz_base__dir variables exists
       assert:
         that:
-          - hpviz_nginx_etc_dir is defined
-          - hpviz_nginx_etc_dir | length > 0
-          - hpviz_nginx_html_dir is defined
-          - hpviz_nginx_html_dir | length > 0
-          - hpviz_nginx_sock_file is defined
-          - hpviz_nginx_sock_file | length > 0
+          - hpviz_base_dir is defined
+          - hpviz_base_dir | length > 0
+      tags: dir
+
+    - name: add project groups
+      group:
+        name: "{{ item }}"
+        state: present
+        system: yes
+      loop:
+        - hpviz
+        - www-data
+      tags: accounts
+
+    - name: Add system accounts
+      user:
+        name: "{{ item }}"
+        comment: HPViz system account
+        system: yes
+        groups: hpviz
+        state: present
+      loop:
+        - kafka
+        - kafka-connect
+        - zookeeper
+        - grafana
+        - elastic
+        - vector
+        - neo4j
+        - nifi
+        - www-data
+      tags: accounts
+
+    - name: Check project top level directory exist "{{ hpviz_base_dir }}"
+      file:
+        path: "{{ hpviz_base_dir }}"
+        state: directory
+        group: hpviz
+        mode: '0775'
+      tags: structure
+
+    - name: Set project directory group inheritance
+      file:
+        path: "{{ hpviz_base_dir }}"
+        state: directory
+        mode: 'g+s'
+      tags: structure
+
+    - name: Set up project directories
+      file:
+        path: "{{ item.0 }}"
+        owner: root
+        state: directory
+        group: hpviz
+        mode: '0775'
+      loop:
+        # docker compose home
+        - ["{{ hpviz_base_dir }}/docker", 'root']
+        # configs
+        - ["{{ hpviz_base_dir }}/etc", 'root']
+        - ["{{ hpviz_base_dir }}/etc/ssl/ca-certificates", 'root']
+        - ["{{ hpviz_base_dir }}/etc/neo4j", 'neo4j']
+        - ["{{ hpviz_base_dir }}/etc/neo4j/certs", 'neo4j']
+        - ["{{ hpviz_base_dir }}/etc/neo4j/plugins", 'neo4j']
+        - ["{{ hpviz_base_dir }}/etc/elastic/certs", 'elastic']
+        - ["{{ hpviz_base_dir }}/etc/nginx/certs", 'root']     # **TODO Check if correct user
+        - ["{{ hpviz_base_dir }}/etc/kafka/secrets", 'kafka']
+        - ["{{ hpviz_base_dir }}/etc/kafka-connect/certs", 'kafka-connect']
+        - ["{{ hpviz_base_dir }}/etc/kafka-connect/plugins", 'kafka-connect']
+        - ["{{ hpviz_base_dir }}/etc/vector/certs",'vector']
+        - ["{{ hpviz_base_dir }}/etc/nifi/certs", 'nifi']
+        # data
+        - ["{{ hpviz_base_dir }}/data", 'root']
+        - ["{{ hpviz_base_dir }}/data/zookeeper", 'zookeeper']
+        - ["{{ hpviz_base_dir }}/data/elastic", 'elastic']
+        - ["{{ hpviz_base_dir }}/data/kafka",'kafka']
+        - ["{{ hpviz_base_dir }}/data/kafka-connect",'kafka-connect']
+        - ["{{ hpviz_base_dir }}/data/nifi",'nifi']
+        - ["{{ hpviz_base_dir }}/data/vector",'vector']
+        - ["{{ hpviz_base_dir }}/data/neo4j", 'neo4j']
+        - ["{{ hpviz_base_dir }}/data/neo4j/data", 'neo4j']
+        - ["{{ hpviz_base_dir }}/data/neo4j/metrics", 'neo4j']
+        - ["{{ hpviz_base_dir }}/data/nginx/html", 'www-data']  # **TODO check if correct user
+        # logs
+        - ["{{ hpviz_base_dir }}/logs", 'root']
+        - ["{{ hpviz_base_dir }}/logs/elastic", 'elastic']
+        - ["{{ hpviz_base_dir }}/logs/neo4j", 'neo4j']
+        - ["{{ hpviz_base_dir }}/logs/zookeeper", 'zookeeper']
+        - ["{{ hpviz_base_dir }}/logs/kafka", 'kafka']
+        - ["{{ hpviz_base_dir }}/logs/vector", 'vector']
+        - ["{{ hpviz_base_dir }}/logs/nifi", 'nifi']
+        - ["{{ hpviz_base_dir }}/logs/nginx", 'root']  # **TODO check if correct user
+      tags: structure
+
+    - name: Check vector viz001 TOML config exists
+      template:
+        src: templates/viz001.vector.toml.j2
+        dest: "{{ hpviz_base_dir }}/etc/vector/viz001.vector.toml"
+      tags: vector, configs, containers
+
+    # - name: check docker-compose.yml exists
+    #   copy:
+    #     src: docker/docker-compose.yml
+    #     dest: "{{ hpviz_base_dir }}/docker"
+    #   when:
+    #     ansible_host!="localhost"
+
+    # - name: check docker-compose.override.yml exists
+    #   copy:
+    #     src: docker/docker-compose.override.yml
+    #     dest: "{{ hpviz_base_dir }}/docker"
+    #   when:
+    #     ansible_host!="localhost"
 
     ## Docker Compose deploy below
 
@@ -69,23 +155,36 @@
 
     ## END Docker Compose deploy
 
-    ### Restricted
+    - name: Define ingest network (docker)
+      docker_network:
+        name: ingest
+        state: absent
+        scope: local
+        ipam_config:
+          - subnet: 172.20.0.0/24
+      tags:
+        - network
+        - containers
+
     - name: Deploy Zookeeper container
       docker_container:
         name: zookeeper
         image: confluentinc/cp-zookeeper
         hostname: zookeeper
         restart: yes
+        recreate: yes
         restart_policy: unless-stopped
-        state: absent
-        #ports:
-        #  - "2181:2181"
+        state: started
         expose:
           - "2181"
         env:
           ZOOKEEPER_CLIENT_PORT: "2181"
           ZOOKEEPER_TICK_TIME: "2000"
-      tags: zookeeper
+        volumes:
+         # - "{{ hpviz_base_dir}}/data/zookeeper:/var/lib/zookeeper/data"
+         # - "{{ hpviz_base_dir}}/logs/zookeeper:/var/lib/zookeeper/log"
+          - /var/run/docker.sock:/var/run/docker.sock:ro
+      tags: zookeeper, containers
 
     - name: Deploy Kafka Broker
       docker_container:
@@ -93,21 +192,22 @@
         image: confluentinc/cp-server:5.5.1
         hostname: broker
         restart: yes
+        recreate: yes
         restart_policy: unless-stopped
-        state: absent
+        state: started
         links:
           - zookeeper:zookeeper
         ports:
-          - "9092:9092"
-          - "9093:9093"
+          - "127.0.0.1:9092:9092"
+        #  - "9093:9093"
         expose:
           - "29092"
         env:
           KAFKA_BROKER_ID: "1"
           KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-          KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "LISTENER_INTERNAL:PLAINTEXT,LISTENER_PLAINTEXT:PLAINTEXT,LISTENER_EXT:PLAINTEXT"
-          KAFKA_ADVERTISED_LISTENERS: "LISTENER_INTERNAL://broker:29092,LISTENER_PLAINTEXT://viz001.ecu-sri.net:9092,LISTENER_EXT://viz001.ecu-sri.net:9093"
-          KAFKA_LISTENERS: "LISTENER_INTERNAL://broker:29092,LISTENER_PLAINTEXT://0.0.0.0:9092, LISTENER_EXT://0.0.0.0:9093"
+          KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "LISTENER_INTERNAL:PLAINTEXT,LISTENER_LOCALHOST:PLAINTEXT,LISTENER_EXT:PLAINTEXT"
+          KAFKA_ADVERTISED_LISTENERS: "LISTENER_INTERNAL://172.17.0.3:29092,LISTENER_LOCALHOST://localhost:9092,LISTENER_EXT://viz001.ecu-sri.net:9093"
+          KAFKA_LISTENERS: "LISTENER_INTERNAL://172.17.0.3:29092,LISTENER_LOCALHOST://0.0.0.0:9092, LISTENER_EXT://0.0.0.0:9093"
           KAFKA_METRIC_REPORTERS: "io.confluent.metrics.reporter.ConfluentMetricsReporter"
           KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
           KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
@@ -116,28 +216,33 @@
           KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "1"
           KAFKA_JMX_PORT: "9101"
           KAFKA_CONFLUENT_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
-          KAFKA_CREATE_TOPICS: "logging.syslog.raw"
+         # KAFKA_CREATE_TOPICS: "logging.syslog.vector"
           CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: "broker:29092"
           CONFLUENT_METRICS_REPORTER_ZOOKEEPER_CONNECT: "zookeeper:2181"
           CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: "1"
           CONFLUENT_METRICS_ENABLE: 'true'
           CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
           KAFKA_INTER_BROKER_LISTENER_NAME: "LISTENER_INTERNAL"
-      tags: broker
+        volumes:
+          # - "{{ hpviz_base_dir}}/data/kafka:/var/lib/kafka/data/"
+           - /var/run/docker.sock:/var/run/docker.sock:ro
+      tags: broker, containers
 
     - name: Deploy NIFI container
       docker_container:
         name: nifi
         image: apache/nifi:latest
         restart: yes
+        recreate: yes
         restart_policy: unless-stopped
         state: absent
+        #user: nifi:hpviz
         links:
           - zookeeper:zookeeper
           - broker:broker
         ports:
           - "9090:8080"
-          - "514:514"
+         # - "127.0.0.1:514:514"
         expose:
           - "9090"
         env:
@@ -145,4 +250,26 @@
           LETSENCRYPT_HOST: "viz001.ecu-sri.net"
           VIRTUAL_PROTO: "http"
           VIRTUAL_PORT: "9090"
-      tags: nifi
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock:ro
+      tags: nifi, containers
+
+    - name: Deploy Vector container
+      docker_container:
+        name: vector
+        image: timberio/vector:latest-alpine
+        restart: yes
+        restart_policy: unless-stopped
+        state: started
+        recreate: yes
+        links: broker:broker
+        ports:
+        #   - "9000:9000"  # incoming tcp vector link from the sink
+            - "127.0.0.1:514:514/udp"
+        expose:
+            - "514/udp"
+        #  - "9090"
+        volumes:
+          - "{{ hpviz_base_dir }}/etc/vector/viz001.vector.toml:/etc/vector/vector.toml:ro"
+          - /var/run/docker.sock:/var/run/docker.sock:ro
+      tags: vector, containers

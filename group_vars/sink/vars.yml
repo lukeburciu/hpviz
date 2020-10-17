@@ -1,4 +1,7 @@
 ---
+# Base project directory
+hpviz_base_dir: /opt/hpviz
+
 # These are users specific to the "sink" group of hosts
 #  1) To remove a user from all groups replace the group list with empty string ''
 #  2) Removing users change 'state: absent'  all theire directories will eb removed
@@ -33,5 +36,5 @@ firewall_services:
 
 ## Managed pip packages to install
 pip_install_packages:
-    - name: syslogng_kafka # error building
-      state: absent
+  - name: docker
+  - name: docker-compose
