@@ -25,7 +25,7 @@ services:
       - DEFAULT_EMAIL=["lburciu@our.ecu.edu.au", "sceaton@our.ecu.edu.au"]
 
 
-# VECTOR CONFIGURATION\
+# VECTOR CONFIGURATION
 
   vector:
     image: timberio/vector:latest-alpine
@@ -51,6 +51,12 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+        - /opt/hpviz/data/zookeeper:/var/lib/zookeeper/data
+        - /opt/hpviz/logs/zookeeper:/var/lib/zookeeper/log
+        - zookeeper:/var/lib/
+
+
 
   broker:
     image: confluentinc/cp-server:5.5.1
@@ -78,7 +84,8 @@ services:
       KAFKA_JMX_PORT: 9101
       KAFKA_CONFLUENT_SCHEMA_REGISTRY_URL: http://schema-registry:8081
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-
+    volumes:
+      - /opt/hpviz/data/kafka:/var/lib/kafka/data
 
   connect:
     image: confluentinc/cp-kafka-connect
@@ -171,6 +178,8 @@ services:
       - http.cors.allow-credentials=true
       - bootstrap.memory_lock=true
       - 'ES_JAVA_OPTS=-Xms512m -Xmx512m'
+    volumes:
+      - /opt/hpviz/data/es:/usr/share/elasticsearch/data
     ports:
       - "9200:9200"
       - "9300:9300"
@@ -183,6 +192,8 @@ services:
       - broker
       - connect
       - ksqldb-server
+    volumes:
+        - /opt/hpviz/etc/ksql-scripts/:/data/scripts/
     entrypoint: /bin/sh
     tty: true
 
@@ -207,6 +218,11 @@ services:
       image: apache/nifi-registry
       ports:
         - "18080:18080"
+      volumes:
+        - /opt/hpviz/etc/nifi-registry/providers.xml:/opt/nifi-registry/nifi-registry-current/conf/providers.xml
+        - /opt/hpviz/etc/nifi-registry/flow-storage:/opt/nifi-registry/nifi-registry-current/flow_storage
+        - /opt/hpviz/etc/nifi-registry/database:/opt/nifi-registry/nifi-registry-current/database
+        - nifi-registry_data:/opt/nifi-registry/
 
 # EXPOSED TO INTERNET
 
@@ -256,33 +272,27 @@ services:
         - LETSENCRYPT_HOST=nifi.viz001.ecu-sri.net
         - VIRTUAL_PROTO=https
         - VIRTUAL_PORT=9090
+      volumes:
+          - /opt/hpviz/data/nifi:/opt/nifi/nifi-current/ls-target
 
   grafana:
       image: grafana/grafana
       ports:
       - 3000:3000
       container_name: grafana
+      volumes:
+          - /opt/hpviz/etc/dashboards:/var/lib/grafana/dashboards
+          - /opt/hpviz/etc/datasources:/etc/grafana/datasources
+          - /opt/hpviz/etc/plugins:/var/lib/grafana/plugins
+          - grafana_data:/var/lib/grafana/
       environment:
         - VIRTUAL_HOST=grafana.viz001.ecu-sri.net
         - LETSENCRYPT_HOST=grafana.viz001.ecu-sri.net
         - VIRTUAL_PROTO=https
         - VIRTUAL_PORT=3000
 
-  dejavu:
-    image: appbaseio/dejavu:3.2.3
-    container_name: dejavu
-    ports:
-      - "1358:1358"
-    expose:
-      - "1358"
-    links:
-      - elasticsearch
-    environment:
-      - VIRTUAL_HOST=dejavu.viz001.ecu-sri.net
-      - LETSENCRYPT_HOST=dejavu.viz001.ecu-sri.net
-      - VIRTUAL_PROTO=https
-      - VIRTUAL_PORT=1358
-
-
 volumes:
   nginx-data:
+  grafana_data:
+  nifi-registry_data:
+  zookeeper:
