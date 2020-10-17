@@ -9,20 +9,21 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - nginx-data:/etc/nginx/certs
-      - nginx-data:/etc/nginx/vhost.d
-      - nginx-data:/usr/share/nginx/html
+      - /opt/hpviz/etc/nginx/certs:/etc/nginx/certs
+      - /opt/hpviz/etc/nginx:/etc/nginx/vhost.d
+      - /opt/hpviz/data/nginx/html:/usr/share/nginx/html
       - /var/run/docker.sock:/tmp/docker.sock:ro
 
   nginx-proxy-companion:
     image: jrcs/letsencrypt-nginx-proxy-companion
     volumes:
-      - nginx-data:/etc/nginx/certs
-      - nginx-data:/etc/nginx/vhost.d
-      - nginx-data:/usr/share/nginx/html
+      - /opt/hpviz/etc/nginx/certs:/etc/nginx/certs
+      - /opt/hpviz/etc/nginx:/etc/nginx/vhost.d
+      - /opt/hpviz/data/nginx/html:/usr/share/nginx/html
       - /var/run/docker.sock:/tmp/docker.sock:ro
     environment:
       - DEFAULT_EMAIL=["lburciu@our.ecu.edu.au", "sceaton@our.ecu.edu.au"]
+
 
 
 # VECTOR CONFIGURATION
@@ -36,10 +37,8 @@ services:
     expose:
       - "9000"
     volumes:
-      - /opt/hpviz/docker/viz001.vector.toml:/etc/vector/vector.toml:ro
+      - /opt/hpviz/etc/vector/viz001.vector.toml:/etc/vector/vector.toml:ro
       - /var/run/docker.sock:/var/run/docker.sock
-
-
 
 # RESTRICTED
   zookeeper:
@@ -72,9 +71,9 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "LISTENER_INTERNAL:PLAINTEXT,LISTENER_PLAINTEXT:PLAINTEXT,LISTENER_EXT:PLAINTEXT"
-      KAFKA_ADVERTISED_LISTENERS: "LISTENER_INTERNAL://broker:29092,LISTENER_PLAINTEXT://viz001.ecu-sri.net:9092,LISTENER_EXT://viz001.ecu-sri.net:9093"
-      KAFKA_LISTENERS: "LISTENER_INTERNAL://broker:29092,LISTENER_PLAINTEXT://0.0.0.0:9092, LISTENER_EXT://0.0.0.0:9093"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "LISTENER_INTERNAL:PLAINTEXT,LISTENER_LOCALHOST:PLAINTEXT,LISTENER_EXT:PLAINTEXT"
+      KAFKA_ADVERTISED_LISTENERS: "LISTENER_INTERNAL://broker:29092,LISTENER_LOCALHOST://127.0.0.1:9092,LISTENER_EXT://viz001.ecu-sri.net:9093"
+      KAFKA_LISTENERS: "LISTENER_INTERNAL://broker:29092,LISTENER_LOCALHOST://127.0.0.1:9092, LISTENER_EXT://0.0.0.0:9093"
       KAFKA_METRIC_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
@@ -98,10 +97,10 @@ services:
     ports:
       - "8083:8083"
     volumes:
-      - $HOME/hpviz/docker/kafka-sink35/connect/plugins:/tmp/connect-plugins
+      - /opt/hpviz/docker/kafka-sink35/connect/plugins:/tmp/connect-plugins
     environment:
       CONNECT_LOG4J_ROOT_LOGLEVEL: 'WARN'
-      CONNECT_BOOTSTRAP_SERVERS: 'broker:9093'
+      CONNECT_BOOTSTRAP_SERVERS: 'broker:29092'
       CONNECT_REST_ADVERTISED_HOST_NAME: connect
       CONNECT_REST_PORT: 8083
       CONNECT_GROUP_ID: compose-connect-group
@@ -153,7 +152,7 @@ services:
       - "8088:8088"
     environment:
       KSQL_CONFIG_DIR: "/etc/ksql"
-      KSQL_BOOTSTRAP_SERVERS: "broker:9093"
+      KSQL_BOOTSTRAP_SERVERS: "broker:29092"
       KSQL_HOST_NAME: ksqldb-server
       KSQL_LISTENERS: "http://0.0.0.0:8088"
       KSQL_CACHE_MAX_BYTES_BUFFERING: 0
@@ -171,7 +170,7 @@ services:
     environment:
       - discovery.type=single-node
       - http.port=9200
-      - ELASTIC_PASSWORD=password
+      - ELASTIC_PASSWORD=password  ## **TODO Elastic Clear text password
       - http.cors.enabled=true
       - http.cors.allow-origin=http://localhost:1358,http://127.0.0.1:1358
       - http.cors.allow-headers=X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization
@@ -209,7 +208,7 @@ services:
     container_name: rest-proxy
     environment:
       KAFKA_REST_HOST_NAME: rest-proxy
-      KAFKA_REST_BOOTSTRAP_SERVERS: 'broker:9093'
+      KAFKA_REST_BOOTSTRAP_SERVERS: 'broker:29092'
       KAFKA_REST_LISTENERS: "http://0.0.0.0:8082"
       KAFKA_REST_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
 
@@ -239,23 +238,22 @@ services:
       - broker
       - connect
     volumes:
-      - $HOME/hpviz/docker/kafka-sink35/neo4j/conf:/conf
+      - /opt/hpviz/docker/kafka-sink35/neo4j/conf:/conf
       - $HOME/hpviz/docker/kafka-sink35/neo4j/data:/data
       - $HOME/hpviz/docker/kafka-sink35/neo4j/logs:/logs
       - $HOME/hpviz/docker/kafka-sink35/neo4j/metrics:/metrics
       - $HOME/hpviz/docker/kafka-sink35/neo4j/plugins:/plugins
     environment:
-      - NEO4J_AUTH=neo4j/password
+      - NEO4J_AUTH=neo4j/password  ## **TODO clear text password
       - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
       - NEO4J_dbms_connector_http_listen__address=:17474
       - NEO4J_dbms_connector_https_listen__address=:17473
       - NEO4J_dbms_connector_bolt_listen__address=:17687
       - NEO4JLABS_PLUGINS=["apoc"]
-      - VIRTUAL_HOST=neo4j.viz001.ecu-sri.net
-      - LETSENCRYPT_HOST=neo4j.viz001.ecu-sri.net
+      - VIRTUAL_HOST=viz001.ecu-sri.net
+      - LETSENCRYPT_HOST=viz001.ecu-sri.net
       - VIRTUAL_PROTO=https
       - VIRTUAL_PORT=17474
-
 
   nifi:
       image: apache/nifi:latest
@@ -268,8 +266,8 @@ services:
       expose:
         - "9090"
       environment:
-        - VIRTUAL_HOST=nifi.viz001.ecu-sri.net
-        - LETSENCRYPT_HOST=nifi.viz001.ecu-sri.net
+        - VIRTUAL_HOST=viz001.ecu-sri.net
+        - LETSENCRYPT_HOST=viz001.ecu-sri.net
         - VIRTUAL_PROTO=https
         - VIRTUAL_PORT=9090
       volumes:
@@ -286,11 +284,11 @@ services:
           - /opt/hpviz/etc/plugins:/var/lib/grafana/plugins
           - grafana_data:/var/lib/grafana/
       environment:
-        - VIRTUAL_HOST=grafana.viz001.ecu-sri.net
-        - LETSENCRYPT_HOST=grafana.viz001.ecu-sri.net
+        - VIRTUAL_HOST=viz001.ecu-sri.net
+        - LETSENCRYPT_HOST=viz001.ecu-sri.net
         - VIRTUAL_PROTO=https
         - VIRTUAL_PORT=3000
-
+        
 volumes:
   nginx-data:
   grafana_data:

@@ -2,7 +2,7 @@
 ######################
 ## site.yml
 ##
-##  defines HPViz Project site-wide playbook
+##  defines HPViz Project site-wide play-book workflow
 
 - name: import pb-common.yml
   import_playbook: pb-common.yml
@@ -10,8 +10,11 @@
 - name: import pb-users.yml
   import_playbook: pb-users.yml
 
-- name: import pb-deploy-docker.yml
-  import_playbook: pb-deploy-docker.yml
+- name: import pb-install-packages.yml
+  import_playbook: pb-install-packages.yml
+
+- name: import pb-docker-deploy.yml
+  import_playbook: pb-docker-deploy.yml
 
 - name: import pb-sink_data.yml
   import_playbook: pb-sink_data.yml
