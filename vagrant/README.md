@@ -1,11 +1,33 @@
-# Shared Development Directories
-
-These two directories are shared with their relavant vagrant boxes for the development environment.
-
-Anything put in them will be available to the Virtual machine under /vagrant_data
-
-custom directories can be added in the Vagrantfile for each VM
+# Vagrant Development Directories
 
 ```
-config.vm.synced_folder "../vagrant/viz", "/vagrant_data"
+.
+├── README.md
+├── scripts
+│   └── provision.sh
+├── shared
+│   └── docker_images
+├── sink
+│   └── data
+└── viz
 ```
+
+These directories are shared with the relevant VM on startup
+
+Custom directories can be added in the Vagrantfile under each VM config
+
+## scripts
+
+provisioning scripts used on VMs
+
+## shared
+
+- docker_images -> /var/lib/docker/image: so docker images don't have to be re-downloaded each time vm is re-provisioned
+
+## viz
+
+none
+
+## sink
+
+- data -> /data: log data for ingestion testing
