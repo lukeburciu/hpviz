@@ -7,5 +7,6 @@ exclude_paths:
   - .github
   - ./roles/geerlingguy.docker
   - ./roles/robertdebock.firewall
-skip_list: {}
+skip_list:
+  - 206
 verbosity: 1
