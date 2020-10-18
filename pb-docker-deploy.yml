@@ -58,7 +58,8 @@
         path: "{{ hpviz_base_dir }}"
         state: directory
         group: hpviz
-        mode: '0775'
+        mode: 2775
+        # files: -rwxrwsr-x; folders: drwxrwsr-x
       tags: structure
 
     - name: Set project directory group inheritance
@@ -74,7 +75,8 @@
         owner: root
         state: directory
         group: hpviz
-        mode: '0775'
+        mode: 2775
+        # files: -rwxrwsr-x; folders: drwxrwsr-x
       loop:
         # docker compose home
         - ["{{ hpviz_base_dir }}/docker", 'root']
@@ -193,8 +195,8 @@
           ZOOKEEPER_CLIENT_PORT: "2181"
           ZOOKEEPER_TICK_TIME: "2000"
         volumes:
-         # - "{{ hpviz_base_dir}}/data/zookeeper:/var/lib/zookeeper/data"
-         # - "{{ hpviz_base_dir}}/logs/zookeeper:/var/lib/zookeeper/log"
+          - "{{ hpviz_base_dir}}/data/zookeeper:/var/lib/zookeeper/data"
+          - "{{ hpviz_base_dir}}/logs/zookeeper:/var/lib/zookeeper/log"
           - /var/run/docker.sock:/var/run/docker.sock:ro
       tags: zookeeper, containers
 
@@ -236,7 +238,7 @@
           CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
           KAFKA_INTER_BROKER_LISTENER_NAME: "LISTENER_INTERNAL"
         volumes:
-          # - "{{ hpviz_base_dir}}/data/kafka:/var/lib/kafka/data/"
+           - "{{ hpviz_base_dir}}/data/kafka:/var/lib/kafka/data"
            - /var/run/docker.sock:/var/run/docker.sock:ro
       tags: broker, containers
 
