@@ -19,6 +19,7 @@ Vagrant.configure("2") do |config|
     viz.vm.provision "shell",
       path: "vagrant/scripts/provision.sh"
     #viz.vm.synced_folder "vagrant/viz/docker" , "/var/lib/docker"
+    viz.vm.synced_folder "vagrant/viz/hpviz" , "/opt/hpviz"
   end
 
   config.vm.define "sink" do |sink|
@@ -34,6 +35,7 @@ Vagrant.configure("2") do |config|
       path: "vagrant/scripts/provision.sh"
     #sink.vm.synced_folder "vagrant/sink/docker" , "/var/lib/docker"
     sink.vm.synced_folder "vagrant/sink/data" , "/data"
+    sink.vm.synced_folder "vagrant/sink/hpviz" , "/opt/hpviz"
   end
 
   # deploy after everything is up and running
