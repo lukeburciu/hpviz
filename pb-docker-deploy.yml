@@ -22,7 +22,8 @@
         that:
           - hpviz_base_dir is defined
           - hpviz_base_dir | length > 0
-      tags: dir
+      tags:
+        - structure
 
     - name: add project groups
       group:
@@ -32,7 +33,8 @@
       loop:
         - hpviz
         - www-data
-      tags: accounts
+      tags:
+        - accounts
 
     - name: Add system accounts
       user:
@@ -51,7 +53,8 @@
         - neo4j
         - nifi
         - www-data
-      tags: accounts
+      tags:
+        - accounts
 
     - name: Check project top level directory exist "{{ hpviz_base_dir }}"
       file:
@@ -60,14 +63,17 @@
         group: hpviz
         mode: 2775
         # files: -rwxrwsr-x; folders: drwxrwsr-x
-      tags: structure
+      tags:
+       - structure
+       - skip_ansible_lint  # 206 error
 
-    - name: Set project directory group inheritance
-      file:
-        path: "{{ hpviz_base_dir }}"
-        state: directory
-        mode: 'g+s'
-      tags: structure
+    # - name: Set project directory group inheritance
+    #   file:
+    #     path: "{{ hpviz_base_dir }}"
+    #     state: directory
+    #     mode: 'g+s'
+    #   tags:
+    #    - structure
 
     - name: Set up project directories
       file:
@@ -114,60 +120,38 @@
         - ["{{ hpviz_base_dir }}/logs/vector", 'vector']
         - ["{{ hpviz_base_dir }}/logs/nifi", 'nifi']
         - ["{{ hpviz_base_dir }}/logs/nginx", 'root']  # **TODO check if correct user
-      tags: structure
+      tags:
+        - structure
+        - skip_ansible_lint
 
     - name: Check vector viz001 TOML config exists
       template:
         src: templates/viz001.vector.toml.j2
         dest: "{{ hpviz_base_dir }}/etc/vector/viz001.vector.toml"
-      tags: vector, configs, containers
+        mode: 0644
+      tags:
+        - vector
+        - configs
+        - containers
 
     - name: Check rsyslog config exist
       template:
         src: templates/rsyslog.conf.j2
         dest: "/etc/rsyslog.d/99-hpviz-ingest.conf"
-      tags: vector, configs, containers
+        mode: 0644
+      tags:
+        - vector
+        - configs
+        - containers
 
     - name: restart rsyslog
       service:
         name: rsyslog
         state: restarted
-      tags: vector, configs, containers
-
-    # - name: check docker-compose.yml exists
-    #   copy:
-    #     src: docker/docker-compose.yml
-    #     dest: "{{ hpviz_base_dir }}/docker"
-    #   when:
-    #     ansible_host!="localhost"
-
-    # - name: check docker-compose.override.yml exists
-    #   copy:
-    #     src: docker/docker-compose.override.yml
-    #     dest: "{{ hpviz_base_dir }}/docker"
-    #   when:
-    #     ansible_host!="localhost"
-
-    ## Docker Compose deploy below
-
-    # - name: Tear down existing HPViz services
-    #   docker_compose:
-    #     project_name: hpviz
-    #     project_src: /var/opt/hpviz/docker
-    #     state: absent
-
-    # - name: Bring up HPViz services
-    #   docker_compose:
-    #     project_name: hpviz
-    #     project_src: /var/opt/hpviz/docker
-    #     files:
-    #       - docker-compose.yml
-    #       - docker-compose.override.yml
-    #     state: present
-    #     remove_orphans: yes
-    #   register: output
-
-    ## END Docker Compose deploy
+      tags:
+        - vector
+        - configs
+        - containers
 
     - name: Define ingest network (docker)
       docker_network:
@@ -195,10 +179,21 @@
           ZOOKEEPER_CLIENT_PORT: "2181"
           ZOOKEEPER_TICK_TIME: "2000"
         volumes:
-          - "{{ hpviz_base_dir}}/data/zookeeper:/var/lib/zookeeper/data"
-          - "{{ hpviz_base_dir}}/logs/zookeeper:/var/lib/zookeeper/log"
+          - "{{ hpviz_base_dir }}/data/zookeeper:/var/lib/zookeeper/data"
+          - "{{ hpviz_base_dir }}/logs/zookeeper:/var/lib/zookeeper/log"
           - /var/run/docker.sock:/var/run/docker.sock:ro
-      tags: zookeeper, containers
+      tags:
+        - zookeeper
+        - containers
+
+    # fixes issues when docker has been restarted i.e. after a reboot.  The broker will receive correct clusterid from zookeeper
+    - name: removes /opt/hpviz/data/kafka/meta.properties
+      file:
+        path: /opt/hpviz/data/kafka/meta.properties
+        state: absent
+      tags:
+        - broker
+        - containers
 
     - name: Deploy Kafka Broker
       docker_container:
@@ -238,9 +233,11 @@
           CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
           KAFKA_INTER_BROKER_LISTENER_NAME: "LISTENER_INTERNAL"
         volumes:
-           - "{{ hpviz_base_dir}}/data/kafka:/var/lib/kafka/data"
+           - "{{ hpviz_base_dir }}/data/kafka:/var/lib/kafka/data"
            - /var/run/docker.sock:/var/run/docker.sock:ro
-      tags: broker, containers
+      tags:
+        - broker
+        - containers
 
     - name: Deploy NIFI container
       docker_container:
@@ -286,4 +283,6 @@
         volumes:
           - "{{ hpviz_base_dir }}/etc/vector/viz001.vector.toml:/etc/vector/vector.toml:ro"
           - /var/run/docker.sock:/var/run/docker.sock:ro
-      tags: vector, containers
+      tags:
+        - vector
+        - containers
