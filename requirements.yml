@@ -5,6 +5,8 @@ roles:
     src: geerlingguy.docker
   - name: geerlingguy.pip
     src: geerlingguy.pip
+  - name: geerlingguy.nginx
+    src: geerlingguy.nginx
   - name: robertdebock.firewall
     src: robertdebock.firewall
 
