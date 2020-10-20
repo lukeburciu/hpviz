@@ -32,3 +32,32 @@ firewall_services:
 # Syslog
 hpviz_syslog_ingest_ip: 127.0.0.1
 hpviz_syslog_ingest_port: 514
+
+#grafana
+
+hpviz_grafana_admin_pass: "{{ vault_hpviz_grafana_admin_pass }}"
+
+## NGINX Reverse proxy config
+nginx_vhosts:
+  - listen: "443 ssl"
+
+    server_name: "{{ hpviz_virtual_hostname }}"
+
+    extra_parameters: |
+      location /grafana/ {
+          proxy_pass http://localhost:3000;
+          proxy_set_header X-Forwarded-Host $http_host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-Proto $scheme;
+      }
+
+      ssl_certificate /etc/ssl/certs/{{ hpviz_vector_hostkey }}.crt;
+      ssl_certificate_key /etc/ssl/private/{{ hpviz_vector_hostkey }}.key;
+      ssl_protocols       TLSv1.1 TLSv1.2;
+      ssl_ciphers         HIGH:!aNULL:!MD5;
+      client_max_body_size 25m;
+
+# Redirect HTTP traffic to HTTPS
+  - listen: "80"
+    server_name: _
+    return: "301 https://$host$request_uri"

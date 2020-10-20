@@ -14,6 +14,7 @@
         name:
           - kafkacat                # command line non jvm kafka cli producer and consumer
           - openjdk-11-jre-headless # required for java keytool
+          - ca-certificates
         state: present
       when:
         ansible_host!="localhost"
@@ -31,3 +32,46 @@
     - role: common_tasks
     - role: geerlingguy.pip
     - role: robertdebock.firewall
+
+  tasks:
+    - name: install ca package on system
+      apt:
+        name: ca-certificates
+        state: present
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+
+    - name: copy certificate authority to trusted ca path of the os
+      copy:
+        src: 'files/hpviz-ca-chain-bundle.crt'
+        dest: '/usr/local/share/ca-certificates/extra'
+        owner: root
+        group: root
+        mode: 0644
+      notify:
+        - update trusted ca
+
+    - name: Copy public certificate to nginx SSL configuration folder.
+      copy:
+          content: "{{ hpviz_tls_cert }}"
+          dest: '/etc/ssl/certs/{{ hpviz_vector_hostkey }}.crt'
+          mode: 0640
+          owner: root
+          group: root
+      ignore_errors: yes
+
+    - name: Copy private key to SSL configuration folder.
+      copy:
+        content: "{{ hpviz_tls_key }}"
+        dest: '/etc/ssl/private/{{ hpviz_vector_hostkey }}.key'
+        mode: 0600
+        owner: root
+        group: root
+      no_log: true
+      ignore_errors: yes
+
+  handlers:
+    - name: update trusted ca
+      shell: /usr/sbin/update-ca-certificates
+      tags:
+        - skip_ansible_lint

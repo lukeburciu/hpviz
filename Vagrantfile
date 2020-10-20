@@ -9,13 +9,16 @@ Vagrant.configure("2") do |config|
 
   config.vm.define "viz", primary: true do |viz|
     viz.vm.box = "bento/ubuntu-18.04"
-    viz.vm.hostname = "viz001"
+    viz.vm.hostname = "dev-viz"
     viz.vm.network "private_network", ip: "192.168.100.10"
     viz.vm.provider "virtualbox" do |vb|
         vb.customize ["modifyvm", :id, "--memory", 4096]
         vb.customize ["modifyvm", :id, "--cpus", 4]
     end
     viz.vm.network "forwarded_port", id: "ssh", host: 20022, guest: 22
+    viz.vm.network "forwarded_port", id: "https", host: 40443, guest: 443
+    viz.vm.network "forwarded_port", id: "http", host: 40080, guest: 80
+    viz.vm.network "forwarded_port", id: "grafana", host: 40300, guest: 3000
     viz.vm.provision "shell",
       path: "vagrant/scripts/provision.sh"
     #viz.vm.synced_folder "vagrant/viz/docker" , "/var/lib/docker"
@@ -24,7 +27,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.define "sink" do |sink|
     sink.vm.box = "bento/ubuntu-18.04"
-    sink.vm.hostname = "thesink"
+    sink.vm.hostname = "dev-sink"
     sink.vm.network "private_network", ip: "192.168.100.11"
     sink.vm.provider "virtualbox" do |vb|
         vb.customize ["modifyvm", :id, "--memory", 2048]
