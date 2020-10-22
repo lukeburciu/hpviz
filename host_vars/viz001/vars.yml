@@ -1,4 +1,16 @@
 ---
 # TLS certificates for this host
-hpviz_vector_hostkey: '{{ vault_hpviz_vector_hostkey }}'                  # host private key
-hpviz_vector_hostkey_secret: '{{ vault_hpviz_vector_hostkey_secret }}'    # host private key secret
+hpviz_tls_cert: '{{ vault_hpviz_tls_cert }}'
+hpviz_tls_key: '{{ vault_hpviz_tls_key }}'
+
+hpviz_elastic_password: '{{ vault_hpviz_elastic_password }}'
+
+# virtual hostname for nginx
+hpviz_virtual_hostname: "viz001.ecu-sri.net"
+
+# vector
+hpviz_vector_hostkey: "viz001_ecu-sri_net"
+
+# rsyslog
+hpviz_syslog_ingest_ip: "127.0.0.1"
+hpviz_syslog_ingest_port: "514"

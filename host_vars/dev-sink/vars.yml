@@ -1,7 +1,7 @@
 ---
-# TLS certificates for this host
+# TLS Certificate
 hpviz_tls_cert: '{{ vault_hpviz_tls_cert }}'
 hpviz_tls_key: '{{ vault_hpviz_tls_key }}'
 
 # vector
-hpviz_vector_hostkey: "thesink_ecu-sri_net"
+hpviz_vector_hostkey: "dev-viz_localhost"

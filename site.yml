@@ -16,5 +16,8 @@
 - name: import pb-docker-deploy.yml
   import_playbook: pb-docker-deploy.yml
 
+- name: import pb-deploy-nginx.yml
+  import_playbook: pb-deploy-nginx.yml
+
 - name: import pb-sink_data.yml
   import_playbook: pb-sink_data.yml

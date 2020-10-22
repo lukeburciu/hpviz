@@ -1,0 +1,48 @@
+[sources.kafka_logging_syslog_raw]
+  # General
+  type = "kafka" # required
+  bootstrap_servers = "172.20.0.10:29092" # IP required not hostname
+  key_field = "user_id" # required
+  topics = ["logging.syslog.raw"] # required
+  group_id= "elasticsearch-ingestion"
+
+[transforms.tag]
+  type="add_fields"
+  inputs = ["kafka_logging_syslog_raw"]
+  overwrite=false
+
+  #tags
+  fields.tags = ["kafka"]
+
+[sinks.elasticsearch_syslog]
+  # General
+  type = "elasticsearch" # required
+  inputs = ["tag"] # required
+  compression = "none" # optional, default
+  doc_type = "_doc" # optional, default
+  healthcheck = true # optional, default
+  host = "http://elasticsearch:9200" # optional, no default
+
+  index = "syslog-%F" # optional, default
+  #pipeline = "syslog" # optional, no default
+
+  # Batch
+  batch.max_bytes = 10490000 # optional, default, bytes
+  batch.max_events = 1000 # optional, no default, events
+  batch.timeout_secs = 1 # optional, default, seconds
+
+  # Headers
+  #headers.Authorization = "${ELASTICSEARCH_TOKEN}" # token for es
+  headers.X-Powered-By = "Vector" # example
+
+  # Query
+  #query.X-Powered-By = "Vector" #
+
+  # Request
+  #request.in_flight_limit = 5 # optional, default, requests
+  #request.rate_limit_duration_secs = 1 # optional, default, seconds
+  #request.rate_limit_num = 5 # optional, default
+  #request.retry_attempts = 6470955161 # optional, default
+  #request.retry_initial_backoff_secs = 1 # optional, default, seconds
+  #request.retry_max_duration_secs = 10 # optional, default, seconds
+  #request.timeout_secs = 60 # optional, default, seconds #}

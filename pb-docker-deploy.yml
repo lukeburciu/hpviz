@@ -17,11 +17,19 @@
 
   tasks:
 
-    - name: Check hpviz_base__dir variables exists
+    - name: Check required variables exists for docker to install
       assert:
         that:
           - hpviz_base_dir is defined
           - hpviz_base_dir | length > 0
+          - hpviz_vector_hostkey is defined
+          - hpviz_vector_hostkey | length > 0
+          - hpviz_virtual_hostname is defined
+          - hpviz_virtual_hostname | length > 0
+          - hpviz_syslog_ingest_ip is defined
+          - hpviz_syslog_ingest_ip | length > 0
+          - hpviz_syslog_ingest_port is defined
+          - hpviz_syslog_ingest_port | length > 0
       tags:
         - structure
 
@@ -53,6 +61,7 @@
         - neo4j
         - nifi
         - www-data
+        - grafana
       tags:
         - accounts
 
@@ -61,7 +70,7 @@
         path: "{{ hpviz_base_dir }}"
         state: directory
         group: hpviz
-        mode: 2775
+        mode: 2770
         # files: -rwxrwsr-x; folders: drwxrwsr-x
       tags:
        - structure
@@ -81,7 +90,7 @@
         owner: root
         state: directory
         group: hpviz
-        mode: 2775
+        mode: 2770
         # files: -rwxrwsr-x; folders: drwxrwsr-x
       loop:
         # docker compose home
@@ -95,42 +104,56 @@
         - ["{{ hpviz_base_dir }}/etc/elastic/certs", 'elastic']
         - ["{{ hpviz_base_dir }}/etc/nginx/certs", 'root']     # **TODO Check if correct user
         - ["{{ hpviz_base_dir }}/etc/kafka/secrets", 'kafka']
-        - ["{{ hpviz_base_dir }}/etc/kafka-connect/certs", 'kafka-connect']
         - ["{{ hpviz_base_dir }}/etc/kafka-connect/plugins", 'kafka-connect']
-        - ["{{ hpviz_base_dir }}/etc/vector/certs",'vector']
+        - ["{{ hpviz_base_dir }}/etc/vector-ingest/certs",'vector']
+        - ["{{ hpviz_base_dir }}/etc/vector2elastic/certs",'vector']
         - ["{{ hpviz_base_dir }}/etc/nifi/certs", 'nifi']
+        - ["{{ hpviz_base_dir }}/etc/grafana/certs", 'grafana']
+        - ["{{ hpviz_base_dir }}/etc/grafana/plugins", 'grafana']
+        - ["{{ hpviz_base_dir }}/etc/grafana/datasources", 'grafana']
+        - ["{{ hpviz_base_dir }}/etc/grafana/dashboards", 'grafana']
         # data
         - ["{{ hpviz_base_dir }}/data", 'root']
         - ["{{ hpviz_base_dir }}/data/zookeeper", 'zookeeper']
         - ["{{ hpviz_base_dir }}/data/elastic", 'elastic']
         - ["{{ hpviz_base_dir }}/data/kafka",'kafka']
-        - ["{{ hpviz_base_dir }}/data/kafka-connect",'kafka-connect']
         - ["{{ hpviz_base_dir }}/data/nifi",'nifi']
-        - ["{{ hpviz_base_dir }}/data/vector",'vector']
+        - ["{{ hpviz_base_dir }}/data/vector-ingest",'vector']
+        - ["{{ hpviz_base_dir }}/data/vector2elastic",'vector']
         - ["{{ hpviz_base_dir }}/data/neo4j", 'neo4j']
         - ["{{ hpviz_base_dir }}/data/neo4j/data", 'neo4j']
         - ["{{ hpviz_base_dir }}/data/neo4j/metrics", 'neo4j']
-        - ["{{ hpviz_base_dir }}/data/nginx/html", 'www-data']  # **TODO check if correct user
+        - ["{{ hpviz_base_dir }}/data/grafana", 'root']
         # logs
         - ["{{ hpviz_base_dir }}/logs", 'root']
         - ["{{ hpviz_base_dir }}/logs/elastic", 'elastic']
         - ["{{ hpviz_base_dir }}/logs/neo4j", 'neo4j']
         - ["{{ hpviz_base_dir }}/logs/zookeeper", 'zookeeper']
         - ["{{ hpviz_base_dir }}/logs/kafka", 'kafka']
-        - ["{{ hpviz_base_dir }}/logs/vector", 'vector']
+        - ["{{ hpviz_base_dir }}/logs/vector-ingest", 'vector']
+        - ["{{ hpviz_base_dir }}/logs/vector2elastic", 'vector']
         - ["{{ hpviz_base_dir }}/logs/nifi", 'nifi']
-        - ["{{ hpviz_base_dir }}/logs/nginx", 'root']  # **TODO check if correct user
       tags:
         - structure
         - skip_ansible_lint
 
-    - name: Check vector viz001 TOML config exists
+    - name: Check ingestion vector on viz hosts TOML config exists
       template:
-        src: templates/viz001.vector.toml.j2
-        dest: "{{ hpviz_base_dir }}/etc/vector/viz001.vector.toml"
-        mode: 0644
+        src: templates/viz.vector.toml.j2
+        dest: "{{ hpviz_base_dir }}/etc/vector-ingest/viz.vector.toml"
+        mode: 0640
       tags:
-        - vector
+        - vector-ingest
+        - configs
+        - containers
+
+    - name: Check vector 2 elastic TOML config exists
+      template:
+        src: templates/elastic.vector.toml.j2
+        dest: "{{ hpviz_base_dir }}/etc/vector2elastic/elastic.vector.toml"
+        mode: 0640
+      tags:
+        - vector2elastic
         - configs
         - containers
 
@@ -153,13 +176,31 @@
         - configs
         - containers
 
-    - name: Define ingest network (docker)
+    # - name: Change default bridge network (docker)
+    #   docker_network:
+    #     name: bridge
+    #     state: present
+    #     driver_options:
+    #       com.docker.network.bridge.default_bridge: "false"
+    #       com.docker.network.bridge.enable_ip_masquerade: "true"
+    #       com.docker.network.bridge.host_binding_ipv4: 0.0.0.0
+    #       com.docker.network.bridge.enable_icc: "true"
+    #   tags:
+    #     - network
+    #     - containers
+
+    - name: Define VIZ network (docker)
       docker_network:
-        name: ingest
-        state: absent
+        name: viz-net
+        state: present
+        force: yes
         scope: local
+        internal: no
         ipam_config:
           - subnet: 172.20.0.0/24
+        driver_options:
+          com.docker.network.bridge.enable_ip_masquerade: "true"
+          com.docker.network.bridge.host_binding_ipv4: 0.0.0.0
       tags:
         - network
         - containers
@@ -173,8 +214,12 @@
         recreate: yes
         restart_policy: unless-stopped
         state: started
+        ports:
+          - "2181"
         expose:
           - "2181"
+        networks:
+          - name: viz-net
         env:
           ZOOKEEPER_CLIENT_PORT: "2181"
           ZOOKEEPER_TICK_TIME: "2000"
@@ -186,7 +231,7 @@
         - zookeeper
         - containers
 
-    # fixes issues when docker has been restarted i.e. after a reboot.  The broker will receive correct clusterid from zookeeper
+    # fixes single node issues when docker has been restarted i.e. after a reboot.  The broker will receive correct clusterid from zookeeper
     - name: removes /opt/hpviz/data/kafka/meta.properties
       file:
         path: /opt/hpviz/data/kafka/meta.properties
@@ -204,19 +249,23 @@
         recreate: yes
         restart_policy: unless-stopped
         state: started
-        links:
-          - zookeeper:zookeeper
         ports:
           - "127.0.0.1:9092:9092"
-        #  - "9093:9093"
+          #- "127.0.0.1:9092:9092"
+          #- "9093:9093"
         expose:
           - "29092"
+        networks:
+          - name: viz-net
+            ipv4_address: "172.20.0.10"
+            links:
+              - zookeeper:zookeeper
         env:
           KAFKA_BROKER_ID: "1"
           KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
           KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "LISTENER_INTERNAL:PLAINTEXT,LISTENER_LOCALHOST:PLAINTEXT,LISTENER_EXT:PLAINTEXT"
-          KAFKA_ADVERTISED_LISTENERS: "LISTENER_INTERNAL://172.17.0.3:29092,LISTENER_LOCALHOST://localhost:9092,LISTENER_EXT://viz001.ecu-sri.net:9093"
-          KAFKA_LISTENERS: "LISTENER_INTERNAL://172.17.0.3:29092,LISTENER_LOCALHOST://0.0.0.0:9092, LISTENER_EXT://0.0.0.0:9093"
+          KAFKA_ADVERTISED_LISTENERS: "LISTENER_INTERNAL://broker:29092,LISTENER_LOCALHOST://localhost:9092,LISTENER_EXT://viz001.ecu-sri.net:9093"
+          KAFKA_LISTENERS: "LISTENER_INTERNAL://:29092,LISTENER_LOCALHOST://0.0.0.0:9092,LISTENER_EXT://0.0.0.0:9093"
           KAFKA_METRIC_REPORTERS: "io.confluent.metrics.reporter.ConfluentMetricsReporter"
           KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
           KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
@@ -247,15 +296,16 @@
         recreate: yes
         restart_policy: unless-stopped
         state: absent
-        #user: nifi:hpviz
-        links:
-          - zookeeper:zookeeper
-          - broker:broker
         ports:
           - "9090:8080"
          # - "127.0.0.1:514:514"
         expose:
           - "9090"
+        networks:
+          - name: viz-net
+            links:
+              - zookeeper:zookeeper
+              - broker:broker
         env:
           VIRTUAL_HOST: "viz001.ecu-sri.net"
           LETSENCRYPT_HOST: "viz001.ecu-sri.net"
@@ -263,26 +313,123 @@
           VIRTUAL_PORT: "9090"
         volumes:
           - /var/run/docker.sock:/var/run/docker.sock:ro
-      tags: nifi, containers
+      tags:
+        - nifi
+        - containers
 
-    - name: Deploy Vector container
+    - name: elasticsearch container
+      docker_container:
+        name: elasticsearch
+        image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.0.1
+        restart: yes
+        recreate: yes
+        state: started
+        restart_policy: unless-stopped
+        expose:
+          - "29200"
+          - "29300"
+        ports:
+          - "127.0.0.1:9300:9300"
+        networks:
+          - name: viz-net
+        env:
+          discovery.type: single-node
+          http.port: '9200'
+          ELASTIC_PASSWORD: '{{ hpviz_elastic_password }}'
+          http.cors.enabled: "true"
+          http.cors.allow-origin: "http://localhost:1358,http://127.0.0.1:1358"
+          http.cors.allow-headers: "X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization"
+          http.cors.allow-credentials: "true"
+          bootstrap.memory_lock: "true"
+          ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+        volumes:
+          - "{{ hpviz_base_dir }}/data/elastic:/usr/share/elasticsearch/data"
+          - /var/run/docker.sock:/var/run/docker.sock:ro
+      tags:
+        - elastic
+        - containers
+
+    - name: Removes old Vector container
       docker_container:
         name: vector
+        image: timberio/vector:latest-alpine
+        state: absent
+
+    - name: Deploy vector-ingestion container
+      docker_container:
+        name: vector-ingest
         image: timberio/vector:latest-alpine
         restart: yes
         restart_policy: unless-stopped
         state: started
         recreate: yes
-        links: broker:broker
         ports:
         #   - "9000:9000"  # incoming tcp vector link from the sink
-            - "127.0.0.1:514:514/udp"
+            - "{{ hpviz_syslog_ingest_ip }}:{{ hpviz_syslog_ingest_port }}:{{ hpviz_syslog_ingest_port }}/udp"
+        networks:
+          - name: viz-net
+            links:
+              - broker:broker
         expose:
-            - "514/udp"
+            - "{{ hpviz_syslog_ingest_port }}/udp"
         #  - "9090"
         volumes:
-          - "{{ hpviz_base_dir }}/etc/vector/viz001.vector.toml:/etc/vector/vector.toml:ro"
+          - "{{ hpviz_base_dir }}/etc/vector-ingest/viz.vector.toml:/etc/vector/vector.toml:ro"
           - /var/run/docker.sock:/var/run/docker.sock:ro
       tags:
-        - vector
+        - vector-ingest
         - containers
+
+    - name: Deploy vector-2-elastic container
+      docker_container:
+        name: vector2elastic
+        image: timberio/vector:latest-alpine
+        restart: yes
+        restart_policy: unless-stopped
+        state: started
+        recreate: yes
+        networks:
+          - name: viz-net
+            links:
+              - broker:broker
+              - elasticsearch:elasticsearch
+        volumes:
+          - "{{ hpviz_base_dir }}/etc/vector2elastic/elastic.vector.toml:/etc/vector/vector.toml:ro"
+          - /var/run/docker.sock:/var/run/docker.sock:ro
+      tags:
+        - vector2elastic
+        - containers
+
+
+    - name: Deploy grafana container
+      docker_container:
+        name: grafana
+        image: grafana/grafana
+        expose:
+          - "127.0.0.1:3000:3000"
+        restart: yes
+        restart_policy: unless-stopped
+        state: started
+        recreate: yes
+        networks:
+          - name: viz-net
+            links:
+              - elasticsearch:elasticsearch
+        volumes:
+          # - "{{ hpviz_base_dir }}/etc/grafana/dashboards:/var/lib/grafana/dashboards"
+          #- "{{ hpviz_base_dir }}/etc/grafana/datasources:/etc/grafana/datasources"
+          #- "{{ hpviz_base_dir }}//grafana/plugins:/var/lib/grafana/plugins"
+          #- "{{ hpviz_base_dir }}/data/grafana:/var/lib/grafana/"
+          - /var/run/docker.sock:/tmp/docker.sock:ro
+        env:
+          GF_SECURITY_ADMIN_PASSWORD: "{{ hpviz_grafana_admin_pass }}"
+          #GF_INSTALL_PLUGINS: "grafana-clock-panel,neocat-cal-heatmap-panel,petrslavotinek-carpetplot-panel,grafana-polystat-panel,scadavis-synoptic-panel,farski-blendstat-panel"
+          GF_ALLOW_USERS_SIGN_UP: "false"
+          GF_SERVER_PROTOCOL: "http"
+          GF_SERVER_PORT: "3000"
+          GF_SERVER_DOMAIN: "{{ hpviz_virtual_hostname }}"
+          GF_SERVER_ROOT_URL: "https://{{ hpviz_virtual_hostname }}/grafana/"
+          GF_SERVER_SERVER_FROM_SUB_PATH: "true"
+      tags:
+        - containers
+        - grafana
