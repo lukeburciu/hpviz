@@ -245,6 +245,8 @@ vagrant/viz/docker/*
 !vagrant/viz/docker/.placeholder
 vagrant/viz/hpviz/*
 !vagrant/viz/hpviz/.placeholder
+vagrant/viz/nginx/*
+!vagrant/viz/nginx/.placeholder
 vagrant/sink/docker/*
 !vagrant/sink/docker/.placeholder
 vagrant/sink/hpviz/*

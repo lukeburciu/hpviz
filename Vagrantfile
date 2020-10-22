@@ -16,13 +16,14 @@ Vagrant.configure("2") do |config|
         vb.customize ["modifyvm", :id, "--cpus", 4]
     end
     viz.vm.network "forwarded_port", id: "ssh", host: 20022, guest: 22
-    viz.vm.network "forwarded_port", id: "https", host: 40443, guest: 443
-    viz.vm.network "forwarded_port", id: "http", host: 40080, guest: 80
-    viz.vm.network "forwarded_port", id: "grafana", host: 40300, guest: 3000
+    viz.vm.network "forwarded_port", id: "https", host: 443, guest: 443
+    viz.vm.network "forwarded_port", id: "http", host: 80, guest: 80
+    viz.vm.network "forwarded_port", id: "grafana", host: 3000, guest: 3000
     viz.vm.provision "shell",
       path: "vagrant/scripts/provision.sh"
     #viz.vm.synced_folder "vagrant/viz/docker" , "/var/lib/docker"
     viz.vm.synced_folder "vagrant/viz/hpviz" , "/opt/hpviz"
+    viz.vm.synced_folder "vagrant/viz/nginx" , "/etc/nginx"
   end
 
   config.vm.define "sink" do |sink|
