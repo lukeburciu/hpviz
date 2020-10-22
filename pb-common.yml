@@ -58,6 +58,7 @@
           mode: 0640
           owner: root
           group: root
+      notify: restart nginx
       ignore_errors: yes
 
     - name: Copy private key to SSL configuration folder.
@@ -67,6 +68,7 @@
         mode: 0600
         owner: root
         group: root
+      notify: restart nginx
       no_log: true
       ignore_errors: yes
 
@@ -75,3 +77,8 @@
       shell: /usr/sbin/update-ca-certificates
       tags:
         - skip_ansible_lint
+    - name: restart nginx
+      service:
+        name: nginx
+        state: reloaded
+      ignore_errors: yes

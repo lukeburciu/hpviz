@@ -423,7 +423,12 @@
           - /var/run/docker.sock:/tmp/docker.sock:ro
         env:
           GF_SECURITY_ADMIN_PASSWORD: "{{ hpviz_grafana_admin_pass }}"
-          #GF_INSTALL_PLUGINS: "grafana-clock-panel,neocat-cal-heatmap-panel,petrslavotinek-carpetplot-panel,grafana-polystat-panel,scadavis-synoptic-panel,farski-blendstat-panel"
+          GF_INSTALL_PLUGINS: "grafana-clock-panel, \
+                                neocat-cal-heatmap-panel, \
+                                petrslavotinek-carpetplot-panel,\
+                                grafana-polystat-panel,\
+                                scadavis-synoptic-panel,\
+                                farski-blendstat-panel"
           GF_ALLOW_USERS_SIGN_UP: "false"
           GF_SERVER_PROTOCOL: "http"
           GF_SERVER_PORT: "3000"
