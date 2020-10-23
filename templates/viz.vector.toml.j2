@@ -1,33 +1,33 @@
-{# [sources.thesink]
+[sources.thesink]
   # syslog from thesink via vector
   # General
   type = "vector" # Assuming the source is the Vector sink on 'thesink'
-  address = "143.110.158.73:9000" # IP address of 'thesink'
+  ## address = "143.110.158.73:9000" # IP address of 'thesink' (to be removed)
+  address = "0.0.0.0:{{ hpviz_vector_port }}" # IP address of 'thesink' (dev)
   shutdown_timeout_secs = 30 # optional, default: 30s
 
   # TLS
   # Make sure to mount volume in docker-compose '/etc/ca-certificates/certificate_authority.crt:/etc/ssl/certs/certificate_authority.crt'
-  #tls.ca_file = "/etc/ssl/certs/certificate_authority.crt" # Local to the vector container.
-  #tls.crt_file = "/etc/ssl/certs/host_certificate.crt" # as above
-  #tls.enabled = true
-  #tls.key_file = "/etc/ssl/certs/host_certificate.key" # as above
-  #tls.key_pass = "{{ hpviz_vector_hostkey_secret }}" # Configure GITHUB_SECRETS "KEY_PASS_ENV_VAR" !! - This needs to be configured on ansible
-  #tls.verify_certificate = true #}
+  tls.ca_file = "/etc/ssl/certs/certificate_authority.crt" # Local to the vector container.
+  tls.crt_file = "/etc/ssl/certs/host_certificate.crt" # as above
+  tls.enabled = true
+  tls.key_file = "/etc/ssl/certs/host_certificate.key" # as above
+  #tls.key_pass = " hpviz_vector_hostkey_secret " # Placeholder: TO DO: Configure GITHUB SECRETS and enable 'hpviz_vector_hostkey_secret'
+  tls.verify_certificate = true
 
-[sources.syslog_viz001]
+[sources.syslog_viz001] 
   # syslog from viz001 (localhost)
   type = "syslog" # required
   address = "0.0.0.0:{{ hpviz_syslog_ingest_port }}"
   mode = "udp" # required, options 'udp', 'tcp', 'unix'
   # Context
-  # host_key = "{{ hpviz_vector_hostkey }}"  # use this format as vector sees "." as a seperate field
+  host_key = "{{ hpviz_vector_hostkey }}"  # use this format as vector sees "." as a seperate field
 
 {# [transforms.parse_syslog]
   type = "logfmt_parser"
   inputs = ["syslog_viz001"]
   drop_field = false
   field = "message"
-
   # Types
   types.status = "int" # example
   types.duration = "float" # example
@@ -36,21 +36,20 @@
   #types.timestamp = "timestamp|%a %b %e %T %Y" # example
   types.parent.child = "int" # example
   types.appname = "string"
-  types.facility = "string"
-   #}
+  types.facility = "string"#}
 
-[transforms.tag]
+{#[transforms.tag]
   type="add_fields"
-  inputs = ["syslog_viz001"]
+  inputs = ["syslog_viz001", "thesink"]
   overwrite=true
 
   #tags
-  fields.tags = ["syslog", "json"]
+  fields.tags = ["syslog", "json"]#}
 
 [sinks.kafka]
   # General
   type = "kafka" # required
-  inputs = ["tag"] # Format: "[sources.foo]", "[sources.bar]" == ["foo", "bar"]
+  inputs = ["syslog_viz001", "thesink"] # Format: "[sources.foo]", "[sources.bar]" == ["foo", "bar"]
   bootstrap_servers = "172.20.0.10:29092" # IP required not hostname
   compression = "none" # optional, default
   healthcheck = true # optional, default
