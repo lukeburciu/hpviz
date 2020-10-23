@@ -326,7 +326,7 @@
         state: started
         restart_policy: unless-stopped
         expose:
-          - "29200"
+          - "9200"
           - "29300"
         ports:
           - "127.0.0.1:9300:9300"
@@ -341,7 +341,7 @@
           http.cors.allow-headers: "X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization"
           http.cors.allow-credentials: "true"
           bootstrap.memory_lock: "true"
-          ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+          ES_JAVA_OPTS: "-Xms2048m -Xmx2048m"
         volumes:
           - "{{ hpviz_base_dir }}/data/elastic:/usr/share/elasticsearch/data"
           - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -400,12 +400,11 @@
         - vector2elastic
         - containers
 
-
     - name: Deploy grafana container
       docker_container:
         name: grafana
-        image: grafana/grafana
-        expose:
+        image: grafana/grafana:latest-ubuntu
+        ports:
           - "127.0.0.1:3000:3000"
         restart: yes
         restart_policy: unless-stopped
