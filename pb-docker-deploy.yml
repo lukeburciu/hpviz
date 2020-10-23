@@ -70,19 +70,19 @@
         path: "{{ hpviz_base_dir }}"
         state: directory
         group: hpviz
-        mode: 2770
+        mode: 2775
         # files: -rwxrwsr-x; folders: drwxrwsr-x
       tags:
        - structure
        - skip_ansible_lint  # 206 error
 
-    # - name: Set project directory group inheritance
-    #   file:
-    #     path: "{{ hpviz_base_dir }}"
-    #     state: directory
-    #     mode: 'g+s'
-    #   tags:
-    #    - structure
+    - name: Set project directory group inheritance
+      file:
+        path: "{{ hpviz_base_dir }}"
+        state: directory
+        mode: 'g+s'
+      tags:
+       - structure
 
     - name: Set up project directories
       file:
@@ -90,7 +90,7 @@
         owner: root
         state: directory
         group: hpviz
-        mode: 2770
+        mode: 2775
         # files: -rwxrwsr-x; folders: drwxrwsr-x
       loop:
         # docker compose home
@@ -193,7 +193,7 @@
       docker_network:
         name: viz-net
         state: present
-        force: yes
+        force: no
         scope: local
         internal: no
         ipam_config:
@@ -201,9 +201,20 @@
         driver_options:
           com.docker.network.bridge.enable_ip_masquerade: "true"
           com.docker.network.bridge.host_binding_ipv4: 0.0.0.0
+          com.docker.network.bridge.enable_icc: "true"
       tags:
         - network
         - containers
+
+    # - name: stopping Zookeeper container
+    #   docker_container:
+    #     name: zookeeper
+    #     image: confluentinc/cp-zookeeper
+    #     state: absent
+    #   ignore_errors: yes
+    #   tags:
+    #     - zookeeper
+    #     - containers
 
     - name: Deploy Zookeeper container
       docker_container:
@@ -214,10 +225,11 @@
         recreate: yes
         restart_policy: unless-stopped
         state: started
-        ports:
-          - "2181"
+        # ports:
+        #   - "2181"
         expose:
           - "2181"
+        purge_networks: yes
         networks:
           - name: viz-net
         env:
@@ -240,6 +252,16 @@
         - broker
         - containers
 
+    # - name: Stopping Kafka Broker
+    #   docker_container:
+    #     name: broker
+    #     image: confluentinc/cp-server:5.5.1
+    #     state: absent
+    #   ignore_errors: yes
+    #   tags:
+    #     - containers
+    #     - broker
+
     - name: Deploy Kafka Broker
       docker_container:
         name: broker
@@ -249,12 +271,12 @@
         recreate: yes
         restart_policy: unless-stopped
         state: started
-        ports:
+        published_ports:
           - "127.0.0.1:9092:9092"
-          #- "127.0.0.1:9092:9092"
           #- "9093:9093"
         expose:
           - "29092"
+        purge_networks: yes
         networks:
           - name: viz-net
             ipv4_address: "172.20.0.10"
@@ -265,7 +287,7 @@
           KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
           KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "LISTENER_INTERNAL:PLAINTEXT,LISTENER_LOCALHOST:PLAINTEXT,LISTENER_EXT:PLAINTEXT"
           KAFKA_ADVERTISED_LISTENERS: "LISTENER_INTERNAL://broker:29092,LISTENER_LOCALHOST://localhost:9092,LISTENER_EXT://viz001.ecu-sri.net:9093"
-          KAFKA_LISTENERS: "LISTENER_INTERNAL://:29092,LISTENER_LOCALHOST://0.0.0.0:9092,LISTENER_EXT://0.0.0.0:9093"
+          KAFKA_LISTENERS: "LISTENER_INTERNAL://172.20.0.10:29092,LISTENER_LOCALHOST://0.0.0.0:9092,LISTENER_EXT://0.0.0.0:9093"
           KAFKA_METRIC_REPORTERS: "io.confluent.metrics.reporter.ConfluentMetricsReporter"
           KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
           KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
@@ -288,6 +310,16 @@
         - broker
         - containers
 
+    # - name: stopping NIFI container
+    #   docker_container:
+    #     name: nifi
+    #     image: apache/nifi:latest
+    #     state: stopped
+    #   ignore_errors: yes
+    #   tags:
+    #     - containers
+    #     - nifi
+
     - name: Deploy NIFI container
       docker_container:
         name: nifi
@@ -301,6 +333,7 @@
          # - "127.0.0.1:514:514"
         expose:
           - "9090"
+        purge_networks: yes
         networks:
           - name: viz-net
             links:
@@ -317,10 +350,21 @@
         - nifi
         - containers
 
+    # - name: stopping elasticsearch container
+    #   docker_container:
+    #     name: elasticsearch
+    #     image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.0.1
+    #     state: stopped
+    #   ignore_errors: yes
+    #   tags:
+    #     - containers
+    #     - elastic
+
     - name: elasticsearch container
       docker_container:
         name: elasticsearch
         image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.0.1
+        hostname: elasticsearch
         restart: yes
         recreate: yes
         state: started
@@ -330,6 +374,7 @@
           - "29300"
         ports:
           - "127.0.0.1:9300:9300"
+        purge_networks: yes
         networks:
           - name: viz-net
         env:
@@ -349,11 +394,21 @@
         - elastic
         - containers
 
-    - name: Removes old Vector container
-      docker_container:
-        name: vector
-        image: timberio/vector:latest-alpine
-        state: absent
+    # - name: Removes old Vector container
+    #   docker_container:
+    #     name: vector
+    #     image: timberio/vector:latest-alpine
+    #     state: absent
+
+    # - name: stopping vector-ingest container
+    #   docker_container:
+    #     name: vector-ingest
+    #     image: timberio/vector:latest-alpine
+    #     state: stopped
+    #   ignore_errors: yes
+    #   tags:
+    #     - containers
+    #     - vector-ingest
 
     - name: Deploy vector-ingestion container
       docker_container:
@@ -365,7 +420,8 @@
         recreate: yes
         ports:
         #   - "9000:9000"  # incoming tcp vector link from the sink
-            - "{{ hpviz_syslog_ingest_ip }}:{{ hpviz_syslog_ingest_port }}:{{ hpviz_syslog_ingest_port }}/udp"
+          - "{{ hpviz_syslog_ingest_ip }}:{{ hpviz_syslog_ingest_port }}:{{ hpviz_syslog_ingest_port }}/udp"
+        purge_networks: yes
         networks:
           - name: viz-net
             links:
@@ -380,6 +436,16 @@
         - vector-ingest
         - containers
 
+    # - name: stopping vector2elastic container
+    #   docker_container:
+    #     name: vector2elastic
+    #     image: timberio/vector:latest-alpine
+    #     state: stopped
+    #   ignore_errors: yes
+    #   tags:
+    #     - containers
+    #     - vector2elastic
+
     - name: Deploy vector-2-elastic container
       docker_container:
         name: vector2elastic
@@ -388,6 +454,7 @@
         restart_policy: unless-stopped
         state: started
         recreate: yes
+        purge_networks: yes
         networks:
           - name: viz-net
             links:
@@ -400,6 +467,16 @@
         - vector2elastic
         - containers
 
+    # - name: stopping grafana container
+    #   docker_container:
+    #     name: grafana
+    #     image: grafana/grafana:latest-ubuntu
+    #     state: stopped
+    #   ignore_errors: yes
+    #   tags:
+    #     - containers
+    #     - grafana
+
     - name: Deploy grafana container
       docker_container:
         name: grafana
@@ -410,15 +487,16 @@
         restart_policy: unless-stopped
         state: started
         recreate: yes
+        purge_networks: yes
         networks:
           - name: viz-net
             links:
               - elasticsearch:elasticsearch
         volumes:
           # - "{{ hpviz_base_dir }}/etc/grafana/dashboards:/var/lib/grafana/dashboards"
-          #- "{{ hpviz_base_dir }}/etc/grafana/datasources:/etc/grafana/datasources"
-          #- "{{ hpviz_base_dir }}//grafana/plugins:/var/lib/grafana/plugins"
-          #- "{{ hpviz_base_dir }}/data/grafana:/var/lib/grafana/"
+          # - "{{ hpviz_base_dir }}/etc/grafana/datasources:/etc/grafana/datasources"
+          # - "{{ hpviz_base_dir }}/grafana/plugins:/var/lib/grafana/plugins"
+          # - "{{ hpviz_base_dir }}/data/grafana:/var/lib/grafana/"
           - /var/run/docker.sock:/tmp/docker.sock:ro
         env:
           GF_SECURITY_ADMIN_PASSWORD: "{{ hpviz_grafana_admin_pass }}"

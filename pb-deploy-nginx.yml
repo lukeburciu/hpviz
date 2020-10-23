@@ -34,10 +34,12 @@
       no_log: true
       ignore_errors: yes
 
+  roles:
+    - role: geerlingguy.nginx
+
+  tasks:
     - name: reload nginx
       service:
         name: nginx
         state: reloaded
-
-  roles:
-    - role: geerlingguy.nginx
+      ignore_errors: yes
