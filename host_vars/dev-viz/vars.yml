@@ -17,3 +17,8 @@ hpviz_syslog_ingest_port: "514"
 
 # grafana
 hpviz_grafana_admin_pass: "{{ vault_hpviz_grafana_admin_pass }}"
+
+# IP Addresses
+hpviz_sink_ip: "192.168.10.11"
+hpviz_viz_ip: "192.168.10.10"
+hpviz_vector_port: "9000"

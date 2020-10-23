@@ -28,6 +28,7 @@ firewall_services:
   - name: 522
   - name: 9093    # kafka broker listener
   - name: 9090
+  - name: 9000
 
 # Syslog
 hpviz_syslog_ingest_ip: 127.0.0.1
