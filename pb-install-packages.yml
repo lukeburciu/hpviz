@@ -11,3 +11,11 @@
 
   roles:
     - role: geerlingguy.docker
+
+- name: Install packages
+  hosts: sink:!localhost
+  gather_facts: yes
+  become: True
+
+  roles:
+    - role: geerlingguy.docker
