@@ -1,19 +1,17 @@
 [sources.syslog_thesink]
   # syslog from thesink (localhost)
   type = "syslog" # required
-  mode = "unix" # required, options 'udp', 'tcp', 'unix'
-  path = "/var/log/syslog" # required, required when mode = "unix"
-  #max_length = 102400 # optional, default, bytes
-
+  address = "0.0.0.0:514"
+  mode = "udp" # required, options 'udp', 'tcp', 'unix'
   # Context
-  host_key = "thesink.scu-sri.net"
-
+  host_key = "thesink.ecu-sri.net"
 
 [sinks.viz001]
   # General
   type = "vector" # required
   inputs = ["syslog_thesink"] # required
-  address = "207.154.249.9:9000" # required
+  #address = "207.154.249.9:9000" # required  
+  address = "192.168.100.10:9000" # required (dev)
   healthcheck = true # optional, default
 
   # Buffer
