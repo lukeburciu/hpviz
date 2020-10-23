@@ -1,0 +1,139 @@
+- name: Deploy Docker Containers
+  hosts: sink
+  gather_facts: no
+  become: True
+
+  tasks:
+
+    - name: Check hpviz_base_dir variables exists
+      assert:
+        that:
+          - hpviz_base_dir is defined
+          - hpviz_base_dir | length > 0
+          - hpviz_vector_hostkey is defined
+          - hpviz_vector_hostkey | length > 0
+      tags:
+        - structure
+
+    - name: add project groups
+      group:
+        name: "{{ item }}"
+        state: present
+        system: yes
+      loop:
+        - hpviz
+        - www-data
+      tags:
+        - accounts
+
+    - name: Add system accounts
+      user:
+        name: "{{ item }}"
+        comment: HPViz system account
+        system: yes
+        groups: hpviz
+        state: present
+      loop:
+        - vector
+      tags:
+        - accounts
+
+    - name: Check project top level directory exist "{{ hpviz_base_dir }}"
+      file:
+        path: "{{ hpviz_base_dir }}"
+        state: directory
+        group: hpviz
+        mode: 2775
+        # files: -rwxrwsr-x; folders: drwxrwsr-x
+      tags:
+       - structure
+       - skip_ansible_lint  # 206 error
+
+    - name: Set up project directories
+      file:
+        path: "{{ item.0 }}"
+        owner: root
+        state: directory
+        group: hpviz
+        mode: 2775
+        # files: -rwxrwsr-x; folders: drwxrwsr-x
+      loop:
+        # docker compose home
+        - ["{{ hpviz_base_dir }}/docker", 'root']
+        # configs
+        - ["{{ hpviz_base_dir }}/etc", 'root']
+        - ["{{ hpviz_base_dir }}/etc/ssl/ca-certificates", 'root']
+        - ["{{ hpviz_base_dir }}/etc/vector/certs",'vector']
+        # data
+        - ["{{ hpviz_base_dir }}/data", 'root']
+        - ["{{ hpviz_base_dir }}/data/vector",'vector']
+        # logs
+        - ["{{ hpviz_base_dir }}/logs", 'root']
+        - ["{{ hpviz_base_dir }}/logs/vector", 'vector']
+
+      tags:
+        - structure
+        - skip_ansible_lint
+
+    - name: Check sink TOML config for Vector exists
+      template:
+        src: templates/sink.vector.toml.j2
+        dest: "{{ hpviz_base_dir }}/etc/vector/sink.vector.toml"
+        mode: 0640
+      tags:
+        - vector
+        - configs
+        - containers
+
+    - name: Check rsyslog config exist
+      template:
+        src: templates/rsyslog.conf.j2
+        dest: "/etc/rsyslog.d/99-hpviz-ingest.conf"
+        mode: 0640
+      tags:
+        - vector
+        - configs
+        - containers
+
+    - name: restart rsyslog
+      service:
+        name: rsyslog
+        state: restarted
+      tags:
+        - vector
+        - configs
+        - containers
+
+    - name: Define ingest network (docker)
+      docker_network:
+        name: ingest
+        state: absent
+        scope: local
+        ipam_config:
+          - subnet: 172.20.0.0/24
+      tags:
+        - network
+        - containers
+
+    - name: Deploy Vector container
+      docker_container:
+        name: vector
+        image: timberio/vector:latest-alpine
+        restart: yes
+        restart_policy: unless-stopped
+        state: started
+        recreate: yes
+        ports:
+            - "9000:9000"  # outgoing tcp vector link to viz001
+            - "127.0.0.1:514:514/udp"
+        expose:
+            - "514/udp"
+        #  - "9090"
+        volumes:
+          #- "{{ hpviz_base_dir }}/etc/vector:/etc/vector"
+          - "{{ hpviz_base_dir }}/etc/ssl/:/etc/ssl:ro"
+          - "{{ hpviz_base_dir }}/etc/vector/sink.vector.toml:/etc/vector/vector.toml:ro"
+          - /var/run/docker.sock:/var/run/docker.sock:ro
+      tags:
+        - vector
+        - containers
