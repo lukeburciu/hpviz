@@ -4,12 +4,12 @@ hpviz_tls_cert: '{{ vault_hpviz_tls_cert }}'
 hpviz_tls_key: '{{ vault_hpviz_tls_key }}'
 
 # vector
-hpviz_vector_hostkey: "dev-viz_localhost"
+hpviz_vector_hostkey: "dev-sink_localhost"
 
 hpviz_syslog_ingest_ip: "127.0.0.1"
 hpviz_syslog_ingest_port: "514"
 
 # IP Addresses
-hpviz_sink_ip: "192.168.10.11"
-hpviz_viz_ip: "192.168.10.10"
+hpviz_sink_ip: "192.168.100.11"
+hpviz_viz_ip: "192.168.100.10"
 hpviz_vector_port: "9000"
