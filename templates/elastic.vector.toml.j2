@@ -1,7 +1,7 @@
 [sources.kafka_logging_syslog_raw]
   # General
   type = "kafka" # required
-  bootstrap_servers = "172.20.0.10:29092" # IP required not hostname
+  bootstrap_servers = "172.17.0.3:29092" # IP required not hostname
   key_field = "user_id" # required
   topics = ["logging.syslog.raw"] # required
   group_id= "elasticsearch-ingestion"

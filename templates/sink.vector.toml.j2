@@ -4,14 +4,14 @@
   address = "0.0.0.0:{{ hpviz_syslog_ingest_port }}"
   mode = "udp" # required, options 'udp', 'tcp', 'unix'
   # Context
-  host_key = "{{ hpviz_vector_hostkey }}"
+  host_key = "thesink."
 
 [sinks.viz001]
   # General
   type = "vector" # required
   inputs = ["syslog_thesink"] # required
   address = "{{ hpviz_viz_ip }}:{{ hpviz_vector_port }}" # required: viz001_ip:vector_port
-  #address = "192.168.100.10:9000" # required (dev)
+  #address = "192.168.100.10:9000" # To be removed  - Ansible vars used
   healthcheck = true # optional, default
 
   # Buffer
@@ -22,9 +22,9 @@
 
   # TLS
   # Make sure to mount volume in docker-compose '/etc/ca-certificates/certificate_authority.crt:/etc/ssl/certs/certificate_authority.crt'
-  tls.ca_file = "/etc/ssl/certs/certificate_authority.crt" # Local to the vector container.
-  tls.crt_file = "/etc/ssl/certs/host_certificate.crt" # as above
+  tls.ca_file = "{{ local_ca_file }}" # Local to the vector container.
+  tls.crt_file = "/etc/ssl/certs/{{ hpviz_vector_hostkey }}.crt" # as above
   tls.enabled = true
-  tls.key_file = "/etc/ssl/certs/host_certificate.key" # as above
-  tls.key_pass = " hpviz_vector_hostkey_secret " # Placeholder: TO DO: Configure GITHUB SECRETS and enable 'hpviz_vector_hostkey_secret'
-  tls.verify_certificate = true
+  tls.key_file = "/etc/ssl/private/{{ hpviz_vector_hostkey }}.key" # as above
+  #tls.key_pass = " hpviz_vector_hostkey_secret " # Placeholder: TO DO: Configure GITHUB SECRETS and enable 'hpviz_vector_hostkey_secret'
+  tls.verify_certificate = false
