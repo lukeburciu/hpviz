@@ -104,17 +104,6 @@
         - configs
         - containers
 
-    - name: Define ingest network (docker)
-      docker_network:
-        name: ingest
-        state: absent
-        scope: local
-        ipam_config:
-          - subnet: 172.20.0.0/24
-      tags:
-        - network
-        - containers
-
     - name: Deploy Vector container
       docker_container:
         name: vector
@@ -124,14 +113,15 @@
         state: started
         recreate: yes
         ports:
-            - "9000:9000"  # outgoing tcp vector link to viz001
-            - "127.0.0.1:514:514/udp"
+          - "{{ hpviz_vector_to_vector_ingest_port }}:{{ hpviz_vector_to_vector_ingest_port }}"  # outgoing tcp vector link to viz001
+          - "{{ hpviz_syslog_ingest_ip }}:{{ hpviz_syslog_ingest_port }}:{{ hpviz_syslog_ingest_port }}/udp"
         expose:
-            - "514/udp"
+          - "{{ hpviz_syslog_ingest_port }}/udp"
         #  - "9090"
         volumes:
-          #- "{{ hpviz_base_dir }}/etc/vector:/etc/vector"
-          - "{{ hpviz_base_dir }}/etc/ssl/:/etc/ssl:ro"
+          - "{{ local_ca_file }}:{{ local_ca_file }}"
+          - "/etc/ssl/certs/{{ hpviz_vector_hostkey }}.crt:/etc/ssl/certs/{{ hpviz_vector_hostkey }}.crt"
+          - "/etc/ssl/private/{{ hpviz_vector_hostkey }}.key:/etc/ssl/private/{{ hpviz_vector_hostkey }}.key"
           - "{{ hpviz_base_dir }}/etc/vector/sink.vector.toml:/etc/vector/vector.toml:ro"
           - /var/run/docker.sock:/var/run/docker.sock:ro
       tags:
