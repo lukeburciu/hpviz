@@ -76,13 +76,13 @@
        - structure
        - skip_ansible_lint  # 206 error
 
-    - name: Set project directory group inheritance
-      file:
-        path: "{{ hpviz_base_dir }}"
-        state: directory
-        mode: 'g+s'
-      tags:
-       - structure
+    #- name: Set project directory group inheritance
+    #  file:
+    #    path: "{{ hpviz_base_dir }}"
+    #    state: directory
+    #    mode: 'g+s'
+    #  tags:
+    #   - structure
 
     - name: Set up project directories
       file:
@@ -189,22 +189,22 @@
     #     - network
     #     - containers
 
-    - name: Define VIZ network (docker)
-      docker_network:
-        name: viz-net
-        state: present
-        force: no
-        scope: local
-        internal: no
-        ipam_config:
-          - subnet: 172.20.0.0/24
-        driver_options:
-          com.docker.network.bridge.enable_ip_masquerade: "true"
-          com.docker.network.bridge.host_binding_ipv4: 0.0.0.0
-          com.docker.network.bridge.enable_icc: "true"
-      tags:
-        - network
-        - containers
+    #- name: Define VIZ network (docker)
+    #  docker_network:
+    #    name: viz-net
+    #    state: present
+    #    force: no
+    #    scope: local
+    #    internal: no
+    #    ipam_config:
+    #      - subnet: 172.20.0.0/24
+    #    driver_options:
+    #      com.docker.network.bridge.enable_ip_masquerade: "true"
+    #      com.docker.network.bridge.host_binding_ipv4: 0.0.0.0
+    #      com.docker.network.bridge.enable_icc: "true"
+    #  tags:
+    #    - network
+    #    - containers
 
     # - name: stopping Zookeeper container
     #   docker_container:
@@ -229,9 +229,9 @@
         #   - "2181"
         expose:
           - "2181"
-        purge_networks: yes
-        networks:
-          - name: viz-net
+        #purge_networks: yes
+        #networks:
+        #  - name: viz-net
         env:
           ZOOKEEPER_CLIENT_PORT: "2181"
           ZOOKEEPER_TICK_TIME: "2000"
@@ -273,21 +273,22 @@
         state: started
         published_ports:
           - "127.0.0.1:9092:9092"
+          - "29092:29092"
           #- "9093:9093"
-        expose:
-          - "29092"
-        purge_networks: yes
-        networks:
-          - name: viz-net
-            ipv4_address: "172.20.0.10"
-            links:
-              - zookeeper:zookeeper
+        #expose:
+        #  - "29092"
+        #purge_networks: yes
+        #networks:
+        #  - name: viz-net
+        #    ipv4_address: "172.20.0.10"
+        links:
+          - zookeeper:zookeeper
         env:
           KAFKA_BROKER_ID: "1"
           KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
           KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "LISTENER_INTERNAL:PLAINTEXT,LISTENER_LOCALHOST:PLAINTEXT,LISTENER_EXT:PLAINTEXT"
           KAFKA_ADVERTISED_LISTENERS: "LISTENER_INTERNAL://broker:29092,LISTENER_LOCALHOST://localhost:9092,LISTENER_EXT://viz001.ecu-sri.net:9093"
-          KAFKA_LISTENERS: "LISTENER_INTERNAL://172.20.0.10:29092,LISTENER_LOCALHOST://0.0.0.0:9092,LISTENER_EXT://0.0.0.0:9093"
+          KAFKA_LISTENERS: "LISTENER_INTERNAL://broker:29092,LISTENER_LOCALHOST://0.0.0.0:9092,LISTENER_EXT://0.0.0.0:9093"
           KAFKA_METRIC_REPORTERS: "io.confluent.metrics.reporter.ConfluentMetricsReporter"
           KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
           KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
@@ -333,12 +334,12 @@
          # - "127.0.0.1:514:514"
         expose:
           - "9090"
-        purge_networks: yes
-        networks:
-          - name: viz-net
-            links:
-              - zookeeper:zookeeper
-              - broker:broker
+        #purge_networks: yes
+        #networks:
+        #  - name: viz-net
+        links:
+          - zookeeper:zookeeper
+          - broker:broker
         env:
           VIRTUAL_HOST: "viz001.ecu-sri.net"
           LETSENCRYPT_HOST: "viz001.ecu-sri.net"
@@ -374,9 +375,9 @@
           - "29300"
         ports:
           - "127.0.0.1:9300:9300"
-        purge_networks: yes
-        networks:
-          - name: viz-net
+        #purge_networks: yes
+        #networks:
+        #  - name: viz-net
         env:
           discovery.type: single-node
           http.port: '9200'
@@ -419,17 +420,20 @@
         state: started
         recreate: yes
         ports:
-        #   - "9000:9000"  # incoming tcp vector link from the sink
+          - "{{ hpviz_vector_to_vector_ingest_port }}:{{ hpviz_vector_to_vector_ingest_port }}"  # incoming tcp vector link from the sink
           - "{{ hpviz_syslog_ingest_ip }}:{{ hpviz_syslog_ingest_port }}:{{ hpviz_syslog_ingest_port }}/udp"
-        purge_networks: yes
-        networks:
-          - name: viz-net
-            links:
-              - broker:broker
+        #purge_networks: yes
+        #networks:
+        #  - name: viz-net
+        links:
+          - broker:broker
         expose:
-            - "{{ hpviz_syslog_ingest_port }}/udp"
+          - "{{ hpviz_syslog_ingest_port }}/udp"
         #  - "9090"
         volumes:
+          - "{{ local_ca_file }}:{{ local_ca_file }}"
+          - "/etc/ssl/certs/{{ hpviz_vector_hostkey }}.crt:/etc/ssl/certs/{{ hpviz_vector_hostkey }}.crt"
+          - "/etc/ssl/private/{{ hpviz_vector_hostkey }}.key:/etc/ssl/private/{{ hpviz_vector_hostkey }}.key"
           - "{{ hpviz_base_dir }}/etc/vector-ingest/viz.vector.toml:/etc/vector/vector.toml:ro"
           - /var/run/docker.sock:/var/run/docker.sock:ro
       tags:
@@ -454,12 +458,12 @@
         restart_policy: unless-stopped
         state: started
         recreate: yes
-        purge_networks: yes
-        networks:
-          - name: viz-net
-            links:
-              - broker:broker
-              - elasticsearch:elasticsearch
+        #purge_networks: yes
+        #networks:
+        #  - name: viz-net
+        links:
+          - broker:broker
+          - elasticsearch:elasticsearch
         volumes:
           - "{{ hpviz_base_dir }}/etc/vector2elastic/elastic.vector.toml:/etc/vector/vector.toml:ro"
           - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -487,11 +491,11 @@
         restart_policy: unless-stopped
         state: started
         recreate: yes
-        purge_networks: yes
-        networks:
-          - name: viz-net
-            links:
-              - elasticsearch:elasticsearch
+        #purge_networks: yes
+        #networks:
+        #  - name: viz-net
+        links:
+          - elasticsearch:elasticsearch
         volumes:
           # - "{{ hpviz_base_dir }}/etc/grafana/dashboards:/var/lib/grafana/dashboards"
           # - "{{ hpviz_base_dir }}/etc/grafana/datasources:/etc/grafana/datasources"
