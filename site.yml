@@ -13,8 +13,11 @@
 - name: import pb-install-packages.yml
   import_playbook: pb-install-packages.yml
 
-- name: import pb-docker-deploy.yml
-  import_playbook: pb-docker-deploy.yml
+- name: import pb-docker-deploy-viz.yml
+  import_playbook: pb-docker-deploy-viz.yml
+
+- name: import pb-docker-deploy-sink.yml
+  import_playbook: pb-docker-deploy-sink.yml
 
 - name: import pb-deploy-nginx.yml
   import_playbook: pb-deploy-nginx.yml

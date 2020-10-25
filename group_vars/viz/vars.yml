@@ -2,6 +2,9 @@
 # Base project directory
 hpviz_base_dir: /opt/hpviz
 
+#ca_file absolute path
+local_ca_file: "/usr/local/share/ca-certificates/hpviz-ca-chain-bundle.crt"
+
 # These are users specific to "viz" group of hosts
 #  1) To remove a user from all groups replace the group list with empty string ''
 #  2) Removing users change 'state: absent'  all theire directories will eb removed
@@ -28,10 +31,12 @@ firewall_services:
   - name: 522
   - name: 9093    # kafka broker listener
   - name: 9090
+  - name: 9000
 
 # Syslog
 hpviz_syslog_ingest_ip: 127.0.0.1
 hpviz_syslog_ingest_port: 514
+hpviz_vector_to_vector_ingest_port: 9000
 
 #grafana
 

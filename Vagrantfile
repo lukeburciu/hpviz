@@ -16,9 +16,9 @@ Vagrant.configure("2") do |config|
         vb.customize ["modifyvm", :id, "--cpus", 4]
     end
     viz.vm.network "forwarded_port", id: "ssh", host: 20022, guest: 22
-    viz.vm.network "forwarded_port", id: "https", host: 443, guest: 443
-    viz.vm.network "forwarded_port", id: "http", host: 80, guest: 80
-    viz.vm.network "forwarded_port", id: "grafana", host: 3000, guest: 3000
+    #viz.vm.network "forwarded_port", id: "https", host: 4430, guest: 443
+    #viz.vm.network "forwarded_port", id: "http", host: 8000, guest: 80
+    #viz.vm.network "forwarded_port", id: "grafana", host: 30000, guest: 3000
     viz.vm.provision "shell",
       path: "vagrant/scripts/provision.sh"
     #viz.vm.synced_folder "vagrant/viz/docker" , "/var/lib/docker"
