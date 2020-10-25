@@ -76,13 +76,13 @@
        - structure
        - skip_ansible_lint  # 206 error
 
-    - name: Set project directory group inheritance
-      file:
-        path: "{{ hpviz_base_dir }}"
-        state: directory
-        mode: 'g+s'
-      tags:
-       - structure
+    # - name: Set project directory group inheritance
+    #   file:
+    #     path: "{{ hpviz_base_dir }}"
+    #     state: directory
+    #     mode: 'g+s'
+    #   tags:
+    #    - structure
 
     - name: Set up project directories
       file:
@@ -176,19 +176,6 @@
         - configs
         - containers
 
-    # - name: Change default bridge network (docker)
-    #   docker_network:
-    #     name: bridge
-    #     state: present
-    #     driver_options:
-    #       com.docker.network.bridge.default_bridge: "false"
-    #       com.docker.network.bridge.enable_ip_masquerade: "true"
-    #       com.docker.network.bridge.host_binding_ipv4: 0.0.0.0
-    #       com.docker.network.bridge.enable_icc: "true"
-    #   tags:
-    #     - network
-    #     - containers
-
     - name: Define VIZ network (docker)
       docker_network:
         name: viz-net
@@ -198,10 +185,11 @@
         internal: no
         ipam_config:
           - subnet: 172.20.0.0/24
-        driver_options:
-          com.docker.network.bridge.enable_ip_masquerade: "true"
-          com.docker.network.bridge.host_binding_ipv4: 0.0.0.0
-          com.docker.network.bridge.enable_icc: "true"
+        #driver_options:
+          #com.docker.network.bridge.default_bridge: "true"
+          #com.docker.network.bridge.enable_ip_masquerade: "true"
+          #com.docker.network.bridge.host_binding_ipv4: 0.0.0.0
+          #com.docker.network.bridge.enable_icc: "true"
       tags:
         - network
         - containers
@@ -271,6 +259,8 @@
         recreate: yes
         restart_policy: unless-stopped
         state: started
+        links:
+          - zookeeper:zookeeper
         published_ports:
           - "127.0.0.1:9092:9092"
           #- "9093:9093"
@@ -287,7 +277,7 @@
           KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
           KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "LISTENER_INTERNAL:PLAINTEXT,LISTENER_LOCALHOST:PLAINTEXT,LISTENER_EXT:PLAINTEXT"
           KAFKA_ADVERTISED_LISTENERS: "LISTENER_INTERNAL://broker:29092,LISTENER_LOCALHOST://localhost:9092,LISTENER_EXT://viz001.ecu-sri.net:9093"
-          KAFKA_LISTENERS: "LISTENER_INTERNAL://172.20.0.10:29092,LISTENER_LOCALHOST://0.0.0.0:9092,LISTENER_EXT://0.0.0.0:9093"
+          KAFKA_LISTENERS: "LISTENER_INTERNAL://:29092,LISTENER_LOCALHOST://0.0.0.0:9092,LISTENER_EXT://0.0.0.0:9093"
           KAFKA_METRIC_REPORTERS: "io.confluent.metrics.reporter.ConfluentMetricsReporter"
           KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
           KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: "0"
@@ -334,6 +324,9 @@
         expose:
           - "9090"
         purge_networks: yes
+        links:
+          - zookeeper:zookeeper
+          - broker:broker
         networks:
           - name: viz-net
             links:
@@ -374,6 +367,7 @@
           - "29300"
         ports:
           - "127.0.0.1:9300:9300"
+          - "127.0.0.1:9200:9200"
         purge_networks: yes
         networks:
           - name: viz-net
@@ -419,7 +413,7 @@
         state: started
         recreate: yes
         ports:
-        #   - "9000:9000"  # incoming tcp vector link from the sink
+          - "{{ hpviz_vector_to_vector_ingest_port }}:{{ hpviz_vector_to_vector_ingest_port }}"  # incoming tcp vector link from the sink
           - "{{ hpviz_syslog_ingest_ip }}:{{ hpviz_syslog_ingest_port }}:{{ hpviz_syslog_ingest_port }}/udp"
         purge_networks: yes
         networks:
@@ -427,14 +421,18 @@
             links:
               - broker:broker
         expose:
-            - "{{ hpviz_syslog_ingest_port }}/udp"
+          - "{{ hpviz_syslog_ingest_port }}/udp"
         #  - "9090"
         volumes:
+          - "{{ local_ca_file }}:{{ local_ca_file }}"
+          - "/etc/ssl/certs/{{ hpviz_vector_hostkey }}.crt:/etc/ssl/certs/{{ hpviz_vector_hostkey }}.crt"
+          - "/etc/ssl/private/{{ hpviz_vector_hostkey }}.key:/etc/ssl/private/{{ hpviz_vector_hostkey }}.key"
           - "{{ hpviz_base_dir }}/etc/vector-ingest/viz.vector.toml:/etc/vector/vector.toml:ro"
           - /var/run/docker.sock:/var/run/docker.sock:ro
       tags:
         - vector-ingest
         - containers
+        - vector
 
     # - name: stopping vector2elastic container
     #   docker_container:
@@ -455,6 +453,9 @@
         state: started
         recreate: yes
         purge_networks: yes
+        links:
+          - broker:broker
+          - elasticsearch:elasticsearch
         networks:
           - name: viz-net
             links:
@@ -466,8 +467,9 @@
       tags:
         - vector2elastic
         - containers
+        - vector
 
-    # - name: stopping grafana container
+    # - name: stopping grafana containaer
     #   docker_container:
     #     name: grafana
     #     image: grafana/grafana:latest-ubuntu
@@ -488,15 +490,17 @@
         state: started
         recreate: yes
         purge_networks: yes
+        links:
+          - elasticsearch:elasticsearch
         networks:
           - name: viz-net
             links:
               - elasticsearch:elasticsearch
         volumes:
-          # - "{{ hpviz_base_dir }}/etc/grafana/dashboards:/var/lib/grafana/dashboards"
-          # - "{{ hpviz_base_dir }}/etc/grafana/datasources:/etc/grafana/datasources"
-          # - "{{ hpviz_base_dir }}/grafana/plugins:/var/lib/grafana/plugins"
-          # - "{{ hpviz_base_dir }}/data/grafana:/var/lib/grafana/"
+          #- "{{ hpviz_base_dir }}/etc/grafana/dashboards:/var/lib/grafana/dashboards"
+          - "{{ hpviz_base_dir }}/etc/grafana/datasources:/etc/grafana/datasources"
+          #- "{{ hpviz_base_dir }}/etc/grafana/plugins:/var/lib/grafana/plugins"
+          - "{{ hpviz_base_dir }}/data/grafana:/var/lib/grafana/"
           - /var/run/docker.sock:/tmp/docker.sock:ro
         env:
           GF_SECURITY_ADMIN_PASSWORD: "{{ hpviz_grafana_admin_pass }}"

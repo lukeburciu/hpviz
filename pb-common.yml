@@ -40,16 +40,20 @@
         state: present
         update_cache: yes
       when: ansible_os_family == "Debian"
+      tags:
+        - certificates
 
     - name: copy certificate authority to trusted ca path of the os
       copy:
         src: 'files/hpviz-ca-chain-bundle.crt'
-        dest: '/usr/local/share/ca-certificates/extra'
+        dest: '/usr/local/share/ca-certificates/hpviz-ca-chain-bundle.crt'
         owner: root
         group: root
         mode: 0644
       notify:
         - update trusted ca
+      tags:
+        - certificates
 
     - name: Copy public certificate to nginx SSL configuration folder.
       copy:
@@ -60,6 +64,8 @@
           group: root
       notify: restart nginx
       ignore_errors: yes
+      tags:
+        - certificates
 
     - name: Copy private key to SSL configuration folder.
       copy:
@@ -71,6 +77,8 @@
       notify: restart nginx
       no_log: true
       ignore_errors: yes
+      tags:
+        - certificates
 
   handlers:
     - name: update trusted ca
