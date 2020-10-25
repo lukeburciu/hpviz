@@ -83,7 +83,7 @@
     #     mode: 'g+s'
     #   tags:
     #    - structure
-    
+
     - name: Set up project directories
       file:
         path: "{{ item.0 }}"
@@ -469,7 +469,7 @@
         - containers
         - vector
 
-    # - name: stopping grafana container
+    # - name: stopping grafana containaer
     #   docker_container:
     #     name: grafana
     #     image: grafana/grafana:latest-ubuntu
