@@ -37,6 +37,8 @@ firewall_services:
 hpviz_syslog_ingest_ip: 127.0.0.1
 hpviz_syslog_ingest_port: 514
 hpviz_vector_to_vector_ingest_port: 9000
+hpviz_broker_bootstrap_server1: "172.20.0.10"
+hpviz_broker_bootstrap_port1: "29092"
 
 #grafana
 
