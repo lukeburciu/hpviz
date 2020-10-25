@@ -1,7 +1,7 @@
 [sources.kafka_logging_syslog_raw]
   # General
   type = "kafka" # required
-  bootstrap_servers = "172.17.0.3:29092" # IP required not hostname
+  bootstrap_servers = "{{ hpviz_broker_bootstrap_server1 }}:{{ hpviz_broker_bootstrap_port1 }}" # IP required not hostname
   key_field = "user_id" # required
   topics = ["logging.syslog.raw"] # required
   group_id= "elasticsearch-ingestion"
@@ -23,7 +23,8 @@
   healthcheck = true # optional, default
   host = "http://elasticsearch:9200" # optional, no default
 
-  index = "syslog-%F" # optional, default
+  #index = "syslog-%F" # optional, default
+  index = "syslog-%Y.%m.%d"
   #pipeline = "syslog" # optional, no default
 
   # Batch
@@ -32,7 +33,7 @@
   batch.timeout_secs = 1 # optional, default, seconds
 
   # Headers
-  #headers.Authorization = "${ELASTICSEARCH_TOKEN}" # token for es
+  #headers.Authorization = "{ELASTICSEARCH_TOKEN}" # token for es
   headers.X-Powered-By = "Vector" # example
 
   # Query
