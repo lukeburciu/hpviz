@@ -23,9 +23,9 @@
   # Context
   host_key = "{{ hpviz_vector_hostkey }}"  # use this format as vector sees "." as a seperate field
 
-{# [transforms.parse_syslog]
+{#[transforms.parse_syslog]
   type = "logfmt_parser"
-  inputs = ["syslog_viz001"]
+  inputs = ["syslog_viz001", "thesink"]
   drop_field = false
   field = "message"
   # Types
@@ -38,19 +38,20 @@
   types.appname = "string"
   types.facility = "string"#}
 
-{#[transforms.tag]
+[transforms.tag]
   type="add_fields"
   inputs = ["syslog_viz001", "thesink"]
   overwrite=true
 
   #tags
-  fields.tags = ["syslog", "json"]#}
+  fields.tags = ["syslog", "json"]
 
 [sinks.kafka]
   # General
   type = "kafka" # required
-  inputs = ["syslog_viz001", "thesink"] # Format: "[sources.foo]", "[sources.bar]" == ["foo", "bar"]
-  bootstrap_servers = "172.17.0.3:29092" # IP required not hostname
+  #inputs = ["syslog_viz001", "thesink"] # Format: "[sources.foo]", "[sources.bar]" == ["foo", "bar"]
+  inputs = ["tag"] # Format: "[sources.foo]", "[sources.bar]" == ["foo", "bar"]
+  bootstrap_servers = "{{ hpviz_broker_bootstrap_server1 }}:{{ hpviz_broker_bootstrap_port1 }}" # IP required not hostname
   compression = "none" # optional, default
   healthcheck = true # optional, default
   key_field = "user_id" # required
