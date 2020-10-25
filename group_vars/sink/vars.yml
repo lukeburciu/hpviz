@@ -3,7 +3,7 @@
 hpviz_base_dir: /opt/hpviz
 
 #ca_file absolute path
-local_ca_file: "/etc/ssl/certs/hpviz-ca-chain-bundle.pem"
+local_ca_file: "/usr/local/share/ca-certificates/hpviz-ca-chain-bundle.crt"
 
 # Syslog
 hpviz_syslog_ingest_ip: 127.0.0.1

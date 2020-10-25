@@ -3,7 +3,7 @@
 hpviz_base_dir: /opt/hpviz
 
 #ca_file absolute path
-local_ca_file: "/etc/ssl/certs/hpviz-ca-chain-bundle.pem"
+local_ca_file: "/usr/local/share/ca-certificates/hpviz-ca-chain-bundle.crt"
 
 # These are users specific to "viz" group of hosts
 #  1) To remove a user from all groups replace the group list with empty string ''
