@@ -163,3 +163,8 @@ To start with a fresh VM image:
 To login to the VM and troubleshoot:
 
 `molecule login`
+
+
+#### 3) Useful commands
+
+Use ansible-playbook -i dev.ini site.yml --vault-password-file ~/.hpviz-vault --tags 'tag1, tag2' to run each playbook by specific tags, rather than the whole playbook. Useful for testing

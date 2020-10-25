@@ -10,7 +10,7 @@ If you wish to manually deploy the docker containers:
 
 ```bash
 cd hpviz/docker
-docker-compose -f docker-compose.yml -f production.yml up -d
+docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d
 ```
 
 ### Production Parameters
