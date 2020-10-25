@@ -44,7 +44,7 @@
     - name: copy certificate authority to trusted ca path of the os
       copy:
         src: 'files/hpviz-ca-chain-bundle.crt'
-        dest: '/usr/local/share/ca-certificates/extra'
+        dest: '/usr/local/share/ca-certificates/hpviz-ca-chain-bundle.crt'
         owner: root
         group: root
         mode: 0644
