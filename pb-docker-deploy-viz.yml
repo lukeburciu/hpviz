@@ -439,6 +439,7 @@
       tags:
         - vector-ingest
         - containers
+        - vector
 
     # - name: stopping vector2elastic container
     #   docker_container:
@@ -470,6 +471,7 @@
       tags:
         - vector2elastic
         - containers
+        - vector
 
     # - name: stopping grafana container
     #   docker_container:
