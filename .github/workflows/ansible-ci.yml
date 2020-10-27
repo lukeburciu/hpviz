@@ -2,12 +2,8 @@ name: Ansible-CI
 
 on:
   push:
-    branches:
-      # - dev-stephen
-      - master
-  # run ever 15 minutes
-  #schedule:
-  #  - cron: '*/15 * * * *'
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 jobs:
   deploy_to_prod:
     runs-on: ubuntu-latest
