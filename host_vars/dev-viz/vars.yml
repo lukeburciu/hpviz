@@ -13,7 +13,7 @@ hpviz_vector_hostkey: "dev-viz_localhost"
 
 # rsyslog
 hpviz_syslog_ingest_ip: "127.0.0.1"
-hpviz_syslog_ingest_port: "514"
+hpviz_syslog_ingest_port: "1514"
 
 # grafana
 hpviz_grafana_admin_pass: "{{ vault_hpviz_grafana_admin_pass }}"
