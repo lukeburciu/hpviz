@@ -2,7 +2,7 @@
   # syslog from thesink (localhost)
   type = "syslog" # required
   address = "0.0.0.0:{{ hpviz_syslog_ingest_port }}"
-  mode = "udp" # required, options 'udp', 'tcp', 'unix'
+  mode = "tcp" # required, options 'udp', 'tcp', 'unix'
   # Context
   host_key = "{{ hpviz_vector_hostkey }}"
 
