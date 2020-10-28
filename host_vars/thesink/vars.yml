@@ -6,7 +6,7 @@ hpviz_tls_key: '{{ vault_hpviz_tls_key }}'
 # vector
 hpviz_vector_hostkey: "thesink_ecu-sri_net"
 
-hpviz_syslog_ingest_ip: "0.0.0.0"
+hpviz_syslog_ingest_ip: "127.0.0.1"
 hpviz_syslog_ingest_port: "1514"
 
 # IP Addresses
