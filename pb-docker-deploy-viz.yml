@@ -16,7 +16,6 @@
   become: True
 
   tasks:
-
     - name: Check required variables exists for docker to install
       assert:
         that:
@@ -70,69 +69,61 @@
         path: "{{ hpviz_base_dir }}"
         state: directory
         group: hpviz
-        mode: 2775
+        mode: 02770
         # files: -rwxrwsr-x; folders: drwxrwsr-x
       tags:
-       - structure
-       - skip_ansible_lint  # 206 error
+        - structure
+        - skip_ansible_lint # 206 error
 
-    # - name: Set project directory group inheritance
-    #   file:
-    #     path: "{{ hpviz_base_dir }}"
-    #     state: directory
-    #     mode: 'g+s'
-    #   tags:
-    #    - structure
-
-    - name: Set up project directories
+    - name: Set up project sub-directories
       file:
         path: "{{ item.0 }}"
         owner: root
         state: directory
         group: hpviz
-        mode: 2775
+        mode: 03777
         # files: -rwxrwsr-x; folders: drwxrwsr-x
       loop:
         # docker compose home
-        - ["{{ hpviz_base_dir }}/docker", 'root']
+        - ["{{ hpviz_base_dir }}/docker", "root"]
         # configs
-        - ["{{ hpviz_base_dir }}/etc", 'root']
-        - ["{{ hpviz_base_dir }}/etc/ssl/ca-certificates", 'root']
-        - ["{{ hpviz_base_dir }}/etc/neo4j", 'neo4j']
-        - ["{{ hpviz_base_dir }}/etc/neo4j/certs", 'neo4j']
-        - ["{{ hpviz_base_dir }}/etc/neo4j/plugins", 'neo4j']
-        - ["{{ hpviz_base_dir }}/etc/elastic/certs", 'elastic']
-        - ["{{ hpviz_base_dir }}/etc/nginx/certs", 'root']     # **TODO Check if correct user
-        - ["{{ hpviz_base_dir }}/etc/kafka/secrets", 'kafka']
-        - ["{{ hpviz_base_dir }}/etc/kafka-connect/plugins", 'kafka-connect']
-        - ["{{ hpviz_base_dir }}/etc/vector-ingest/certs",'vector']
-        - ["{{ hpviz_base_dir }}/etc/vector2elastic/certs",'vector']
-        - ["{{ hpviz_base_dir }}/etc/nifi/certs", 'nifi']
-        - ["{{ hpviz_base_dir }}/etc/grafana/certs", 'grafana']
-        - ["{{ hpviz_base_dir }}/etc/grafana/plugins", 'grafana']
-        - ["{{ hpviz_base_dir }}/etc/grafana/datasources", 'grafana']
-        - ["{{ hpviz_base_dir }}/etc/grafana/dashboards", 'grafana']
+        - ["{{ hpviz_base_dir }}/etc", "root"]
+        - ["{{ hpviz_base_dir }}/etc/ssl/ca-certificates", "root"]
+        - ["{{ hpviz_base_dir }}/etc/neo4j", "neo4j"]
+        - ["{{ hpviz_base_dir }}/etc/neo4j/certs", "neo4j"]
+        - ["{{ hpviz_base_dir }}/etc/neo4j/plugins", "neo4j"]
+        - ["{{ hpviz_base_dir }}/etc/elastic/certs", "elastic"]
+        - ["{{ hpviz_base_dir }}/etc/nginx/certs", "root"] # **TODO Check if correct user
+        - ["{{ hpviz_base_dir }}/etc/kafka/secrets", "kafka"]
+        - ["{{ hpviz_base_dir }}/etc/kafka-connect/plugins", "kafka-connect"]
+        - ["{{ hpviz_base_dir }}/etc/vector-ingest/certs", "vector"]
+        - ["{{ hpviz_base_dir }}/etc/vector2elastic/certs", "vector"]
+        - ["{{ hpviz_base_dir }}/etc/nifi/certs", "nifi"]
+        - ["{{ hpviz_base_dir }}/etc/grafana/certs", "grafana"]
+        - ["{{ hpviz_base_dir }}/etc/grafana/plugins", "grafana"]
+        - ["{{ hpviz_base_dir }}/etc/grafana/datasources", "grafana"]
+        - ["{{ hpviz_base_dir }}/etc/grafana/dashboards", "grafana"]
         # data
-        - ["{{ hpviz_base_dir }}/data", 'root']
-        - ["{{ hpviz_base_dir }}/data/zookeeper", 'zookeeper']
-        - ["{{ hpviz_base_dir }}/data/elastic", 'elastic']
-        - ["{{ hpviz_base_dir }}/data/kafka",'kafka']
-        - ["{{ hpviz_base_dir }}/data/nifi",'nifi']
-        - ["{{ hpviz_base_dir }}/data/vector-ingest",'vector']
-        - ["{{ hpviz_base_dir }}/data/vector2elastic",'vector']
-        - ["{{ hpviz_base_dir }}/data/neo4j", 'neo4j']
-        - ["{{ hpviz_base_dir }}/data/neo4j/data", 'neo4j']
-        - ["{{ hpviz_base_dir }}/data/neo4j/metrics", 'neo4j']
-        - ["{{ hpviz_base_dir }}/data/grafana", 'root']
+        - ["{{ hpviz_base_dir }}/data", "root"]
+        - ["{{ hpviz_base_dir }}/data/zookeeper", "zookeeper"]
+        - ["{{ hpviz_base_dir }}/data/elastic", "elastic"]
+        - ["{{ hpviz_base_dir }}/data/kafka", "kafka"]
+        - ["{{ hpviz_base_dir }}/data/nifi", "nifi"]
+        - ["{{ hpviz_base_dir }}/data/vector-ingest", "vector"]
+        - ["{{ hpviz_base_dir }}/data/vector2elastic", "vector"]
+        - ["{{ hpviz_base_dir }}/data/neo4j", "neo4j"]
+        - ["{{ hpviz_base_dir }}/data/neo4j/data", "neo4j"]
+        - ["{{ hpviz_base_dir }}/data/neo4j/metrics", "neo4j"]
+        - ["{{ hpviz_base_dir }}/data/grafana", "root"]
         # logs
-        - ["{{ hpviz_base_dir }}/logs", 'root']
-        - ["{{ hpviz_base_dir }}/logs/elastic", 'elastic']
-        - ["{{ hpviz_base_dir }}/logs/neo4j", 'neo4j']
-        - ["{{ hpviz_base_dir }}/logs/zookeeper", 'zookeeper']
-        - ["{{ hpviz_base_dir }}/logs/kafka", 'kafka']
-        - ["{{ hpviz_base_dir }}/logs/vector-ingest", 'vector']
-        - ["{{ hpviz_base_dir }}/logs/vector2elastic", 'vector']
-        - ["{{ hpviz_base_dir }}/logs/nifi", 'nifi']
+        - ["{{ hpviz_base_dir }}/logs", "root"]
+        - ["{{ hpviz_base_dir }}/logs/elastic", "elastic"]
+        - ["{{ hpviz_base_dir }}/logs/neo4j", "neo4j"]
+        - ["{{ hpviz_base_dir }}/logs/zookeeper", "zookeeper"]
+        - ["{{ hpviz_base_dir }}/logs/kafka", "kafka"]
+        - ["{{ hpviz_base_dir }}/logs/vector-ingest", "vector"]
+        - ["{{ hpviz_base_dir }}/logs/vector2elastic", "vector"]
+        - ["{{ hpviz_base_dir }}/logs/nifi", "nifi"]
       tags:
         - structure
         - skip_ansible_lint
@@ -186,10 +177,10 @@
         ipam_config:
           - subnet: 172.20.0.0/24
         #driver_options:
-          #com.docker.network.bridge.default_bridge: "true"
-          #com.docker.network.bridge.enable_ip_masquerade: "true"
-          #com.docker.network.bridge.host_binding_ipv4: 0.0.0.0
-          #com.docker.network.bridge.enable_icc: "true"
+        #com.docker.network.bridge.default_bridge: "true"
+        #com.docker.network.bridge.enable_ip_masquerade: "true"
+        #com.docker.network.bridge.host_binding_ipv4: 0.0.0.0
+        #com.docker.network.bridge.enable_icc: "true"
       tags:
         - network
         - containers
@@ -274,7 +265,7 @@
               - zookeeper:zookeeper
         env:
           KAFKA_BROKER_ID: "1"
-          KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+          KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
           KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "LISTENER_INTERNAL:PLAINTEXT,LISTENER_LOCALHOST:PLAINTEXT,LISTENER_EXT:PLAINTEXT"
           KAFKA_ADVERTISED_LISTENERS: "LISTENER_INTERNAL://broker:29092,LISTENER_LOCALHOST://localhost:9092,LISTENER_EXT://viz001.ecu-sri.net:9093"
           KAFKA_LISTENERS: "LISTENER_INTERNAL://:29092,LISTENER_LOCALHOST://0.0.0.0:9092,LISTENER_EXT://0.0.0.0:9093"
@@ -286,16 +277,16 @@
           KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: "1"
           KAFKA_JMX_PORT: "9101"
           KAFKA_CONFLUENT_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
-         # KAFKA_CREATE_TOPICS: "logging.syslog.vector"
+          # KAFKA_CREATE_TOPICS: "logging.syslog.vector"
           CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: "broker:29092"
           CONFLUENT_METRICS_REPORTER_ZOOKEEPER_CONNECT: "zookeeper:2181"
           CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: "1"
-          CONFLUENT_METRICS_ENABLE: 'true'
-          CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
+          CONFLUENT_METRICS_ENABLE: "true"
+          CONFLUENT_SUPPORT_CUSTOMER_ID: "anonymous"
           KAFKA_INTER_BROKER_LISTENER_NAME: "LISTENER_INTERNAL"
         volumes:
-           - "{{ hpviz_base_dir }}/data/kafka:/var/lib/kafka/data"
-           - /var/run/docker.sock:/var/run/docker.sock:ro
+          - "{{ hpviz_base_dir }}/data/kafka:/var/lib/kafka/data"
+          - /var/run/docker.sock:/var/run/docker.sock:ro
       tags:
         - broker
         - containers
@@ -320,7 +311,7 @@
         state: absent
         ports:
           - "9090:8080"
-         # - "127.0.0.1:514:514"
+          # - "127.0.0.1:514:514"
         expose:
           - "9090"
         purge_networks: yes
@@ -373,8 +364,8 @@
           - name: viz-net
         env:
           discovery.type: single-node
-          http.port: '9200'
-          ELASTIC_PASSWORD: '{{ hpviz_elastic_password }}'
+          http.port: "9200"
+          ELASTIC_PASSWORD: "{{ hpviz_elastic_password }}"
           http.cors.enabled: "true"
           http.cors.allow-origin: "http://localhost:1358,http://127.0.0.1:1358"
           http.cors.allow-headers: "X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization"
@@ -413,7 +404,7 @@
         state: started
         recreate: yes
         ports:
-          - "{{ hpviz_vector_to_vector_ingest_port }}:{{ hpviz_vector_to_vector_ingest_port }}"  # incoming tcp vector link from the sink
+          - "{{ hpviz_vector_to_vector_ingest_port }}:{{ hpviz_vector_to_vector_ingest_port }}" # incoming tcp vector link from the sink
           - "{{ hpviz_syslog_ingest_ip }}:{{ hpviz_syslog_ingest_port }}:{{ hpviz_syslog_ingest_port }}"
         purge_networks: yes
         networks:
@@ -505,11 +496,11 @@
         env:
           GF_SECURITY_ADMIN_PASSWORD: "{{ hpviz_grafana_admin_pass }}"
           GF_INSTALL_PLUGINS: "grafana-clock-panel, \
-                                neocat-cal-heatmap-panel, \
-                                petrslavotinek-carpetplot-panel,\
-                                grafana-polystat-panel,\
-                                scadavis-synoptic-panel,\
-                                farski-blendstat-panel"
+            neocat-cal-heatmap-panel, \
+            petrslavotinek-carpetplot-panel,\
+            grafana-polystat-panel,\
+            scadavis-synoptic-panel,\
+            farski-blendstat-panel"
           GF_ALLOW_USERS_SIGN_UP: "false"
           GF_SERVER_PROTOCOL: "http"
           GF_SERVER_PORT: "3000"

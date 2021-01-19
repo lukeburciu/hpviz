@@ -54,7 +54,7 @@
   bootstrap_servers = "{{ hpviz_broker_bootstrap_server1 }}:{{ hpviz_broker_bootstrap_port1 }}" # IP required not hostname
   compression = "none" # optional, default
   healthcheck = true # optional, default
-  key_field = "user_id" # required
+  #key_field = "" # empty means one will be automatically generated
   message_timeout_ms = 300000 # optional, default
   socket_timeout_ms = 60000 # optional, default
   topic = "logging.syslog.raw" # required
