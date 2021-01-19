@@ -22,7 +22,7 @@ Vagrant.configure("2") do |config|
     viz.vm.provision "shell",
       path: "vagrant/scripts/provision.sh"
     #viz.vm.synced_folder "vagrant/viz/docker" , "/var/lib/docker"
-    viz.vm.synced_folder "vagrant/viz/hpviz" , "/opt/hpviz"
+    #viz.vm.synced_folder "vagrant/viz/hpviz" , "/opt/hpviz"
     viz.vm.synced_folder "vagrant/viz/nginx" , "/etc/nginx"
   end
 
