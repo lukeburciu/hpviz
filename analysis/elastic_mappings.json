@@ -1,0 +1,38 @@
+{
+    "syslog-2021.01.19": {
+        "mappings": {
+            "properties": {
+                "message": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "source_type": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "tags": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "timestamp": {
+                    "type": "date"
+                }
+            }
+        }
+    }
+}
