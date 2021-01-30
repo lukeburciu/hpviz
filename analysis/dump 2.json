@@ -1,0 +1,50 @@
+{
+    "appname": "named",
+    "facility": "daemon",
+    "hostname": "scada080",
+    "message": "message repeated 4 times: [ client 75.130.201.131#53558 (.): query (cache) './ANY/IN' denied]",
+    "procid": 2150,
+    "severity": "info",
+    "source_ip": "104.168.38.224",
+    "source_type": "syslog",
+    "tags": [
+        "syslog",
+        "json"
+    ],
+    "thesink_ecu-sri_net": "scada080",
+    "timestamp": "2021-01-16T08:17:48.359504Z",
+    "version": 1
+},
+{
+    "appname": "named",
+    "facility": "daemon",
+    "hostname": "scada080",
+    "message": "client 75.130.201.131#8978 (.): query (cache) './ANY/IN' denied",
+    "procid": 2150,
+    "severity": "info",
+    "source_ip": "104.168.38.224",
+    "source_type": "syslog",
+    "tags": [
+        "syslog",
+        "json"
+    ],
+    "thesink_ecu-sri_net": "scada080",
+    "timestamp": "2021-01-16T08:18:08.139115Z",
+    "version": 1
+}
+{
+    "appname": "kernel",
+    "facility": "kern",
+    "hostname": "scada012",
+    "message": "[3464330.843843] [UFW BLOCK] IN=eth0 OUT= MAC=00:16:3e:c8:8a:cc:10:0e:7e:ba:69:00:08:00 SRC=188.136.172.75 DST=45.151.175.210 LEN=52 TOS=0x00 PREC=0x00 TTL=90 ID=32524 DF PROTO=TCP SPT=58059 DPT=1433 WINDOW=8192 RES=0x00 SYN URGP=0",
+    "severity": "warning",
+    "source_ip": "45.151.175.210",
+    "source_type": "syslog",
+    "tags": [
+        "syslog",
+        "json"
+    ],
+    "thesink_ecu-sri_net": "scada012",
+    "timestamp": "2021-01-16T08:18:04.753549Z",
+    "version": 1
+}
