@@ -127,3 +127,21 @@
       tags:
         - vector
         - containers
+
+    - name: Deploy docker-must container
+      docker_container:
+        name: docker-must
+        image: quay.io/doubledensity/must
+        restart: yes
+        restart_policy: unless-stopped
+        state: stopped
+        recreate: yes
+        ports:
+          #- "{{ docker_must_port }}:{{ docker_must_port }}/tcp"
+          - "{{ docker_must_port }}:{{ docker_must_port }}/udp"
+        env:
+          host: "{{ docker_vector_ip }}"
+          port: "{{ docker_must_port }}"
+      tags:
+        - docker-must
+        - containers

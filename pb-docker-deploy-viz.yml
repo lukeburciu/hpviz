@@ -402,6 +402,7 @@
               - broker:broker
         expose:
           - "{{ hpviz_syslog_ingest_port }}/udp"
+          - "{{ docker_must_port }}/udp"
         #  - "9090"
         volumes:
           - "{{ local_ca_file }}:{{ local_ca_file }}"
