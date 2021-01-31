@@ -6,10 +6,18 @@
   # Context
   host_key = "host"
 
+[sources.syslog_udp_must]
+  # syslog from docker-must 
+  type = "syslog" # required
+  address = "0.0.0.0:{{ docker_must_port }}"
+  mode = "udp" # required, options 'udp', 'tcp', 'unix'
+  # Context
+  host_key = "{{ docker_must_hostkey }}"
+
 [sinks.viz001]
   # General
   type = "vector" # required
-  inputs = ["syslog_thesink"] # required
+  inputs = ["syslog_thesink", "syslog_udp_must"] # required
   address = "{{ hpviz_viz_ip }}:{{ hpviz_vector_port }}" # required: viz001_ip:vector_port
   #address = "192.168.100.10:9000" # To be removed  - Ansible vars used
   healthcheck = true # optional, default
