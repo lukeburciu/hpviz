@@ -4,7 +4,7 @@
   address = "0.0.0.0:{{ hpviz_syslog_ingest_port }}"
   mode = "tcp" # required, options 'udp', 'tcp', 'unix'
   # Context
-  host_key = "{{ hpviz_vector_hostkey }}"
+  host_key = "host"
 
 [sinks.viz001]
   # General

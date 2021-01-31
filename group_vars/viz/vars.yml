@@ -21,17 +21,17 @@ user_list:
 
 ### Managed pip packages to install
 pip_install_packages:
-    - name: docker
-    - name: docker-compose
+  - name: docker
+  - name: docker-compose
 
 ### Firewall - defaults to tcp
 firewall_services:
-  - name: ssh     # <- Do no remove will break CICD
+  - name: ssh # <- Do no remove will break CICD
   - name: https
   - name: 522
-  - name: 9093    # kafka broker listener
-  - name: 9090
-  - name: 9000
+  - name: 9093 # kafka broker listener
+  - name: 9090 # nifi direct
+  - name: 9000 # vector2vector
 
 # Syslog
 hpviz_syslog_ingest_ip: 127.0.0.1
@@ -43,6 +43,11 @@ hpviz_broker_bootstrap_port1: "29092"
 #grafana
 
 hpviz_grafana_admin_pass: "{{ vault_hpviz_grafana_admin_pass }}"
+
+# nifi
+
+hpviz_nifi_admin_user: "{{ vault_hpviz_nifi_admin_user }}"
+hpviz_nifi_admin_pass: "{{ vault_hpviz_nifi_admin_pass }}"
 
 ## NGINX Reverse proxy config
 nginx_vhosts:
@@ -56,13 +61,50 @@ nginx_vhosts:
           proxy_set_header   Host $host;
       }
 
+      # location /nifi {
+      #     proxy_pass http://127.0.0.1:9090;
+
+      #     proxy_set_header   Host                 $host;
+      #     proxy_set_header   X-ProxyScheme        "https";
+
+      #     # proxy_set_header   X-Real-IP            $remote_addr;
+      #     # proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
+      #     proxy_set_header   X-Forwarded-Proto    $scheme;
+      #     # proxy_set_header   X-Forwarded-User     $remote_user;
+      #     # proxy_set_header   Authorization        "";
+      #     # proxy_set_header   X-ProxyHost          $hostname;
+      #     # proxy_set_header   X-ProxyPort          $server_port;
+      #     proxy_set_header   X-ProxyContextPath   "/";
+
+      #     auth_basic "NiFi Authentication";
+      #     auth_basic_user_file "/etc/nginx/nifi.htpasswd";
+      # }
+
+      # location /nifi-registry {
+      #     proxy_pass http://127.0.0.1:19090;
+
+      #     proxy_set_header   Host                 $http_host;
+      #     #proxy_set_header   X-Real-IP            $remote_addr;
+      #     #proxy_set_header   X-Forwarded-For      $proxy_add_x_forwarded_for;
+      #     #proxy_set_header   X-Forwarded-Proto    $scheme;
+      #     #proxy_set_header   X-Forwarded-User     $remote_user;
+      #     #proxy_set_header   Authorization        "";
+      #     proxy_set_header   X-ProxyScheme        https;
+      #     #proxy_set_header   X-ProxyHost          $hostname;
+      #     #proxy_set_header   X-ProxyPort          $server_port;
+      #     #proxy_set_header   X-ProxyContextPath   "/";
+
+      #     auth_basic "NiFi Authentication";
+      #     auth_basic_user_file /etc/nginx/nifi.htpasswd;
+      # }
+
       ssl_certificate /etc/ssl/certs/{{ hpviz_vector_hostkey }}.crt;
       ssl_certificate_key /etc/ssl/private/{{ hpviz_vector_hostkey }}.key;
       ssl_protocols       TLSv1.1 TLSv1.2;
       ssl_ciphers         HIGH:!aNULL:!MD5;
       client_max_body_size 25m;
 
-# Redirect HTTP traffic to HTTPS
+  # Redirect HTTP traffic to HTTPS
   - listen: "80"
     server_name: _
     return: "301 https://$host$request_uri"
