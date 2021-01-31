@@ -134,7 +134,7 @@
         image: quay.io/doubledensity/must
         restart: yes
         restart_policy: unless-stopped
-        state: started
+        state: stopped
         recreate: yes
         ports:
           #- "{{ docker_must_port }}:{{ docker_must_port }}/tcp"
