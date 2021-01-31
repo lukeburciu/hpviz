@@ -40,8 +40,12 @@ hpviz_vector_to_vector_ingest_port: 9000
 hpviz_broker_bootstrap_server1: "172.20.0.10"
 hpviz_broker_bootstrap_port1: "29092"
 
-#grafana
+# docker-must
+docker_must_hostkey: "syslog_docker-must"
+docker_must_port: "3514"
 
+
+#grafana
 hpviz_grafana_admin_pass: "{{ vault_hpviz_grafana_admin_pass }}"
 
 ## NGINX Reverse proxy config
