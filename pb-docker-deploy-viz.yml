@@ -59,6 +59,7 @@
         - vector
         - neo4j
         - nifi
+        - nifi-registry
         - www-data
         - grafana
       tags:
@@ -108,7 +109,13 @@
         - ["{{ hpviz_base_dir }}/data/zookeeper", "zookeeper"]
         - ["{{ hpviz_base_dir }}/data/elastic", "elastic"]
         - ["{{ hpviz_base_dir }}/data/kafka", "kafka"]
-        - ["{{ hpviz_base_dir }}/data/nifi", "nifi"]
+        - ["{{ hpviz_base_dir }}/data/nifi/", "nifi"]
+        - ["{{ hpviz_base_dir }}/data/nifi/state", "nifi"]
+        - ["{{ hpviz_base_dir }}/data/nifi/db", "nifi"]
+        - ["{{ hpviz_base_dir }}/data/nifi/flowfile", "nifi"]
+        - ["{{ hpviz_base_dir }}/data/nifi/content", "nifi"]
+        - ["{{ hpviz_base_dir }}/data/nifi/provenance", "nifi"]
+        - ["{{ hpviz_base_dir }}/data/nifi-registry", "nifi-registry"]
         - ["{{ hpviz_base_dir }}/data/vector-ingest", "vector"]
         - ["{{ hpviz_base_dir }}/data/vector2elastic", "vector"]
         - ["{{ hpviz_base_dir }}/data/neo4j", "neo4j"]
@@ -291,45 +298,27 @@
         - broker
         - containers
 
-    # - name: stopping NIFI container
-    #   docker_container:
-    #     name: nifi
-    #     image: apache/nifi:latest
-    #     state: stopped
-    #   ignore_errors: yes
-    #   tags:
-    #     - containers
-    #     - nifi
-
-    - name: Deploy NIFI container
+    - name: Deploy NIFI-registry container
       docker_container:
-        name: nifi
-        image: apache/nifi:latest
+        name: nifi-registry
+        image: apache/nifi-registry:latest
         restart: yes
         recreate: yes
         restart_policy: unless-stopped
         state: absent
         ports:
-          - "9090:8080"
+          - "127.0.0.1:19090:19090"
           # - "127.0.0.1:514:514"
         expose:
-          - "9090"
+          - "19090"
         purge_networks: yes
-        links:
-          - zookeeper:zookeeper
-          - broker:broker
         networks:
           - name: viz-net
-            links:
-              - zookeeper:zookeeper
-              - broker:broker
         env:
-          VIRTUAL_HOST: "viz001.ecu-sri.net"
-          LETSENCRYPT_HOST: "viz001.ecu-sri.net"
-          VIRTUAL_PROTO: "http"
-          VIRTUAL_PORT: "9090"
+          NIFI_REGISTRY_WEB_HTTP_PORT: "19090"
         volumes:
           - /var/run/docker.sock:/var/run/docker.sock:ro
+        #  - "{{ hpviz_base_dir }}/data/nifi-registry:/data"
       tags:
         - nifi
         - containers
@@ -459,6 +448,61 @@
         - vector2elastic
         - containers
         - vector
+
+    # - name: stopping NIFI container
+    #   docker_container:
+    #     name: nifi
+    #     image: apache/nifi:latest
+    #     state: stopped
+    #   ignore_errors: yes
+    #   tags:
+    #     - containers
+    #     - nifi
+
+    - name: Deploy NIFI container
+      docker_container:
+        name: nifi
+        image: apache/nifi:latest
+        restart: yes
+        recreate: yes
+        restart_policy: unless-stopped
+        state: absent
+        ports:
+          - "127.0.0.1:9090:9090"
+          - "127.0.0.1:8082:8082"
+          # - "127.0.0.1:514:514"
+        expose:
+          - "9090"
+          - "8082"
+        purge_networks: yes
+        links:
+          - zookeeper:zookeeper
+          - broker:broker
+          - nifi-registry:nifi-registry
+          - elasticsearch:elasticsearch
+        networks:
+          - name: viz-net
+            links:
+              - zookeeper:zookeeper
+              - broker:broker
+              - nifi-registry:nifi-registry
+              - elasticsearch:elasticsearch
+        env:
+          NIFI_WEB_HTTP_PORT: "9090"
+          # NIFI_CLUSTER_IS_NODE: "true"
+          # NIFI_CLUSTER_NODE_PROTOCOL_PORT: "8082"
+          # NIFI_ZK_CONNECT_STRING: "zookeeper:2181"
+          # NIFI_ELECTION_MAX_WAIT: "1 min"
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock:ro
+          - "{{ hpviz_base_dir }}/data/nifi/state:/opt/nifi/nifi-current/state"
+          - "{{ hpviz_base_dir }}/data/nifi/db:/opt/nifi-current/database_repository"
+          - "{{ hpviz_base_dir }}/data/nifi/flowfile:/opt/nifi-current/flowfile_repository"
+          - "{{ hpviz_base_dir }}/data/nifi/content:/opt/nifi-current/content_repository"
+
+      tags:
+        - nifi
+        - containers
 
     # - name: stopping grafana containaer
     #   docker_container:

@@ -1,9 +1,9 @@
 ---
-hpviz_elastic_password: '{{ vault_hpviz_elastic_password }}'
+hpviz_elastic_password: "{{ vault_hpviz_elastic_password }}"
 
 # TLS Certificate
-hpviz_tls_cert: '{{ vault_hpviz_tls_cert }}'
-hpviz_tls_key: '{{ vault_hpviz_tls_key }}'
+hpviz_tls_cert: "{{ vault_hpviz_tls_cert }}"
+hpviz_tls_key: "{{ vault_hpviz_tls_key }}"
 
 # nginx
 hpviz_virtual_hostname: "localhost"
@@ -17,6 +17,10 @@ hpviz_syslog_ingest_port: "1514"
 
 # grafana
 hpviz_grafana_admin_pass: "{{ vault_hpviz_grafana_admin_pass }}"
+
+# nifi
+hpviz_nifi_admin_user: "{{ vault_hpviz_nifi_admin_user }}"
+hpviz_nifi_admin_pass: "{{ vault_hpviz_nifi_admin_pass }}"
 
 # IP Addresses
 hpviz_sink_ip: "192.168.100.11"

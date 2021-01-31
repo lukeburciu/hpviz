@@ -1,49 +1,40 @@
 [sources.kafka_logging_syslog_raw]
-  # General
-  type = "kafka" # required
+  # pulls the syslog events from the kafka topic
+
+  type = "kafka"
   bootstrap_servers = "{{ hpviz_broker_bootstrap_server1 }}:{{ hpviz_broker_bootstrap_port1 }}" # IP required not hostname
-  #key_field = ""  # empty means one will be automatically generated
-  topics = ["logging.syslog.raw"] # required
+  key_field = "host"
+  topics = ["logging.syslog.raw"]
   group_id= "elasticsearch-ingestion"
 
-[transforms.tag]
-  type="add_fields"
-  inputs = ["kafka_logging_syslog_raw"]
-  overwrite=false
+[transforms.kafka_message]
+  # this process processes the kafka 'message' field which is in json format and is the full syslog event
+  # pushed to kafka topic, once processed it deletes the original 'message' field
+  # this is required otherwise elastic will just index the message field as a string
 
-  #tags
-  fields.tags = ["kafka"]
+  type="json_parser"
+  inputs = ["kafka_logging_syslog_raw"]
+  field = "message"
+  drop_field = true
+  drop_invalid = false
+  overwrite_target = true
 
 [sinks.elasticsearch_syslog]
-  # General
-  type = "elasticsearch" # required
-  inputs = ["tag"] # required
-  compression = "none" # optional, default
-  doc_type = "_doc" # optional, default
-  healthcheck = true # optional, default
-  host = "http://elasticsearch:9200" # optional, no default
+  # pushes the JSON syslog event to elastic for indexing
 
-  #index = "syslog-%F" # optional, default
+  # General
+  type = "elasticsearch"
+  inputs = ["kafka_message"]
+  compression = "none"
+  doc_type = "_doc"
+  healthcheck = true
+  host = "http://elasticsearch:9200"
   index = "syslog-%Y.%m.%d"
-  #pipeline = "syslog" # optional, no default
 
   # Batch
-  batch.max_bytes = 10490000 # optional, default, bytes
-  batch.max_events = 1000 # optional, no default, events
-  batch.timeout_secs = 1 # optional, default, seconds
+  batch.max_bytes = 10490000
+  batch.max_events = 1000
+  batch.timeout_secs = 1
 
   # Headers
-  #headers.Authorization = "{ELASTICSEARCH_TOKEN}" # token for es
-  headers.X-Powered-By = "Vector" # example
-
-  # Query
-  #query.X-Powered-By = "Vector" #
-
-  # Request
-  #request.in_flight_limit = 5 # optional, default, requests
-  #request.rate_limit_duration_secs = 1 # optional, default, seconds
-  #request.rate_limit_num = 5 # optional, default
-  #request.retry_attempts = 6470955161 # optional, default
-  #request.retry_initial_backoff_secs = 1 # optional, default, seconds
-  #request.retry_max_duration_secs = 10 # optional, default, seconds
-  #request.timeout_secs = 60 # optional, default, seconds #}
+  headers.X-Powered-By = "Vector"

@@ -1,0 +1,159 @@
+{
+    "took": 1,
+    "timed_out": false,
+    "_shards": {
+        "total": 1,
+        "successful": 1,
+        "skipped": 0,
+        "failed": 0
+    },
+    "hits": {
+        "total": {
+            "value": 2121,
+            "relation": "eq"
+        },
+        "max_score": 1.0,
+        "hits": [
+            {
+                "_index": "syslog-2021.01.19",
+                "_type": "_doc",
+                "_id": "Q2ICGncB9L43fiW7zZF5",
+                "_score": 1.0,
+                "_source": {
+                    "message": "{\"appname\":\"sshd\",\"dev-viz_localhost\":\"dev-viz\",\"facility\":\"auth\",\"hostname\":\"dev-viz\",\"message\":\"Received disconnect from 10.0.2.2 port 52378:11: disconnected by user\",\"procid\":21475,\"severity\":\"info\",\"source_ip\":\"172.20.0.1\",\"source_type\":\"syslog\",\"tags\":[\"syslog\",\"json\"],\"timestamp\":\"2021-01-19T09:38:46Z\"}",
+                    "source_type": "kafka",
+                    "tags": [
+                        "kafka"
+                    ],
+                    "timestamp": "2021-01-19T09:38:46Z"
+                }
+            },
+            {
+                "_index": "syslog-2021.01.19",
+                "_type": "_doc",
+                "_id": "RGICGncB9L43fiW7zZF5",
+                "_score": 1.0,
+                "_source": {
+                    "message": "{\"appname\":\"sshd\",\"dev-viz_localhost\":\"dev-viz\",\"facility\":\"auth\",\"hostname\":\"dev-viz\",\"message\":\"Disconnected from user vagrant 10.0.2.2 port 52378\",\"procid\":21475,\"severity\":\"info\",\"source_ip\":\"172.20.0.1\",\"source_type\":\"syslog\",\"tags\":[\"syslog\",\"json\"],\"timestamp\":\"2021-01-19T09:38:46Z\"}",
+                    "source_type": "kafka",
+                    "tags": [
+                        "kafka"
+                    ],
+                    "timestamp": "2021-01-19T09:38:46Z"
+                }
+            },
+            {
+                "_index": "syslog-2021.01.19",
+                "_type": "_doc",
+                "_id": "RWICGncB9L43fiW7zZF5",
+                "_score": 1.0,
+                "_source": {
+                    "message": "{\"appname\":\"sshd\",\"dev-viz_localhost\":\"dev-viz\",\"facility\":\"authpriv\",\"hostname\":\"dev-viz\",\"message\":\"pam_unix(sshd:session): session closed for user vagrant\",\"procid\":21428,\"severity\":\"info\",\"source_ip\":\"172.20.0.1\",\"source_type\":\"syslog\",\"tags\":[\"syslog\",\"json\"],\"timestamp\":\"2021-01-19T09:38:46Z\"}",
+                    "source_type": "kafka",
+                    "tags": [
+                        "kafka"
+                    ],
+                    "timestamp": "2021-01-19T09:38:46Z"
+                }
+            },
+            {
+                "_index": "syslog-2021.01.19",
+                "_type": "_doc",
+                "_id": "RmICGncB9L43fiW7zZF5",
+                "_score": 1.0,
+                "_source": {
+                    "message": "{\"appname\":\"systemd-logind\",\"dev-viz_localhost\":\"dev-viz\",\"facility\":\"auth\",\"hostname\":\"dev-viz\",\"message\":\"Removed session 17.\",\"procid\":794,\"severity\":\"info\",\"source_ip\":\"172.20.0.1\",\"source_type\":\"syslog\",\"tags\":[\"syslog\",\"json\"],\"timestamp\":\"2021-01-19T09:38:46Z\"}",
+                    "source_type": "kafka",
+                    "tags": [
+                        "kafka"
+                    ],
+                    "timestamp": "2021-01-19T09:38:46Z"
+                }
+            },
+            {
+                "_index": "syslog-2021.01.19",
+                "_type": "_doc",
+                "_id": "R2ICGncB9L43fiW7zZF5",
+                "_score": 1.0,
+                "_source": {
+                    "message": "{\"appname\":\"systemd\",\"dev-viz_localhost\":\"dev-viz\",\"facility\":\"daemon\",\"hostname\":\"dev-viz\",\"message\":\"Stopping User Manager for UID 1000...\",\"procid\":1,\"severity\":\"info\",\"source_ip\":\"172.20.0.1\",\"source_type\":\"syslog\",\"tags\":[\"syslog\",\"json\"],\"timestamp\":\"2021-01-19T09:38:46Z\"}",
+                    "source_type": "kafka",
+                    "tags": [
+                        "kafka"
+                    ],
+                    "timestamp": "2021-01-19T09:38:46Z"
+                }
+            },
+            {
+                "_index": "syslog-2021.01.19",
+                "_type": "_doc",
+                "_id": "SGICGncB9L43fiW7zZF5",
+                "_score": 1.0,
+                "_source": {
+                    "message": "{\"appname\":\"systemd\",\"dev-viz_localhost\":\"dev-viz\",\"facility\":\"daemon\",\"hostname\":\"dev-viz\",\"message\":\"Stopped target Default.\",\"procid\":21430,\"severity\":\"info\",\"source_ip\":\"172.20.0.1\",\"source_type\":\"syslog\",\"tags\":[\"syslog\",\"json\"],\"timestamp\":\"2021-01-19T09:38:46Z\"}",
+                    "source_type": "kafka",
+                    "tags": [
+                        "kafka"
+                    ],
+                    "timestamp": "2021-01-19T09:38:46Z"
+                }
+            },
+            {
+                "_index": "syslog-2021.01.19",
+                "_type": "_doc",
+                "_id": "SWICGncB9L43fiW7zZF5",
+                "_score": 1.0,
+                "_source": {
+                    "message": "{\"appname\":\"systemd\",\"dev-viz_localhost\":\"dev-viz\",\"facility\":\"daemon\",\"hostname\":\"dev-viz\",\"message\":\"Stopped target Basic System.\",\"procid\":21430,\"severity\":\"info\",\"source_ip\":\"172.20.0.1\",\"source_type\":\"syslog\",\"tags\":[\"syslog\",\"json\"],\"timestamp\":\"2021-01-19T09:38:46Z\"}",
+                    "source_type": "kafka",
+                    "tags": [
+                        "kafka"
+                    ],
+                    "timestamp": "2021-01-19T09:38:46Z"
+                }
+            },
+            {
+                "_index": "syslog-2021.01.19",
+                "_type": "_doc",
+                "_id": "SmICGncB9L43fiW7zZF5",
+                "_score": 1.0,
+                "_source": {
+                    "message": "{\"appname\":\"systemd\",\"dev-viz_localhost\":\"dev-viz\",\"facility\":\"daemon\",\"hostname\":\"dev-viz\",\"message\":\"Stopped target Paths.\",\"procid\":21430,\"severity\":\"info\",\"source_ip\":\"172.20.0.1\",\"source_type\":\"syslog\",\"tags\":[\"syslog\",\"json\"],\"timestamp\":\"2021-01-19T09:38:46Z\"}",
+                    "source_type": "kafka",
+                    "tags": [
+                        "kafka"
+                    ],
+                    "timestamp": "2021-01-19T09:38:46Z"
+                }
+            },
+            {
+                "_index": "syslog-2021.01.19",
+                "_type": "_doc",
+                "_id": "S2ICGncB9L43fiW7zZF5",
+                "_score": 1.0,
+                "_source": {
+                    "message": "{\"appname\":\"systemd\",\"dev-viz_localhost\":\"dev-viz\",\"facility\":\"daemon\",\"hostname\":\"dev-viz\",\"message\":\"Stopped target Sockets.\",\"procid\":21430,\"severity\":\"info\",\"source_ip\":\"172.20.0.1\",\"source_type\":\"syslog\",\"tags\":[\"syslog\",\"json\"],\"timestamp\":\"2021-01-19T09:38:46Z\"}",
+                    "source_type": "kafka",
+                    "tags": [
+                        "kafka"
+                    ],
+                    "timestamp": "2021-01-19T09:38:46Z"
+                }
+            },
+            {
+                "_index": "syslog-2021.01.19",
+                "_type": "_doc",
+                "_id": "TGICGncB9L43fiW7zZF5",
+                "_score": 1.0,
+                "_source": {
+                    "message": "{\"appname\":\"systemd\",\"dev-viz_localhost\":\"dev-viz\",\"facility\":\"daemon\",\"hostname\":\"dev-viz\",\"message\":\"Closed GnuPG cryptographic agent and passphrase cache (access for web browsers).\",\"procid\":21430,\"severity\":\"info\",\"source_ip\":\"172.20.0.1\",\"source_type\":\"syslog\",\"tags\":[\"syslog\",\"json\"],\"timestamp\":\"2021-01-19T09:38:46Z\"}",
+                    "source_type": "kafka",
+                    "tags": [
+                        "kafka"
+                    ],
+                    "timestamp": "2021-01-19T09:38:46Z"
+                }
+            }
+        ]
+    }
+}
