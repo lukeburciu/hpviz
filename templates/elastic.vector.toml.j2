@@ -7,6 +7,16 @@
   topics = ["logging.syslog.raw"]
   group_id= "elasticsearch-ingestion"
 
+[sources.kafka_logging_syslog_processed]
+  # pulls the syslog events from the kafka topic
+
+  type = "kafka"
+  bootstrap_servers = "{{ hpviz_broker_bootstrap_server1 }}:{{ hpviz_broker_bootstrap_port1 }}" # IP required not hostname
+  key_field = "host"
+  topics = ["logging.syslog.processed"]
+  group_id= "elasticsearch-ingestion"
+
+
 [transforms.kafka_message]
   # this process processes the kafka 'message' field which is in json format and is the full syslog event
   # pushed to kafka topic, once processed it deletes the original 'message' field
@@ -24,7 +34,7 @@
 
   # General
   type = "elasticsearch"
-  inputs = ["kafka_message"]
+  inputs = ["kafka_message", "kafka_logging_syslog_processed"]
   compression = "none"
   doc_type = "_doc"
   healthcheck = true

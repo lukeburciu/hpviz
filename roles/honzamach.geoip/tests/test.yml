@@ -1,0 +1,13 @@
+---
+
+#
+# This playbook is used for testing the role with TravisCI. The role name in this
+# playbook file must match the name of GitHub repository.
+#
+
+- hosts: servers_geoip
+  remote_user: root
+  roles:
+    - role: ansible-role-geoip
+  tags:
+    - role-geoip

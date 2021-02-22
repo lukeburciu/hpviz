@@ -46,6 +46,67 @@
   #tags
   fields.tags = ["syslog", "json"]
 
+[transforms.regex_sshd_1]
+  # This regex processes logs with a message of (examples):
+  # Disconnected from 178.154.253.235 port 36640 [preauth]
+  # Failed password for root from 37.152.180.201 port 34364 ssh2
+  # Disconnected from invalid user maprdev 173.212.240.196 port 45598 [preauth]
+  # Received disconnect from 49.235.107.161 port 35076:11: Bye Bye [preauth]
+  # lo
+  # Disconnected from authenticating user root 51.77.150.118 port 56266 [preauth]
+  # Connection closed by invalid user pi 109.116.77.115 port 39062 [preauth]
+  
+  type = "regex_parser" # required
+  inputs = ["tag"] # required
+  drop_failed = false # optional, default
+  drop_field = true # optional, default
+  field = "message" # optional, default
+  overwrite_target = true # optional, default
+  patterns = ['(?P<action>^(?:\w+\s?){1,5}.*) (?P<src_ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) port (?P<src_port>[\d]+)'] # required
+
+[transforms.regex_cowrie_1]
+  # This regex processes logs with a message of (examples):
+  # [SSHChannel cowrie-discarded-direct-tcpip (9) on SSHService 'ssh-connection' on HoneyPotSSHTransport,432878,5.182.39.64] discarded direct-tcp forward request 9 to auth.roblox.com:443 with data
+  
+  type = "regex_parser" # required
+  inputs = ["tag"] # required
+  drop_failed = false # optional, default
+  drop_field = true # optional, default
+  field = "message" # optional, default
+  overwrite_target = true # optional, default
+  patterns = ['(?P<service>[\w]+),(?P<pid>[\d]+),(?P<src_ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})]\s(?P<dst_response>discarded direct-tcp forward request)\s[\d]+ to\s(?P<dst_ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}+):(?P<dst_port>[0-9]+)'] # required
+
+[transforms.geoip_src_ip_1]
+  type = "geoip" # required
+  inputs = ["regex_cowrie_1", "regex_sshd_1"] # required
+  database = "{{ hm_geoip__database_directory }}/GeoLite2-ASN.mmdb" # required
+  source = "src_ip" # required
+  target = "geoip" # optional, default
+
+
+[sinks.kafka_processed]
+  # General
+  type = "kafka" # required
+  inputs = ["geoip_src_ip_1"]
+  #inputs = ["regex_cowrie_1", "regex_sshd_1"] # Format: "[sources.foo]", "[sources.bar]" == ["foo", "bar"]
+  bootstrap_servers = "{{ hpviz_broker_bootstrap_server1 }}:{{ hpviz_broker_bootstrap_port1 }}" # IP required not hostname
+  compression = "none" # optional, default
+  healthcheck = true # optional, default
+  key_field = "host" # empty means one will be automatically generated
+  message_timeout_ms = 300000 # optional, default
+  socket_timeout_ms = 60000 # optional, default
+  topic = "logging.syslog.processed" # required
+
+  # Buffer
+  buffer.max_events = 500 # optional, default, events, relevant when type = "memory"
+  buffer.max_size = 104900000 # required, bytes, required when type = "disk"
+  buffer.type = "memory" # optional, default
+  buffer.when_full = "block" # optional, default
+
+  # Encoding
+  encoding.codec = "json" # optional, default
+  encoding.timestamp_format = "rfc3339" # optional, default
+
 [sinks.kafka]
   # General
   type = "kafka" # required

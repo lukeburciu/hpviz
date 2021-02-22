@@ -19,6 +19,9 @@
 - name: import pb-docker-deploy-sink.yml
   import_playbook: pb-docker-deploy-sink.yml
 
+- name: import pb-geoip.yml
+  import_playbook: pb-geoip.yml
+
 - name: import pb-deploy-nginx.yml
   import_playbook: pb-deploy-nginx.yml
 

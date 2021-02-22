@@ -28,6 +28,11 @@
       when:
         ansible_host!="localhost"
 
+    - name: pip self-update
+      pip:
+        name: pip
+        state: latest
+
   roles:
     - role: common_tasks
     - role: geerlingguy.pip
