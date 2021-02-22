@@ -1,0 +1,17 @@
+galaxy_info:
+  role_name: geoip
+  author: Jan Mach
+  description: Ansible role for convenient installation of the free IP geolocation databases GeoLite2 provided by MaxMind.
+  license: MIT
+  min_ansible_version: 2.5
+  github_branch: master
+  platforms:
+    - name: Debian
+      versions:
+        - all
+  galaxy_tags:
+    - system
+    - database
+    - geoip
+
+dependencies: []

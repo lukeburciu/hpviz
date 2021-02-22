@@ -70,6 +70,8 @@
         # logs
         - ["{{ hpviz_base_dir }}/logs", 'root']
         - ["{{ hpviz_base_dir }}/logs/vector", 'vector']
+        # Maxmind db
+        - ["{{ hpviz_base_dir }}/maxmind/geolite", 'vector']
 
       tags:
         - structure

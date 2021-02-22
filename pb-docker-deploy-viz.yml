@@ -131,6 +131,8 @@
         - ["{{ hpviz_base_dir }}/logs/vector-ingest", "vector"]
         - ["{{ hpviz_base_dir }}/logs/vector2elastic", "vector"]
         - ["{{ hpviz_base_dir }}/logs/nifi", "nifi"]
+        # maxmind geolite2 db
+        - ["{{ hm_geoip__database_directory }}", "vector"]
       tags:
         - structure
         - skip_ansible_lint
@@ -144,6 +146,8 @@
         - vector-ingest
         - configs
         - containers
+        - vector
+        - vec-config
 
     - name: Check vector 2 elastic TOML config exists
       template:
@@ -154,6 +158,8 @@
         - vector2elastic
         - configs
         - containers
+        - vector
+        - vec-config
 
     - name: Check rsyslog config exist
       template:
@@ -410,6 +416,7 @@
           - "/etc/ssl/private/{{ hpviz_vector_hostkey }}.key:/etc/ssl/private/{{ hpviz_vector_hostkey }}.key"
           - "{{ hpviz_base_dir }}/etc/vector-ingest/viz.vector.toml:/etc/vector/vector.toml:ro"
           - /var/run/docker.sock:/var/run/docker.sock:ro
+          - "{{ hm_geoip__database_directory }}:{{ hm_geoip__database_directory }}"
       tags:
         - vector-ingest
         - containers

@@ -12,21 +12,26 @@
     - name: check common packages are installed
       package:
         name:
-          - kafkacat                # command line non jvm kafka cli producer and consumer
+          - kafkacat # command line non jvm kafka cli producer and consumer
           - openjdk-11-jre-headless # required for java keytool
           - ca-certificates
         state: present
-      when:
-        ansible_host!="localhost"
+      when: ansible_host!="localhost"
 
     - name: Remove unwanted packages
       package:
         name:
           - syslog-ng
-          - librdkafka-dev          # library required for syslogng_kafka pip install
+          - librdkafka-dev # library required for syslogng_kafka pip install
         state: absent
-      when:
-        ansible_host!="localhost"
+      when: ansible_host!="localhost"
+
+    - name: pip self-update
+      pip:
+        name: pip
+        state: latest
+      tags:
+        - skip_ansible_lint # 403 warning
 
   roles:
     - role: common_tasks
@@ -45,8 +50,8 @@
 
     - name: copy certificate authority to trusted ca path of the os
       copy:
-        src: 'files/hpviz-ca-chain-bundle.crt'
-        dest: '/usr/local/share/ca-certificates/hpviz-ca-chain-bundle.crt'
+        src: "files/hpviz-ca-chain-bundle.crt"
+        dest: "/usr/local/share/ca-certificates/hpviz-ca-chain-bundle.crt"
         owner: root
         group: root
         mode: 0644
@@ -57,11 +62,11 @@
 
     - name: Copy public certificate to nginx SSL configuration folder.
       copy:
-          content: "{{ hpviz_tls_cert }}"
-          dest: '/etc/ssl/certs/{{ hpviz_vector_hostkey }}.crt'
-          mode: 0640
-          owner: root
-          group: root
+        content: "{{ hpviz_tls_cert }}"
+        dest: "/etc/ssl/certs/{{ hpviz_vector_hostkey }}.crt"
+        mode: 0640
+        owner: root
+        group: root
       notify: restart nginx
       ignore_errors: yes
       tags:
@@ -70,7 +75,7 @@
     - name: Copy private key to SSL configuration folder.
       copy:
         content: "{{ hpviz_tls_key }}"
-        dest: '/etc/ssl/private/{{ hpviz_vector_hostkey }}.key'
+        dest: "/etc/ssl/private/{{ hpviz_vector_hostkey }}.key"
         mode: 0600
         owner: root
         group: root

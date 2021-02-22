@@ -238,6 +238,7 @@ roles/*
 !roles/common_tasks/*
 !roles/user_management/*
 !roles/bootstrap/*
+!roles/honzamach.geoip
 docker/nginx/*
 docker/dev/*
 .vagrant

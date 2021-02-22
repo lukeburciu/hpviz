@@ -50,9 +50,9 @@
         path: /etc/nginx/nifi.htpasswd
         name: "{{ hpviz_nifi_admin_user }}"
         password: "{{ hpviz_nifi_admin_pass }}"
-        # owner: root
-        # group: root
-        # mode: 0640
+        mode: 0600
+        owner: root
+        group: root
       tags: nginx
 
     - name: reload nginx

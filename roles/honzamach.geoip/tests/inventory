@@ -1,0 +1,6 @@
+#
+# This inventory file is used for testing the role with TravisCI.
+#
+
+[servers_geoip]
+localhost

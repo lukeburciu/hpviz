@@ -9,6 +9,8 @@ roles:
     src: geerlingguy.nginx
   - name: robertdebock.firewall
     src: robertdebock.firewall
+  # - name: honzamach.geoip
+  #   src: honzamach.geoip
 
 # collections to retrieve from Galaxy
 collections:

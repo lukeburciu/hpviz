@@ -1,0 +1,8 @@
+---
+
+- name: Configuration validity check
+  assert:
+    that:
+        - 'hm_geoip__account_id is defined'
+        - 'hm_geoip__license_key is defined'
+    msg: "MaxMind account ID and license keys must be defined to proceed"

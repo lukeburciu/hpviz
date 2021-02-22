@@ -7,7 +7,7 @@
   host_key = "host"
 
 [sources.syslog_udp_must]
-  # syslog from docker-must 
+  # syslog from docker-must
   type = "syslog" # required
   address = "0.0.0.0:{{ docker_must_port }}"
   mode = "udp" # required, options 'udp', 'tcp', 'unix'
