@@ -16,25 +16,25 @@
   topics = ["logging.syslog.processed"]
   group_id= "elasticsearch-ingestion"
 
-
 [transforms.kafka_message]
   # this process processes the kafka 'message' field which is in json format and is the full syslog event
   # pushed to kafka topic, once processed it deletes the original 'message' field
   # this is required otherwise elastic will just index the message field as a string
 
   type="json_parser"
-  inputs = ["kafka_logging_syslog_raw"]
+  inputs = ["kafka_logging_syslog_raw", "kafka_logging_syslog_processed"]
   field = "message"
   drop_field = true
   drop_invalid = false
   overwrite_target = true
+
 
 [sinks.elasticsearch_syslog]
   # pushes the JSON syslog event to elastic for indexing
 
   # General
   type = "elasticsearch"
-  inputs = ["kafka_message", "kafka_logging_syslog_processed"]
+  inputs = ["kafka_message"]#, "kafka_logging_syslog_processed"]
   compression = "none"
   doc_type = "_doc"
   healthcheck = true

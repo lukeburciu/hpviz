@@ -2,7 +2,7 @@
   hosts: viz:!localhost
   gather_facts: yes
   become: true
-  
+
   roles:
     - role: honzamach.geoip
   tags:
