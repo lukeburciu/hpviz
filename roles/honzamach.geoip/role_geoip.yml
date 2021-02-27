@@ -1,0 +1,19 @@
+---
+
+#
+# This is an example playbook that you can immediatelly use after installing the
+# role from Ansible Galaxy. Just make sure to put your target hosts to appropriate
+# group in your inventory file.
+#
+# When installing role manually by cloning directly GitHub repository please use
+# following command (otherwise you may break role dependency system):
+#
+#   git clone https://github.com/honzamach/ansible-role-geoip.git honzamach.geoip
+#
+
+- hosts: servers_geoip
+  remote_user: root
+  roles:
+    - role: honzamach.geoip
+  tags:
+    - role-geoip

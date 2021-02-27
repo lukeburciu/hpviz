@@ -5,6 +5,12 @@ hpviz_base_dir: /opt/hpviz
 #ca_file absolute path
 local_ca_file: "/usr/local/share/ca-certificates/hpviz-ca-chain-bundle.crt"
 
+#Maxmind GeoLite2
+hm_geoip__account_id: "{{ vault_hm_geoip__account_id }}"
+hm_geoip__license_key: "{{ vault_hm_geoip__license_key }}"
+hm_geoip__edition_ids: ["GeoLite2-ASN", "GeoLite2-City", "GeoLite2-Country"]
+hm_geoip__database_directory: "{{ hpviz_base_dir }}/data/geoip"
+
 # These are users specific to "viz" group of hosts
 #  1) To remove a user from all groups replace the group list with empty string ''
 #  2) Removing users change 'state: absent'  all theire directories will eb removed

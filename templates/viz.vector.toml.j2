@@ -2,9 +2,8 @@
   # syslog from thesink via vector
   # General
   type = "vector" # Assuming the source is the Vector sink on 'thesink'
-  ## address = "143.110.158.73:9000" # IP address of 'thesink' (to be removed)
   address = "0.0.0.0:{{ hpviz_vector_port }}" # IP address of 'thesink'
-  shutdown_timeout_secs = 30 # optional, default: 30s
+  shutdown_timeout_secs = 30 #: 30s
 
   # TLS
   # Make sure to mount volume in docker-compose '/etc/ca-certificates/certificate_authority.crt:/etc/ssl/certs/certificate_authority.crt'
@@ -12,59 +11,317 @@
   tls.crt_file = "/etc/ssl/certs/{{ hpviz_vector_hostkey }}.crt" # as above
   tls.enabled = true
   tls.key_file = "/etc/ssl/private/{{ hpviz_vector_hostkey }}.key" # as above
-  #tls.key_pass = " hpviz_vector_hostkey_secret " # Placeholder: TO DO: Configure GITHUB SECRETS and enable 'hpviz_vector_hostkey_secret'
+  #tls.key_pass = " hpviz_vector_hostkey_secret " # TODO: Configure GITHUB SECRETS and enable 'hpviz_vector_hostkey_secret'
   tls.verify_certificate = false
 
 [sources.syslog_viz001]
   # syslog from viz001 (localhost)
-  type = "syslog" # required
+  type = "syslog"
   address = "0.0.0.0:{{ hpviz_syslog_ingest_port }}"
-  mode = "tcp" # required, options 'udp', 'tcp', 'unix'
+  mode = "tcp" # options 'udp', 'tcp', 'unix'
   # Context
   host_key = "host"
 
-{#[transforms.parse_syslog]
-  type = "logfmt_parser"
-  inputs = ["syslog_viz001", "thesink"]
-  drop_field = false
-  field = "message"
-  # Types
-  types.status = "int" # example
-  types.duration = "float" # example
-  types.success = "bool" # example
-  types.timestamp = "timestamp|%F" # example
-  #types.timestamp = "timestamp|%a %b %e %T %Y" # example
-  types.parent.child = "int" # example
-  types.appname = "string"
-  types.facility = "string"#}
-
+#===================================< tagging >=================================================#
 [transforms.tag]
+  # 
+  # First stage in processing pipeline
+  #   everything tagged as 'syslog', 'json' and 'raw'
+  #   as logs are processed the tag will be updated to 'processed' and also tagged as type i.e. 'sshd'
+  #   anything not processed will remain with tag = 'raw' 
+  #
   type="add_fields"
   inputs = ["syslog_viz001", "thesink"]
   overwrite=true
 
   #tags
-  fields.tags = ["syslog", "json"]
+  fields.tags = ["syslog", "json", "raw"]
 
-[sinks.kafka]
+#===================================< transforms >===============================================#
+# <<SSHD START>>
+
+[transforms.regex_sshd_log]
+  # 
+  # 
+  # This regex processes logs with a message of (examples):
+  # Disconnected from 178.154.253.235 port 36640 [preauth]
+  # Failed password for root from 37.152.180.201 port 34364 ssh2
+  # Disconnected from invalid user maprdev 173.212.240.196 port 45598 [preauth]
+  # Received disconnect from 49.235.107.161 port 35076:11: Bye Bye [preauth]
+  # Disconnected from authenticating user root 51.77.150.118 port 56266 [preauth]
+  # Connection closed by invalid user pi 109.116.77.115 port 39062 [preauth]
+
+  type = "regex_parser"
+  inputs = ["tag"]
+  drop_failed = true
+  drop_field = true
+  field = "message"
+  overwrite_target = true
+  patterns = ['(?P<action>^(?:\w+\s?){1,5}.*) (?P<src_ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) port (?P<src_port>[\d]+)']
+
+
+[transforms.tag_regex_sshd_log]
+  type="add_fields"
+  inputs = ["regex_sshd_log"]
+  overwrite=true
+
+  #tags
+  fields.tags = ["syslog", "json", "sshd"]
+
+[transforms.src_ip_geoip_sshd_log]
+  # GeoIP transform for src_ip
+  type = "geoip"
+  inputs = ["tag_regex_sshd_log"]
+  database = "{{ hm_geoip__database_directory }}/GeoLite2-ASN.mmdb"
+  source = "src_ip"
+  target = "src"
+
+[transforms.src_ip_geocity_sshd_log]
+  # GeoCity transform for dst_ip
+  type = "geoip"
+  inputs = ["tag_regex_sshd_log"]
+  database = "{{ hm_geoip__database_directory }}/GeoLite2-City.mmdb"
+  source = "src_ip"
+  target = "src"
+
+[transforms.transform_src_ip_geoip_sshd_log]
+  # json flattening transform for src_ip
+  type = "json_parser"
+  inputs = ["src_ip_geoip_sshd_log"]
+  drop_field = true
+  drop_invalid = false
+  field = "src"
+  overwrite_target = false #false
+  #target_field = "src" # optional, no default
+
+
+[transforms.transform_src_ip_geocity_sshd_log]
+  # json flattening transform for src_ip
+  type = "json_parser"
+  inputs = ["src_ip_geocity_sshd_log"]
+  drop_field = true
+  drop_invalid = false
+  field = "src"
+  overwrite_target = false #false
+  #target_field = "src" # optional, no default
+
+[transforms.rename_transform_src_ip_geoip_sshd_log]
   # General
-  type = "kafka" # required
-  #inputs = ["syslog_viz001", "thesink"] # Format: "[sources.foo]", "[sources.bar]" == ["foo", "bar"]
-  inputs = ["tag"] # Format: "[sources.foo]", "[sources.bar]" == ["foo", "bar"]
+  type = "rename_fields"
+  inputs = ["transform_src_ip_geoip_sshd_log"]
+
+  # Fields
+  fields.autonomous_system_number = "autonomous_system_number_src_ip"
+  fields.autonomous_system_organization = "autonomous_system_organization_src_ip"
+  fields.isp = "isp_src_ip"
+  fields.organization = "organization_src_ip"
+
+
+[transforms.rename_transform_src_ip_geocity_sshd_log]
+  # General
+  type = "rename_fields"
+  inputs = ["transform_src_ip_geocity_sshd_log"]
+
+  # Fields
+  fields.city_name = "city_name_src_ip"
+  fields.continent_code = "continent_code_src_ip"
+  fields.country_code = "country_code_src_ip"
+  fields.latitude = "latitude_src_ip"
+  fields.longitude = "longitude_src_ip"
+  fields.postal_code = "postal_code_src_ip"
+  fields.timezone = "timezone_src_ip"
+
+
+
+[transforms.reduce_sshd_log]
+  # General
+  type = "reduce"
+  inputs = ["rename_transform_src_ip_geoip_sshd_log", "rename_transform_src_ip_geocity_sshd_log"]
+  group_by = []
+
+  expire_after_ms = 10
+  flush_period_ms = 5
+
+# SSHD Field = ["reduce_sshd_log"]
+
+# <<SSHD END>>
+#==================================================================================#
+
+#==================================================================================#
+# << COWRIE START >>
+
+[transforms.regex_cowrie_log]
+  # This regex processes logs with a message of (examples):
+  # [SSHChannel cowrie-discarded-direct-tcpip (23) on SSHService 'ssh-connection' on HoneyPotSSHTransport,384039,5.182.39.61] discarded direct-tcp forward request 23 to 188.125.73.109:993 with data
+
+  type = "regex_parser"
+  inputs = ["tag"]
+  drop_failed = true
+  drop_field = true
+  field = "message"
+  overwrite_target = true
+  patterns = ['(?P<service>[\w]+),(?P<pid>[\d]+),(?P<src_ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})]\s(?P<dst_response>discarded direct-tcp forward request)\s[\d]+ to\s(?P<dst_ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}+):(?P<dst_port>[0-9]+)']
+
+[transforms.tag_regex_cowrie_log]
+  type="add_fields"
+  inputs = ["regex_cowrie_log"]
+  overwrite=true
+
+  #tags
+  fields.tags = ["syslog", "json", "cowrie"]
+
+[transforms.src_ip_geoip_cowrie_log]
+  # GeoIP transform for src_ip
+  type = "geoip"
+  inputs = ["tag_regex_cowrie_log"]
+  database = "{{ hm_geoip__database_directory }}/GeoLite2-ASN.mmdb"
+  source = "src_ip"
+  target = "src"
+
+[transforms.dst_ip_geoip_cowrie_log]
+  # GeoIP transform for dst_ip
+  type = "geoip"
+  inputs = ["tag_regex_cowrie_log"]
+  database = "{{ hm_geoip__database_directory }}/GeoLite2-ASN.mmdb"
+  source = "dst_ip"
+  target = "dst"
+
+[transforms.src_ip_geocity_cowrie_log]
+  # GeoCity transform for dst_ip
+  type = "geoip"
+  inputs = ["tag_regex_cowrie_log"]
+  database = "{{ hm_geoip__database_directory }}/GeoLite2-City.mmdb"
+  source = "src_ip"
+  target = "src"
+
+[transforms.dst_ip_geocity_cowrie_log]
+  # GeoCity transform for dst_ip
+  type = "geoip"
+  inputs = ["tag_regex_cowrie_log"]
+  database = "{{ hm_geoip__database_directory }}/GeoLite2-City.mmdb"
+  source = "dst_ip"
+  target = "dst"
+
+[transforms.transform_src_ip_geolite_cowrie_log]
+  # json flattening transform for src_ip
+  type = "json_parser"
+  inputs = ["src_ip_geoip_cowrie_log", "src_ip_geocity_cowrie_log"]
+  drop_field = true
+  drop_invalid = false
+  field = "src"
+  overwrite_target = false #false
+  #target_field = "src" # optional, no default
+
+[transforms.transform_dst_ip_geolite_cowrie_log]
+  # json flattening transform for dst_ip
+  type = "json_parser"
+  inputs = ["dst_ip_geoip_cowrie_log", "dst_ip_geocity_cowrie_log"]
+  drop_field = true
+  drop_invalid = false
+  field = "dst"
+  overwrite_target = false #false
+  #target_field = "dst"
+
+[transforms.rename_transform_src_ip_geolite_cowrie_log]
+  # General
+  type = "rename_fields"
+  inputs = ["transform_src_ip_geolite_cowrie_log"]
+
+  # Fields
+  fields.autonomous_system_number = "autonomous_system_number_src_ip"
+  fields.autonomous_system_organization = "autonomous_system_organization_src_ip"
+  fields.isp = "isp_src_ip"
+  fields.organization = "organization_src_ip"
+  fields.city_name = "city_name_src_ip"
+  fields.continent_code = "continent_code_src_ip"
+  fields.country_code = "country_code_src_ip"
+  fields.latitude = "latitude_src_ip"
+  fields.longitude = "longitude_src_ip"
+  fields.postal_code = "postal_code_src_ip"
+  fields.timezone = "timezone_src_ip"
+
+[transforms.rename_transform_dst_ip_geolite_cowrie_log]
+  # General
+  type = "rename_fields"
+  inputs = ["transform_dst_ip_geolite_cowrie_log"]
+
+  # Fields
+  fields.autonomous_system_number = "autonomous_system_number_dst_ip"
+  fields.autonomous_system_organization = "autonomous_system_organization_dst_ip"
+  fields.isp = "isp_dst_ip"
+  fields.organization = "organization_dst_ip"
+  fields.city_name = "city_name_dst_ip"
+  fields.continent_code = "continent_code_dst_ip"
+  fields.country_code = "country_code_dst_ip"
+  fields.latitude = "latitude_dst_ip"
+  fields.longitude = "longitude_dst_ip"
+  fields.postal_code = "postal_code_dst_ip"
+  fields.timezone = "timezone_dst_ip"
+
+[transforms.reduce_cowrie_log]
+  # General
+  type = "reduce"
+  inputs = ["rename_transform_src_ip_geolite_cowrie_log", "rename_transform_dst_ip_geolite_cowrie_log"]
+  group_by = []
+
+  expire_after_ms = 10
+  flush_period_ms = 5
+
+
+# << COWRIE END >>
+
+#=================================< /transforms >=================================================#
+
+
+# ==============================< Sinks >======================================== #
+
+[sinks.kafka_processed]
+  # 
+  # sink for all log messages that have been processed i.e. transformed and enriched with GeoIP
+  #
+  type = "kafka"
+  inputs = ["reduce_cowrie_log", "reduce_sshd_log"]
+  #inputs = ["rename_transform_src_ip_geolite_log", "rename_transform_dst_ip_geolite_log"]
+  #inputs = ["regex_cowrie_1", "regex_sshd_1"]
   bootstrap_servers = "{{ hpviz_broker_bootstrap_server1 }}:{{ hpviz_broker_bootstrap_port1 }}" # IP required not hostname
-  compression = "none" # optional, default
-  healthcheck = true # optional, default
-  key_field = "host" # empty means one will be automatically generated
-  message_timeout_ms = 300000 # optional, default
-  socket_timeout_ms = 60000 # optional, default
-  topic = "logging.syslog.raw" # required
+  compression = "none" 
+  healthcheck = true 
+  key_field = "host" 
+  message_timeout_ms = 300000 
+  socket_timeout_ms = 60000 
+  topic = "logging.syslog.processed"
 
   # Buffer
-  buffer.max_events = 500 # optional, default, events, relevant when type = "memory"
-  buffer.max_size = 104900000 # required, bytes, required when type = "disk"
-  buffer.type = "memory" # optional, default
-  buffer.when_full = "block" # optional, default
+  buffer.max_events = 500 
+  buffer.max_size = 104900000 
+  buffer.type = "memory" 
+  buffer.when_full = "block" 
 
   # Encoding
-  encoding.codec = "json" # optional, default
-  encoding.timestamp_format = "rfc3339" # optional, default
+  encoding.codec = "json" 
+  encoding.timestamp_format = "rfc3339"
+
+
+[sinks.kafka_raw]
+  # 
+  # sink for raw unprocessed logs, i.e. these logs have not been transformed or enriched
+  #
+  type = "kafka"
+  inputs = ["tag"]
+  bootstrap_servers = "{{ hpviz_broker_bootstrap_server1 }}:{{ hpviz_broker_bootstrap_port1 }}" # IP required not hostname
+  compression = "none" 
+  healthcheck = true 
+  key_field = "host" 
+  message_timeout_ms = 300000 
+  socket_timeout_ms = 60000 
+  topic = "logging.syslog.raw" 
+
+  # Buffer
+  buffer.max_events = 500
+  buffer.max_size = 104900000
+  buffer.type = "memory" 
+  buffer.when_full = "block" 
+
+  # Encoding
+  encoding.codec = "json" 
+  encoding.timestamp_format = "rfc3339" 

@@ -1,0 +1,5 @@
+---
+
+- name: Install geoipupdate utility
+  apt:
+    deb: "{{ hm_geoip__package_url }}"

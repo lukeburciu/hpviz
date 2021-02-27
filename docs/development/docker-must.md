@@ -6,7 +6,7 @@ MUST <https://sourceforge.net/p/mustsyslog/wiki/Home/>
 
 M - More
 U - Useful
-S - Syslog 
+S - Syslog
 T - Testing tool
 
 Flow of data:
@@ -35,6 +35,3 @@ sudo docker start docker-must
 ```
 sudo docker stop docker-must
 ```
-
-
-

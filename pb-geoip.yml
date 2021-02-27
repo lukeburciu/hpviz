@@ -1,0 +1,10 @@
+- name: Install Maxmind GeoLite2 database
+  hosts: viz:!localhost
+  gather_facts: yes
+  become: true
+
+  roles:
+    - role: honzamach.geoip
+  tags:
+    - geoip
+    - geolite2

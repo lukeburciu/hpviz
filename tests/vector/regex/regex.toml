@@ -1,0 +1,40 @@
+
+[sources.foo]
+  type = "socket"
+  address = "0.0.0.0:9000"
+  mode = "tcp"
+
+# Structure the data
+[transforms.apache_parser]
+  inputs = ["foo"]
+  type = "regex_parser"
+  field = "message"
+  patterns = ['(?P<service>[\w]+),(?P<pid>[\d]+),(?P<src_ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})]\s(?P<dst_response>discarded direct-tcp forward request)\s[\d]+ to\s(?P<dst_ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}+):(?P<dst_port>[0-9]+)'] # required
+
+# Write the data
+[sinks.bar]
+  inputs = ["apache_parser"]
+  type = "elasticsearch"
+  index = "example-index"
+  host = "http://10.24.32.122:9000"
+
+[[tests]]
+  name = "test apache regex"
+
+  [[tests.inputs]]
+    insert_at = "apache_parser"
+    type = "raw"
+    #value = "[SSHChannel cowrie-discarded-direct-tcpip (23) on SSHService 'ssh-connection' on HoneyPotSSHTransport,384039,5.182.39.61] discarded direct-tcp forward request 23 to 188.125.73.109:993 with data"
+    #value = "[SSHChannel cowrie-discarded-direct-tcpip (9) on SSHService 'ssh-connection' on HoneyPotSSHTransport,432878,5.182.39.64] discarded direct-tcp forward request 9 to auth.roblox.com:443 with data"
+    value = "[SSHChannel cowrie-discarded-direct-tcpip (23) on SSHService 'ssh-connection' on HoneyPotSSHTransport,384039,5.182.39.61] discarded direct-tcp forward request 23 to 188.125.73.109:993 with data"
+
+  [[tests.outputs]]
+    extract_from = "apache_parser"
+    [[tests.outputs.conditions]]
+      type = "check_fields"
+      "service.eq" = "HoneyPotSSHTransport"
+      "pid.eq" = "384039"
+      "src_ip.eq" = "5.182.39.61"
+      "dst_response.eq" = "discarded direct-tcp forward request"
+      "dst_ip.eq" = "188.125.73.109"
+      "dst_port.eq" = "993"

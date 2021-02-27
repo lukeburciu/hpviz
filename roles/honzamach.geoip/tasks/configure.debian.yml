@@ -1,0 +1,37 @@
+---
+
+- name: Configuring geoipupdate utility
+  template:
+    src: "{{ item }}"
+    dest: /etc/GeoIP.conf
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  with_first_found:
+    - "inventory/host_files/{{ inventory_hostname }}/honzamach.geoip/GeoIP.conf.j2"
+    - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.geoip/GeoIP.conf.{{ ansible_lsb['codename'] }}.j2"
+    - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.geoip/GeoIP.conf.j2"
+    - "inventory/group_files/servers/honzamach.geoip/GeoIP.conf.{{ ansible_lsb['codename'] }}.j2"
+    - "inventory/group_files/servers/honzamach.geoip/GeoIP.conf.j2"
+    - "GeoIP.conf.{{ ansible_lsb['codename'] }}.j2"
+    - "GeoIP.conf.j2"
+  notify:
+    - Fetch GeoIP databases
+
+- name: Configuring cronjob for geoipupdate utility
+  template:
+    src: "{{ item }}"
+    dest: /etc/cron.d/geoipupdate
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  with_first_found:
+    - "inventory/host_files/{{ inventory_hostname }}/honzamach.geoip/geoipupdate.cron.j2"
+    - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.geoip/geoipupdate.cron.{{ ansible_lsb['codename'] }}.j2"
+    - "inventory/group_files/servers_{{ msms_server_type }}/honzamach.geoip/geoipupdate.cron.j2"
+    - "inventory/group_files/servers/honzamach.geoip/geoipupdate.cron.{{ ansible_lsb['codename'] }}.j2"
+    - "inventory/group_files/servers/honzamach.geoip/geoipupdate.cron.j2"
+    - "geoipupdate.cron.{{ ansible_lsb['codename'] }}.j2"
+    - "geoipupdate.cron.j2"
