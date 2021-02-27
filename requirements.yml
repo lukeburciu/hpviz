@@ -7,8 +7,8 @@ roles:
     src: geerlingguy.pip
   - name: geerlingguy.nginx
     src: geerlingguy.nginx
-  - name: robertdebock.firewall
-    src: robertdebock.firewall
+  # - name: robertdebock.firewall  #todo: remove comment when upstream role is fixed issue #98
+  #  src: robertdebock.firewall
   # - name: honzamach.geoip
   #   src: honzamach.geoip
 

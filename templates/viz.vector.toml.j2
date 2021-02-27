@@ -54,7 +54,7 @@
   type = "regex_parser"
   inputs = ["tag"]
   drop_failed = true
-  drop_field = true
+  drop_field = false
   field = "message"
   overwrite_target = true
   patterns = ['(?P<action>^(?:\w+\s?){1,5}.*) (?P<src_ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) port (?P<src_port>[\d]+)']
@@ -157,7 +157,7 @@
   type = "regex_parser"
   inputs = ["tag"]
   drop_failed = true
-  drop_field = true
+  drop_field = false
   field = "message"
   overwrite_target = true
   patterns = ['(?P<service>[\w]+),(?P<pid>[\d]+),(?P<src_ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})]\s(?P<dst_response>discarded direct-tcp forward request)\s[\d]+ to\s(?P<dst_ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}+):(?P<dst_port>[0-9]+)']
