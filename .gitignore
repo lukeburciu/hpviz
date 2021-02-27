@@ -238,6 +238,8 @@ roles/*
 !roles/common_tasks/*
 !roles/user_management/*
 !roles/bootstrap/*
+#todo: workaround for issue #98 until upstream firewall role is fixed
+!roles/robertdebock.firewall
 !roles/honzamach.geoip
 docker/nginx/*
 docker/dev/*
