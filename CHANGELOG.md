@@ -9,7 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [0.0.9] 2021-02-27
 - added GeoIP enrichment
 - added cowerie log processing
-- added ssh log processing 
+- added ssh log processing
+- fixed issue #98
+- fixed issue #106 
 
 ## [0.0.8] 2021-02-01
 - Added MUST syslog generator for testing
