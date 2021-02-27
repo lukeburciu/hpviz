@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.0.8] 2021-02-27
+- added GeoIP enrichment
+- added cowerie log processing
+- added ssh log processing 
+
 ## [0.0.7] 2021-01-31
 - Fixed issue #88 Elasticsearch ingestion issues
 
