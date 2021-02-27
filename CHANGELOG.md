@@ -6,10 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.0.11]2021-02-27
+- fixed issue #108
+
 ## [0.0.10] 2021-02-27
 - fixed issue #98
 - fixed issue #106 
-- 
+
 ## [0.0.9] 2021-02-27
 - added GeoIP enrichment
 - added cowerie log processing
