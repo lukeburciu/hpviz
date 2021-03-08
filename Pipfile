@@ -5,14 +5,16 @@ verify_ssl = true
 
 [dev-packages]
 molecule = "*"
-docker = {extras = ["molecule"], version = "*"}
+mkdocs-material = "*"
+mkdocs-print-site-plugin = "*"
+mkdocs-macros-plugin = "*"
+testinfra = "*"
+flake8 = "*"
+ansible-lint = "*"
 
 [packages]
 docker = {extras = ["molecule"], version = "*"}
-testinfra = "*"
 ansible = "*"
-flake8 = "*"
-ansible-lint = "*"
 
 [requires]
 python_version = "3.8"

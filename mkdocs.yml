@@ -1,0 +1,80 @@
+# project information
+site_name: "HPViZ"
+site_author: "Stephen Eaton"
+site_description: "Honeypot Visualisation Project"
+
+# Page Tree
+nav:
+  - Home: index.md
+  - Architecture:
+      - arch/overview.md
+      - arch/components.md
+      - arch/devops.md
+  - Development:
+      - dev/gettingstarted.md
+      - dev/vagrant.md
+      - dev/ansible.md
+      - dev/github.md
+      - dev/docker-must.md
+      - dev/contributing
+  - Authors: authors.md
+  - Change Log: changelog.md
+  - License: license.md
+
+# Configuration
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.indexes
+    - navigation.expand
+    - header.autohide
+
+# Repository
+repo_name: "lukeburciu/hpviz"
+repo_url: "https://github.com/lukeburciu/hpviz"
+edit_uri: ""
+
+# plugins
+plugins:
+  - search
+
+# extensions
+markdown_extensions:
+  - abbr
+  - attr_list
+  - admonition
+  - footnotes
+  - meta
+  - pymdownx.details
+  - pymdownx.snippets
+  - pymdownx.smartsymbols
+  - pymdownx.caret
+  - pymdownx.mark
+  - pymdownx.tabbed
+  - pymdownx.tilde
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.keys
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+
+# Copyright
+copyright: Copyright &copy; 2021 ECU Security Research Institute - SRI
+# footer customisation
+# extra:
+#   social:
+#     - icon: fontawesome/brands/github
+#       link: https://github.com/madeinoz67
+#     - icon: fontawesome/brands/twitter
+#       link: "https://twitter.com/madeinoz"
+
+# Google Analytics
+# google_analytics:
+#   - !!python/object/apply:os.getenv ["GOOGLE_ANALYTICS_KEY"]
+#   - auto
