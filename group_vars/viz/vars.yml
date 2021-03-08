@@ -35,8 +35,8 @@ firewall_services:
   - name: ssh # <- Do no remove will break CICD
   - name: https
   - name: 522
-  - name: 9093 # kafka broker listener
-  - name: 9090 # nifi direct
+  #- name: 9093 # kafka broker listener
+  #- name: 9090 # nifi direct
   - name: 9000 # vector2vector
 
 # Syslog
@@ -49,7 +49,6 @@ hpviz_broker_bootstrap_port1: "29092"
 # docker-must
 docker_must_hostkey: "syslog_docker-must"
 docker_must_port: "3514"
-
 
 #grafana
 hpviz_grafana_admin_pass: "{{ vault_hpviz_grafana_admin_pass }}"
