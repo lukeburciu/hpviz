@@ -30,8 +30,7 @@ Guidelines for bug reports:
 3. **Isolate and report the problem** &mdash; ideally create a reduced test
    case.
 
-Please try to be as detailed as possible in your report. Include information about
-your version of KiCAD and the OS you're using. Please provide steps to
+Please try to be as detailed as possible in your report. Please provide steps to
 reproduce the issue as well as the outcome you were expecting! Screen shots help!  All these details
 will help developers to fix any potential bugs.
 
