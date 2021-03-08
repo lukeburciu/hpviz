@@ -11,6 +11,11 @@ nav:
       - arch/components.md
       - arch/infrastructure.md
       - arch/devops.md
+  - Operations:
+      - ops/introduction.md
+      - ops/bootstrapping.md
+      - ops/users.md
+      - ops/firewall.md
   - Development:
       - dev/gettingstarted.md
       - dev/vagrant.md

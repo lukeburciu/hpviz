@@ -13,65 +13,6 @@ Honeypot Data Visualisation Project.
 
 All servers are under config management so manual changes made on them may get overwritten
 
-### 1. Bootstrap for the CI/CD pipeline
-
-new servers need to be bootstrapped for the CI/CD pipeline.
-
-#### pre-requisites
-
-* existing account with elevated privileges (example shows root user)
-* your pub key in authorize_hosts file for that user
-
-#### Command
-
-'ansible-playbook -i "x.x.x.x," bootstrap.yml --extra-vars "user=root"'
-
-note the ',' in the '-i' parameter.  Multiple IP address can be added seperated with ',' and make sure trailing ',' still exists or will look for an inventory file of that name and fail.
-
-The following is performed by the bootstrap.yml playbook:
-
-1. 'hpviz-ci' is added as a user to the remote server(s)
-2. 'hpviz-ci' ssh pub key is added to users authorized keys file
-3. 'wheel' group is added if required
-4. 'wheel' group is added to sudo and set to NOPASS
-5. 'hpviz-ci' is added to wheel group
-
-### 2. managing users
-
-Shell access to the project servers is only accessible via ssh with a valid key i.e. password authentication is disabled by default.
-
-All HPViz project server users are under config management and are managed the the group_vars/viz/vars.yml or group_vars/sink/vars.ymlin the `user_list` variable.
-
-1. users must have a public ssh key defined as password authentication is disabled
-2. To remove a user from all groups replace the group list with empty string ''
-3. Removing users change 'state: absent'  all their directories under /home/username will be removed
-4. pub_key must be present for active users
-5. all users are created with password login disabled
-6. multiple groups if the the user is a member of is added as a list (see roles\user_management\README.md).  These groups must already exist on the remote system.
-
-### 3. managing Firewall rules
-
-The serves use UFW for the firewall and is managed via the CICD process through group_vars
-
-`tcp` is the default protocol, `udp` needs to be specified with `protocol: udp`
-
-#### [theSink]
-
-````
-firewall_services:
-  - name: ssh
-  - name: https
-  - name: 522
-````
-
-#### [viz001]
-
-````
-firewall_services:
-  - name: ssh
-  - name: https
-  - name: 522
-````
 
 # Development Environment
 
