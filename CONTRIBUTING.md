@@ -1,4 +1,4 @@
-# Contributing to Cookiecutter-KiCAD
+# Contributing to HPViz
 
 Please take a moment to review this document in order to make the contribution
 process easy and effective for everyone involved!
@@ -7,9 +7,12 @@ process easy and effective for everyone involved!
 
 You can use the issues tracker for:
 
-* [bug reports](#bug-reports)
-* [feature requests](#feature-requests)
-* [submitting pull requests](#pull-requests)
+- [Contributing to HPViz](#contributing-to-hpviz)
+  - [Using the issue tracker](#using-the-issue-tracker)
+  - [Bug reports](#bug-reports)
+  - [Feature requests](#feature-requests)
+  - [Contributing Documentation](#contributing-documentation)
+  - [Pull requests](#pull-requests)
 
 ## Bug reports
 
@@ -87,11 +90,11 @@ in order to craft an excellent pull request:
 
       ```sh
       # Clone your fork of the repo into the current directory
-      git clone https://github.com/<your-username>/cookiecutter-kicad
+      git clone https://github.com/<your-username>/hpviz
       # Navigate to the newly cloned directory
-      cd cookiecutter-kicad
+      cd hpviz
       # Assign the original repo to a remote called "upstream"
-      git remote add upstream https://github.com/madeinoz67/cookiecutter-kicad
+      git remote add upstream https://github.com/lukeburciu/hpviz
       ```
 
 2. If you cloned a while ago, get the latest changes from upstream:

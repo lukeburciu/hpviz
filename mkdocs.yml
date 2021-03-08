@@ -9,6 +9,7 @@ nav:
   - Architecture:
       - arch/overview.md
       - arch/components.md
+      - arch/infrastructure.md
       - arch/devops.md
   - Development:
       - dev/gettingstarted.md
@@ -16,7 +17,7 @@ nav:
       - dev/ansible.md
       - dev/github.md
       - dev/docker-must.md
-      - dev/contributing
+      - dev/contributing.md
   - Authors: authors.md
   - Change Log: changelog.md
   - License: license.md
