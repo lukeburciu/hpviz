@@ -18,6 +18,9 @@ nav:
       - ops/firewall.md
   - Development:
       - dev/gettingstarted.md
+      - dev/documentation.md
+      - dev/makefile.md
+      - dev/python.md
       - dev/vagrant.md
       - dev/ansible.md
       - dev/github.md
