@@ -1,17 +1,20 @@
-# HPViz - docker-must docker container
+# docker-must
 
-## Useful information
+Docker container to generate syslog output for testing purposes.
 
-MUST <https://sourceforge.net/p/mustsyslog/wiki/Home/>
-
+```
 M - More
 U - Useful
 S - Syslog
 T - Testing tool
+```
 
-Flow of data:
+!!! Note
+    For more information relating to using MUST, please see the MUST Project home page <https://sourceforge.net/p/mustsyslog/wiki/Home/>
 
-docker-must -> vector (sink) -> vector-ingest (viz) => //other services//
+## Flow of data
+
+![Must data flow](img/must-flow.png)
 
 ## Useful commands
 

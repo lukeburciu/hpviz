@@ -1,4 +1,8 @@
-## HPViz - Vagrant developemnt environment
+
+Vagrant is used to provide a virtual development environment on the local developers machine that closely resembles the production environment and allows to fully deploy the ansible playbooks in exactly the same manner as the production environment.
+
+!!! Info
+    Vagrant allows all developers to develop under the exactly same environment and is a key concept of DevOps as it helps prevent errors due to different development environments from getting into production.
 
 ## Requirements
 
@@ -46,7 +50,7 @@ Stop all virtual machines
 ### Connecting to the VM environment
 
 `vagrant ssh` defaults to viz vm
-`vagrant ssh sink` to login into ingestion sink
+`vagrant ssh sink` to login into sink vm
 
 ### deploying ansible script
 
@@ -58,8 +62,8 @@ Requires the vault password in a file, not under the project directory, in this 
 
 use tags to target specific tasks:
 
-`ansible-playbook -i dev.ini site.yml --vault-password-file ~/.hpviz-vault` --tags containers
+`ansible-playbook -i dev.ini site.yml --vault-password-file ~/.hpviz-vault --tags containers`
 
-example will just deploy containers
+example will just deploy containers portion of the playbook
 
 tags must be defined in the playbooks to work

@@ -1,0 +1,105 @@
+# project information
+site_name: "HPViZ"
+site_author: "Stephen Eaton"
+site_description: "Honeypot Visualisation Project"
+
+# Page Tree
+nav:
+    - Home: index.md
+    - Architecture:
+          - arch/overview.md
+          - arch/components.md
+          - arch/infrastructure.md
+          - arch/devops.md
+    - Operations:
+          - ops/introduction.md
+          - ops/bootstrapping.md
+          - ops/users.md
+          - ops/firewall.md
+          - ops/dashboards.md
+          - ops/backups.md
+          - ops/cicd.md
+          - ops/secrets_management.md
+          - ops/data_processing.md
+          - ops/troubleshooting.md
+    - Development:
+          - dev/getting_started.md
+          - dev/documentation.md
+          - dev/makefile.md
+          - dev/python.md
+          - dev/vagrant.md
+          - dev/ansible.md
+          - dev/github.md
+          - dev/docker-must.md
+          - dev/contributing.md
+    - Authors: authors.md
+    - Release Notes: releasenotes.md
+    - License: license.md
+
+# Configuration
+theme:
+    name: material
+    features:
+        - navigation.tabs
+        - navigation.indexes
+        - navigation.expand
+        - header.autohide
+
+# Repository
+repo_name: "lukeburciu/hpviz"
+repo_url: "https://github.com/lukeburciu/hpviz"
+edit_uri: ""
+
+# plugins
+plugins:
+    - search
+    - with-pdf:
+          author: Stephen Eaton & Luke Burciu
+          copyright: (C) 2021 ECU Security Research Institute
+          cover_title: "HPViz"
+          cover_subtitle: "Honeypot Visualisation Project"
+          back_cover: true
+          output_path: pdf/hpviz-docs.pdf
+
+# extensions
+markdown_extensions:
+    - abbr
+    - attr_list
+    - admonition
+    - footnotes
+    - meta
+    - pymdownx.details
+    - pymdownx.snippets
+    - pymdownx.smartsymbols
+    - pymdownx.caret
+    - pymdownx.mark
+    - pymdownx.tabbed
+    - pymdownx.tilde
+    - pymdownx.highlight
+    - pymdownx.superfences
+    - pymdownx.keys
+    - pymdownx.tasklist:
+          custom_checkbox: true
+    - pymdownx.arithmatex:
+          generic: true
+    - pymdownx.emoji:
+          emoji_index: !!python/name:materialx.emoji.twemoji # noqa
+
+
+          emoji_generator: !!python/name:materialx.emoji.to_svg # noqa
+
+
+# Copyright
+copyright: Copyright &copy; 2021 ECU Security Research Institute - SRI
+# footer customisation
+# extra:
+#   social:
+#     - icon: fontawesome/brands/github
+#       link: https://github.com/madeinoz67
+#     - icon: fontawesome/brands/twitter
+#       link: "https://twitter.com/madeinoz"
+
+# Google Analytics
+# google_analytics:
+#   - !!python/object/apply:os.getenv ["GOOGLE_ANALYTICS_KEY"]
+#   - auto

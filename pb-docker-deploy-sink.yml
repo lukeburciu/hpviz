@@ -4,7 +4,6 @@
   become: True
 
   tasks:
-
     - name: Check hpviz_base_dir variables exists
       assert:
         that:
@@ -46,8 +45,8 @@
         mode: 2775
         # files: -rwxrwsr-x; folders: drwxrwsr-x
       tags:
-       - structure
-       - skip_ansible_lint  # 206 error
+        - structure
+        - skip_ansible_lint # 206 error
 
     - name: Set up project directories
       file:
@@ -59,19 +58,19 @@
         # files: -rwxrwsr-x; folders: drwxrwsr-x
       loop:
         # docker compose home
-        - ["{{ hpviz_base_dir }}/docker", 'root']
+        - ["{{ hpviz_base_dir }}/docker", "root"]
         # configs
-        - ["{{ hpviz_base_dir }}/etc", 'root']
-        - ["{{ hpviz_base_dir }}/etc/ssl/ca-certificates", 'root']
-        - ["{{ hpviz_base_dir }}/etc/vector/certs",'vector']
+        - ["{{ hpviz_base_dir }}/etc", "root"]
+        - ["{{ hpviz_base_dir }}/etc/ssl/ca-certificates", "root"]
+        - ["{{ hpviz_base_dir }}/etc/vector/certs", "vector"]
         # data
-        - ["{{ hpviz_base_dir }}/data", 'root']
-        - ["{{ hpviz_base_dir }}/data/vector",'vector']
+        - ["{{ hpviz_base_dir }}/data", "root"]
+        - ["{{ hpviz_base_dir }}/data/vector", "vector"]
         # logs
-        - ["{{ hpviz_base_dir }}/logs", 'root']
-        - ["{{ hpviz_base_dir }}/logs/vector", 'vector']
+        - ["{{ hpviz_base_dir }}/logs", "root"]
+        - ["{{ hpviz_base_dir }}/logs/vector", "vector"]
         # Maxmind db
-        - ["{{ hpviz_base_dir }}/maxmind/geolite", 'vector']
+        - ["{{ hpviz_base_dir }}/maxmind/geolite", "vector"]
 
       tags:
         - structure
@@ -115,7 +114,7 @@
         state: started
         recreate: yes
         ports:
-          - "{{ hpviz_vector_to_vector_ingest_port }}:{{ hpviz_vector_to_vector_ingest_port }}"  # outgoing tcp vector link to viz001
+          - "{{ hpviz_vector_to_vector_ingest_port }}:{{ hpviz_vector_to_vector_ingest_port }}" # outgoing tcp vector link to viz001
           - "{{ hpviz_syslog_ingest_port }}:{{ hpviz_syslog_ingest_port }}" #incoming sensor syslog tcp
         expose:
           - "{{ hpviz_syslog_ingest_port }}"

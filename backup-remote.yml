@@ -1,0 +1,42 @@
+#
+# Stephen Eaton - sceaton@our.ecu.edu.au
+#
+
+# this will make a backup of the remote systems to the local project directory
+#  ...just-in-case!!!!
+#
+# TODO: link to latest should be created under files/backups however there appears to be a bug in
+#       the ansible file module that stops it working.
+#       Until this bug is resolved the latest-backup is put in the projects root directory
+#       ref: https://github.com/ansible/ansible/issues/21401
+#
+- name: backup remote data directory
+  hosts: all
+  gather_facts: yes
+
+  tasks:
+    - name: register backup timestamp
+      set_fact:
+        backup_ts: "{{ ansible_date_time.iso8601_basic_short  }}"
+      delegate_to: localhost
+
+    - name: backup the remote '/opt/hpviz' files to local 'files/backup/''
+      synchronize:
+        mode: pull
+        src: "{{ hpviz_base_dir }}"
+        dest: files/backup/{{ ansible_hostname }}-{{ backup_ts }}/
+      become: True
+
+    - name: remove link to latest
+      file:
+        path: latest-backup
+        state: absent
+      delegate_to: localhost
+
+    - name: re-create latest link to the backup just performed
+      file:
+        src: files/backup/{{ ansible_hostname }}-{{ backup_ts }}/
+        dest: latest-backup
+        state: link
+      delegate_to: localhost
+      when: not ansible_check_mode
