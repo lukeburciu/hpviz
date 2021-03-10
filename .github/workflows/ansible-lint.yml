@@ -6,12 +6,12 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - name: Lint Ansible Playbook
-      uses: ansible/ansible-lint-action@master
-      with:
-        targets: ""
-        override-deps: |
-          ansible==2.10
-          ansible-lint==4.3.5
-        args: ""
+      - uses: actions/checkout@v2
+      - name: Lint Ansible Playbook
+        uses: ansible/ansible-lint-action@master
+        with:
+          targets: ""
+          override-deps: |
+            ansible==2.10.3
+            ansible-lint==5.0.2
+          args: ""
