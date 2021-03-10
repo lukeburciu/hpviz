@@ -1,15 +1,76 @@
 
 !!! Important
-    Documenting your project is just as important as what you're building.  
-    
+    Documenting your project is just as important as what you're building.
+
     In 12 months time do you think you'll remember where you were at?
 
 ## Location and Customisation
-All project documentation lives in the projects 'docs' directory and written in mark-down format that's easy to update, especially with tools like [VSCode](https://code.visualstudio.com/).  
+All project documentation lives in the projects 'docs' directory and written in mark-down format that's easy to update, especially with tools like [VSCode](https://code.visualstudio.com/).
 
-Feel free to change navigation and headings as required to suit your personal style.
+```
+docs
+├── arch
+│   ├── components.md
+│   ├── devops.md
+│   ├── img
+│   │   ├── CICD-Overview.png
+│   │   ├── Highlevel-System-Architect.png
+│   │   ├── sink-docker.png
+│   │   ├── sink-viz.png
+│   │   └── viz-docker.png
+│   ├── infrastructure.md
+│   └── overview.md
+├── authors.md
+├── dev
+│   ├── ansible.md
+│   ├── contributing.md
+│   ├── docker-must.md
+│   ├── documentation.md
+│   ├── getting_started.md
+│   ├── github.md
+│   ├── img
+│   │   ├── git-feature-flow.jpeg
+│   │   └── must-flow.png
+│   ├── makefile.md
+│   ├── python.md
+│   └── vagrant.md
+├── img
+│   └── sri-logo.png
+├── index.md
+├── license.md
+├── ops
+│   ├── backups.md
+│   ├── bootstrapping.md
+│   ├── dashboards.md
+│   ├── firewall.md
+│   ├── img
+│   ├── introduction.md
+│   └── users.md
+└── releasenotes.md
+```
 
 See [mkdocs-material documentation](https://squidfunk.github.io/mkdocs-material/) for more information.
+
+## Build documentation
+
+```bash
+make build
+```
+
+Will compile all documentation and generate the __site__ directory containing the html documentation this can be viewed locally.
+
+!!! Note
+    The __site__ directory is not included in source control as is dynamically generated.
+
+## PDF Version
+
+A pdf version of the documentation is generated on each change by the [mkdocs-with-pdf plugin](https://pypi.org/project/mkdocs-with-pdf/) and is located in:
+
+```
+hpviz\
+    site\
+        pdf\hpviz-docs.pdf
+```
 
 ## Viewing Locally
 
@@ -24,4 +85,4 @@ This will start up the mkdocs local server and your projects documentation will 
 
 ## Making changes
 
-Any changes to the document files or mkdocs.yml will be automatically updated, with a page refresh, on the local server view each time you save, so allows you to see the changes as you mae them.
+Any changes to the document files or mkdocs.yml will be automatically updated when being displayed locally, with a page refresh, on the local server view each time you save, so allows you to see the changes as you make them.

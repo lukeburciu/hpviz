@@ -1,7 +1,5 @@
 # HPViz
 
-![Ansible-CI](https://github.com/lukeburciu/hpviz/workflows/Ansible-CI/badge.svg)
-
 Honeypot Data Visualisation Project.
 
 ## Team members
@@ -16,36 +14,13 @@ All servers are under config management so manual changes made on them may get o
 
 # Development Environment
 
-## Requirements
 
-1. install pre-commit from <https://pre-commit.com>, hook dependencies will be automatically downloaded when hooks are first run.
-2. install pipenv
-3. install docker desktop
 
-## python environment
-
-The python environment and packages is managed by `pipenv`.
-
-To access:
-
-`pipenv shell`
-
-To exit:
-
-`exit`
-
-To install packages in the environment you must be in the shell:
-
-````
-pipenv shell
-pipenv install package-x
-````
 ## Ansible
-
 
 ### Installing dependencies
 
-To install galaxy roles into local development environment
+To install the required galaxy roles into local development environment
 
 `ansible-galaxy role install --role-file requirements.yml`
 

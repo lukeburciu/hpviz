@@ -16,8 +16,10 @@ nav:
       - ops/bootstrapping.md
       - ops/users.md
       - ops/firewall.md
+      - ops/dashboards.md
+      - ops/backups.md
   - Development:
-      - dev/gettingstarted.md
+      - dev/getting_started.md
       - dev/documentation.md
       - dev/makefile.md
       - dev/python.md
@@ -27,7 +29,7 @@ nav:
       - dev/docker-must.md
       - dev/contributing.md
   - Authors: authors.md
-  - Change Log: changelog.md
+  - Release Notes: releasenotes.md
   - License: license.md
 
 # Configuration
@@ -47,6 +49,13 @@ edit_uri: ""
 # plugins
 plugins:
   - search
+  - with-pdf:
+      author: Stephen Eaton & Luke Burciu
+      copyright: (C) 2021 ECU Security Research Institute
+      cover_title: "HPViz"
+      cover_subtitle: "Honeypot Visualisation Project"
+      back_cover: true
+      output_path: pdf/hpviz-docs.pdf
 
 # extensions
 markdown_extensions:
@@ -70,8 +79,10 @@ markdown_extensions:
   - pymdownx.arithmatex:
       generic: true
   - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
-      emoji_generator: !!python/name:materialx.emoji.to_svg
+      emoji_index: !!python/name:materialx.emoji.twemoji # noqa
+
+      emoji_generator: !!python/name:materialx.emoji.to_svg # noqa
+
 
 # Copyright
 copyright: Copyright &copy; 2021 ECU Security Research Institute - SRI

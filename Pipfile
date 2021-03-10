@@ -11,6 +11,9 @@ mkdocs-macros-plugin = "*"
 testinfra = "*"
 flake8 = "*"
 ansible-lint = "*"
+weasyprint = "*"
+mkpdfs-mkdocs = "*"
+mkdocs-with-pdf = "*"
 
 [packages]
 docker = {extras = ["molecule"], version = "*"}

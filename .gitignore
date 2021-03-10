@@ -234,6 +234,9 @@ dmypy.json
 docker/nifi/*
 docker/neo4j/*
 .vscode/settings.json
+# project backup files should not be kept in SCM
+files/backup/*
+!files/backup/.gitkeep
 roles/*
 !roles/common_tasks/*
 !roles/user_management/*
