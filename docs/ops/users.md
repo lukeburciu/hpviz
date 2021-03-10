@@ -1,3 +1,7 @@
+---
+title: User Management
+---
+
 ### Managing shell access
 
 Shell access to the project servers is only accessible via ssh with a valid key i.e. password authentication is disabled by default.

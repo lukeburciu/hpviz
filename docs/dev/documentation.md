@@ -7,7 +7,7 @@
 ## Location and Customisation
 All project documentation lives in the projects 'docs' directory and written in mark-down format that's easy to update, especially with tools like [VSCode](https://code.visualstudio.com/).
 
-```
+``` bash
 docs
 ├── arch
 │   ├── components.md
@@ -35,18 +35,29 @@ docs
 │   ├── python.md
 │   └── vagrant.md
 ├── img
+│   ├── dashboard.png
 │   └── sri-logo.png
 ├── index.md
 ├── license.md
 ├── ops
 │   ├── backups.md
 │   ├── bootstrapping.md
+│   ├── cicd.md
 │   ├── dashboards.md
+│   ├── data_processing.md
 │   ├── firewall.md
+│   ├── github.md
 │   ├── img
+│   │   ├── cicd_detail_error.png
+│   │   ├── cicd_error.png
+│   │   ├── dashboard.png
+│   │   └── elastic_datasource.png
 │   ├── introduction.md
+│   ├── secrets_management.md
+│   ├── troubleshooting.md
 │   └── users.md
 └── releasenotes.md
+
 ```
 
 See [mkdocs-material documentation](https://squidfunk.github.io/mkdocs-material/) for more information.

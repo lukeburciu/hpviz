@@ -5,12 +5,12 @@ Github is used as the git source repository to manage:
 2. Issue and Feature request management via the Issues page.
 3. Change management tracking via Pull Requests.
 4. QA via pre-commit hooks.
-5. Continuous Integration (QA Testing) and Continuous Deployment (CICD) via Gihub Actions
+5. Continuous Integration (QA Testing) and Continuous Deployment (CICD) via [Gihub Actions](https://docs.github.com/en/actions)
 6. Release Management via tagged releases
 
 ## Git Feature WorkFlow
 
-This project uses git feature workflows where *issues* and *features* are developed in a seperate branch.
+This project uses git feature workflows where *issues* and *features* are developed in a separate branch.
 
 Once the issue or feature has been completed and tested it is merged into the master branch via a pull request.
 
@@ -35,3 +35,8 @@ hpviz\
 ## Pre-commit hooks
 
 pre-commit hooks are used to run a number of locals tests before the commit occurs.  If any of the pre-commits tests fail then the commit will not occur until all tests pass.
+
+!!! example ".pre-commit-config.yaml"
+    ``` yaml
+    --8<-- "././.pre-commit-config.yaml"
+    ```

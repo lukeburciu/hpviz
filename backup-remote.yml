@@ -11,7 +11,7 @@
 #       ref: https://github.com/ansible/ansible/issues/21401
 #
 - name: backup remote data directory
-  hosts: viz
+  hosts: all
   gather_facts: yes
 
   tasks:
@@ -25,6 +25,7 @@
         mode: pull
         src: "{{ hpviz_base_dir }}"
         dest: files/backup/{{ ansible_hostname }}-{{ backup_ts }}/
+      become: True
 
     - name: remove link to latest
       file:

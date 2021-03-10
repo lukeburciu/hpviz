@@ -50,7 +50,7 @@ Stop all virtual machines
 ### Connecting to the VM environment
 
 `vagrant ssh` defaults to viz vm
-`vagrant ssh sink` to login into ingestion sink
+`vagrant ssh sink` to login into sink vm
 
 ### deploying ansible script
 
