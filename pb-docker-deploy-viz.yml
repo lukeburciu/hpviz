@@ -181,7 +181,7 @@
         - containers
 
     - name: Define VIZ network (docker)
-      docker_network:
+      community.general.docker_network:
         name: viz-net
         state: present
         force: no
