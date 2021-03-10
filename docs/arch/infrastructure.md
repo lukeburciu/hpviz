@@ -13,7 +13,7 @@
     _Detailed Diagram_
     ![sink docker](img/sink-docker.png)
 
-    !!! Note 
+    !!! Note
         To view drawing in full:
 
         Right click on image and open image in new tab
@@ -28,7 +28,7 @@
     4. all unprocessed data is forwarded to **kafka broker** topic `logging.syslog.raw`. (tag=raw)
     5. process **elastic.viz** consumes topic `logging.syslog.processed` and forwards to **elastic search** container.
     6. **elastic search** container indexes the field data into daily indexes, identified by: "syslog-%Y.%m.%d"
-    7. **Grafana** container has elastic search configured as the default data source.  
+    7. **Grafana** container has elastic search configured as the default data source.
     8. **nginx** reverse proxy provides access to the **grafana** container.
     9. Dashboard user access dashboards via <https://viz001.ecu-sri.net/grafana>.
 
@@ -36,7 +36,7 @@
 
     ![viz docker](img/viz-docker.png)
 
-    !!! Note 
+    !!! Note
         To view drawing in full:
-        
+
         Right click on image and open image in new tab

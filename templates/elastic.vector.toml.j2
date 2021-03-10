@@ -32,12 +32,12 @@
 
 
 [sinks.elasticsearch_syslog]
-  # 
+  #
   # Currently only 'processed' logs are ingested
   #  'raw are left on raw topic'
   #  pushes the JSON syslog event to elastic for indexing
   #
-  
+
   type = "elasticsearch"
   inputs = ["kafka_message"]
   compression = "none"

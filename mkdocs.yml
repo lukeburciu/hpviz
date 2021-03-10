@@ -83,7 +83,6 @@ markdown_extensions:
 
       emoji_generator: !!python/name:materialx.emoji.to_svg # noqa
 
-
 # Copyright
 copyright: Copyright &copy; 2021 ECU Security Research Institute - SRI
 # footer customisation

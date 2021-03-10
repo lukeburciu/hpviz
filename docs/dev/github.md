@@ -10,7 +10,7 @@ Github is used as the git source repository to manage:
 
 ## Git Feature WorkFlow
 
-This project uses git feature workflows where *issues* and *features* are developed in a seperate branch.  
+This project uses git feature workflows where *issues* and *features* are developed in a seperate branch.
 
 Once the issue or feature has been completed and tested it is merged into the master branch via a pull request.
 
@@ -26,7 +26,7 @@ Github actions are used for the projects CICD
 ```
 hpviz\
     .github\
-        workflows\                
+        workflows\
             ansible-deploy.yml  # deployment action will only run after linting passes
             ansible-lint.yml    # pull request ansible linting
             main.yml            # general lint on push

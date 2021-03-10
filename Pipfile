@@ -14,6 +14,7 @@ ansible-lint = "*"
 weasyprint = "*"
 mkpdfs-mkdocs = "*"
 mkdocs-with-pdf = "*"
+yamllint = "*"
 
 [packages]
 docker = {extras = ["molecule"], version = "*"}

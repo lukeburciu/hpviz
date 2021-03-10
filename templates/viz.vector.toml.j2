@@ -24,11 +24,11 @@
 
 #===================================< tagging >=================================================#
 [transforms.tag]
-  # 
+  #
   # First stage in processing pipeline
   #   everything tagged as 'syslog', 'json' and 'raw'
   #   as logs are processed the tag will be updated to 'processed' and also tagged as type i.e. 'sshd'
-  #   anything not processed will remain with tag = 'raw' 
+  #   anything not processed will remain with tag = 'raw'
   #
   type="add_fields"
   inputs = ["syslog_viz001", "thesink"]
@@ -41,8 +41,8 @@
 # <<SSHD START>>
 
 [transforms.regex_sshd_log]
-  # 
-  # 
+  #
+  #
   # This regex processes logs with a message of (examples):
   # Disconnected from 178.154.253.235 port 36640 [preauth]
   # Failed password for root from 37.152.180.201 port 34364 ssh2
@@ -276,7 +276,7 @@
 # ==============================< Sinks >======================================== #
 
 [sinks.kafka_processed]
-  # 
+  #
   # sink for all log messages that have been processed i.e. transformed and enriched with GeoIP
   #
   type = "kafka"
@@ -284,44 +284,44 @@
   #inputs = ["rename_transform_src_ip_geolite_log", "rename_transform_dst_ip_geolite_log"]
   #inputs = ["regex_cowrie_1", "regex_sshd_1"]
   bootstrap_servers = "{{ hpviz_broker_bootstrap_server1 }}:{{ hpviz_broker_bootstrap_port1 }}" # IP required not hostname
-  compression = "none" 
-  healthcheck = true 
-  key_field = "host" 
-  message_timeout_ms = 300000 
-  socket_timeout_ms = 60000 
+  compression = "none"
+  healthcheck = true
+  key_field = "host"
+  message_timeout_ms = 300000
+  socket_timeout_ms = 60000
   topic = "logging.syslog.processed"
 
   # Buffer
-  buffer.max_events = 500 
-  buffer.max_size = 104900000 
-  buffer.type = "memory" 
-  buffer.when_full = "block" 
+  buffer.max_events = 500
+  buffer.max_size = 104900000
+  buffer.type = "memory"
+  buffer.when_full = "block"
 
   # Encoding
-  encoding.codec = "json" 
+  encoding.codec = "json"
   encoding.timestamp_format = "rfc3339"
 
 
 [sinks.kafka_raw]
-  # 
+  #
   # sink for raw unprocessed logs, i.e. these logs have not been transformed or enriched
   #
   type = "kafka"
   inputs = ["tag"]
   bootstrap_servers = "{{ hpviz_broker_bootstrap_server1 }}:{{ hpviz_broker_bootstrap_port1 }}" # IP required not hostname
-  compression = "none" 
-  healthcheck = true 
-  key_field = "host" 
-  message_timeout_ms = 300000 
-  socket_timeout_ms = 60000 
-  topic = "logging.syslog.raw" 
+  compression = "none"
+  healthcheck = true
+  key_field = "host"
+  message_timeout_ms = 300000
+  socket_timeout_ms = 60000
+  topic = "logging.syslog.raw"
 
   # Buffer
   buffer.max_events = 500
   buffer.max_size = 104900000
-  buffer.type = "memory" 
-  buffer.when_full = "block" 
+  buffer.type = "memory"
+  buffer.when_full = "block"
 
   # Encoding
-  encoding.codec = "json" 
-  encoding.timestamp_format = "rfc3339" 
+  encoding.codec = "json"
+  encoding.timestamp_format = "rfc3339"

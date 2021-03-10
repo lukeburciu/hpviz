@@ -20,3 +20,7 @@ repos:
     rev: v0.1.2
     hooks:
       - id: encryption-check
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: v1.10.0
+    hooks:
+      - id: yamllint

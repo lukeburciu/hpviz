@@ -11,7 +11,7 @@ New servers need to be bootstrapped for the CI/CD pipeline.
 !!! Example "Command"
     `ansible-playbook -i "x.x.x.x," bootstrap.yml --extra-vars "user=root"`
 
-!!! important 
+!!! important
     "x.x.x.x," represents the ip address of the remote host.
 
     Note the ',' in the above command in the '-i' parameter.  Multiple IP address can be added separated with ',' and make sure trailing ',' still exists or will look for an inventory file of that name and fail.

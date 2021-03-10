@@ -122,7 +122,7 @@ in order to craft an excellent pull request:
    feature to tidy up your commits before making them public.
 
 5. Push your topic branch up to your fork:
-   
+
       ```sh
       git push origin <topic-branch-name>
       ```
@@ -132,7 +132,7 @@ in order to craft an excellent pull request:
 
 7. If you haven't updated your pull request for a while, you should consider
    rebasing on main and resolving any conflicts.
-   
+
       ```sh
       git checkout master
       git pull upstream master
