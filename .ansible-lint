@@ -2,10 +2,15 @@
 # see https://github.com/ansible/ansible-lint
 #
 exclude_paths:
-  - ./docker
-  - ./grafana
-  - .github
-  - ./roles/geerlingguy.docker
-  - ./roles/robertdebock.firewall
+  - docker/
+  - grafana/
+  - .github/
+  - roles/
+  - group_vars/sink/vault.yml
+  - group_vars/viz/vault.yml
+  - host_vars/dev-sink/vault.yml
+  - host_vars/dev-viz/vault.yml
+  - host_vars/thesink/vault.yml
+  - host_vars/viz001/vault.yml
 skip_list: {}
 verbosity: 1

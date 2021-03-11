@@ -15,4 +15,5 @@ roles:
 # collections to retrieve from Galaxy
 collections:
   - community.general
+  - community.docker
   - ansible.posix

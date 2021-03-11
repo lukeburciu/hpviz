@@ -23,5 +23,10 @@ collections:
 
 galaxy: roles collections
 
+lint:
+	pipenv run ansible-lint
+
+test: lint
+
 deploy-dev:
 	pipenv run ansible-playbook -i dev.ini site.yml --vault-password-file ~/.hpviz-vault

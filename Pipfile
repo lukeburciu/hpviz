@@ -10,7 +10,7 @@ mkdocs-print-site-plugin = "*"
 mkdocs-macros-plugin = "*"
 testinfra = "*"
 flake8 = "*"
-ansible-lint = "*"
+ansible-lint = "==5.0.2"
 weasyprint = "*"
 mkpdfs-mkdocs = "*"
 mkdocs-with-pdf = "*"
@@ -18,7 +18,7 @@ yamllint = "*"
 
 [packages]
 docker = {extras = ["molecule"], version = "*"}
-ansible = "*"
+ansible = "==2.10.3"
 
 [requires]
 python_version = "3.8"
