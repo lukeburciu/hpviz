@@ -16,6 +16,10 @@
 
 `make galaxy` - updates both roles and collections.
 
+`make lint` - lints the ansible playbooks.
+
+`make test` - runs tests.
+
 `make deploy-dev` - Deploys ansible playbooks to vagrant environment.
 
 ## Makefile Contents

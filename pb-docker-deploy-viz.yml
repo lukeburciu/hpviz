@@ -181,7 +181,7 @@
         - containers
 
     - name: Define VIZ network (docker)
-      community.general.docker_network:
+      community.docker.docker_network:
         name: viz-net
         state: present
         force: no
@@ -209,7 +209,7 @@
     #     - containers
 
     - name: Deploy Zookeeper container
-      docker_container:
+      community.docker.docker_container:
         name: zookeeper
         image: confluentinc/cp-zookeeper
         hostname: zookeeper
@@ -255,7 +255,7 @@
     #     - broker
 
     - name: Deploy Kafka Broker
-      docker_container:
+      community.docker.docker_container:
         name: broker
         image: confluentinc/cp-server:5.5.1
         hostname: broker
@@ -305,7 +305,7 @@
         - containers
 
     - name: Deploy NIFI-registry container
-      docker_container:
+      community.docker.docker_container:
         name: nifi-registry
         image: apache/nifi-registry:latest
         restart: yes
@@ -340,7 +340,7 @@
     #     - elastic
 
     - name: elasticsearch container
-      docker_container:
+      community.docker.docker_container:
         name: elasticsearch
         image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.0.1
         hostname: elasticsearch
@@ -391,7 +391,7 @@
     #     - vector-ingest
 
     - name: Deploy vector-ingestion container
-      docker_container:
+      community.docker.docker_container:
         name: vector-ingest
         image: timberio/vector:latest-alpine
         restart: yes
@@ -468,7 +468,7 @@
     #     - nifi
 
     - name: Deploy NIFI container
-      docker_container:
+      community.docker.docker_container:
         name: nifi
         image: apache/nifi:latest
         restart: yes
@@ -523,7 +523,7 @@
     #     - grafana
 
     - name: Deploy grafana container
-      docker_container:
+      community.docker.docker_container:
         name: grafana
         image: grafana/grafana:latest-ubuntu
         ports:

@@ -106,7 +106,7 @@
         - containers
 
     - name: Deploy Vector container
-      docker_container:
+      community.docker.docker_container:
         name: vector
         image: timberio/vector:latest-alpine
         restart: yes
@@ -130,7 +130,7 @@
         - containers
 
     - name: Deploy docker-must container
-      docker_container:
+      community.docker.docker_container:
         name: docker-must
         image: quay.io/doubledensity/must
         restart: yes
