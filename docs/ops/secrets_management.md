@@ -1,7 +1,7 @@
 
 ## Keepass
 
-[Kepass](https://docs.github.com/en/actions) manages all of the projects secrets ad is used to generate passwords in a secure manner.
+[Keepass](https://docs.github.com/en/actions) manages all of the projects secrets ad is used to generate passwords in a secure manner.
 
 
 !!! Important
@@ -34,6 +34,19 @@ This file is passed into the decryption / encryption process.
     │   ├── vars.yml
     │   └── vault.yml
     └── viz
+        ├── vars.yml
+        └── vault.yml
+    host_vars/
+    ├── dev-sink
+    │   ├── vars.yml
+    │   └── vault.yml
+    ├── dev-viz
+    │   ├── vars.yml
+    │   └── vault.yml
+    ├── thesink
+    │   ├── vars.yml
+    │   └── vault.yml
+    └── viz001
         ├── vars.yml
         └── vault.yml
     ```
