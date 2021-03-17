@@ -5,11 +5,6 @@
 # this will make a backup of the remote systems to the local project directory
 #  ...just-in-case!!!!
 #
-# TODO: link to latest should be created under files/backups however there appears to be a bug in
-#       the ansible file module that stops it working.
-#       Until this bug is resolved the latest-backup is put in the projects root directory
-#       ref: https://github.com/ansible/ansible/issues/21401
-#
 - name: backup remote data directory
   hosts: all
   gather_facts: yes

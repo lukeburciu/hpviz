@@ -5,45 +5,45 @@ site_description: "Honeypot Visualisation Project"
 
 # Page Tree
 nav:
-    - Home: index.md
-    - Architecture:
-          - arch/overview.md
-          - arch/components.md
-          - arch/infrastructure.md
-          - arch/devops.md
-    - Operations:
-          - ops/introduction.md
-          - ops/bootstrapping.md
-          - ops/users.md
-          - ops/firewall.md
-          - ops/dashboards.md
-          - ops/backups.md
-          - ops/cicd.md
-          - ops/secrets_management.md
-          - ops/data_processing.md
-          - ops/troubleshooting.md
-    - Development:
-          - dev/getting_started.md
-          - dev/documentation.md
-          - dev/makefile.md
-          - dev/python.md
-          - dev/vagrant.md
-          - dev/ansible.md
-          - dev/github.md
-          - dev/docker-must.md
-          - dev/contributing.md
-    - Authors: authors.md
-    - Release Notes: releasenotes.md
-    - License: license.md
+  - Home: index.md
+  - Architecture:
+      - arch/overview.md
+      - arch/components.md
+      - arch/infrastructure.md
+      - arch/devops.md
+  - Operations:
+      - ops/introduction.md
+      - ops/bootstrapping.md
+      - ops/users.md
+      - ops/firewall.md
+      - ops/dashboards.md
+      - ops/backups.md
+      - ops/cicd.md
+      - ops/secrets_management.md
+      - ops/data_processing.md
+      - ops/troubleshooting.md
+  - Development:
+      - dev/getting_started.md
+      - dev/documentation.md
+      - dev/makefile.md
+      - dev/python.md
+      - dev/vagrant.md
+      - dev/ansible.md
+      - dev/github.md
+      - dev/docker-must.md
+      - dev/contributing.md
+  - Authors: authors.md
+  - Release Notes: releasenotes.md
+  - License: license.md
 
 # Configuration
 theme:
-    name: material
-    features:
-        - navigation.tabs
-        - navigation.indexes
-        - navigation.expand
-        - header.autohide
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.indexes
+    - navigation.expand
+    - header.autohide
 
 # Repository
 repo_name: "lukeburciu/hpviz"
@@ -52,41 +52,46 @@ edit_uri: ""
 
 # plugins
 plugins:
-    - search
-    - with-pdf:
-          author: Stephen Eaton & Luke Burciu
-          copyright: (C) 2021 ECU Security Research Institute
-          cover_title: "HPViz"
-          cover_subtitle: "Honeypot Visualisation Project"
-          back_cover: true
-          output_path: pdf/hpviz-docs.pdf
+  - search
+  - mermaid2
+  - with-pdf:
+      author: Stephen Eaton & Luke Burciu
+      copyright: (C) 2021 ECU Security Research Institute
+      cover_title: "HPViz"
+      cover_subtitle: "Honeypot Visualisation Project"
+      back_cover: true
+      output_path: pdf/hpviz-docs.pdf
 
 # extensions
 markdown_extensions:
-    - abbr
-    - attr_list
-    - admonition
-    - footnotes
-    - meta
-    - pymdownx.details
-    - pymdownx.snippets
-    - pymdownx.smartsymbols
-    - pymdownx.caret
-    - pymdownx.mark
-    - pymdownx.tabbed
-    - pymdownx.tilde
-    - pymdownx.highlight
-    - pymdownx.superfences
-    - pymdownx.keys
-    - pymdownx.tasklist:
-          custom_checkbox: true
-    - pymdownx.arithmatex:
-          generic: true
-    - pymdownx.emoji:
-          emoji_index: !!python/name:materialx.emoji.twemoji # noqa
+  - abbr
+  - attr_list
+  - admonition
+  - footnotes
+  - meta
+  - pymdownx.details
+  - pymdownx.snippets
+  - pymdownx.smartsymbols
+  - pymdownx.caret
+  - pymdownx.mark
+  - pymdownx.tabbed
+  - pymdownx.tilde
+  - pymdownx.highlight
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:mermaid2.fence_mermaid
+  - pymdownx.keys
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji # noqa
 
 
-          emoji_generator: !!python/name:materialx.emoji.to_svg # noqa
+      emoji_generator: !!python/name:materialx.emoji.to_svg # noqa
 
 
 # Copyright

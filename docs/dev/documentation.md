@@ -83,6 +83,9 @@ hpviz\
         pdf\hpviz-docs.pdf
 ```
 
+!!! Note
+    The PDF can also be downloaded from the web version, where the link to the PDF is located on the page footer.
+
 ## Viewing Locally
 
 To view or update locally
@@ -97,3 +100,23 @@ This will start up the mkdocs local server and your projects documentation will 
 ## Making changes
 
 Any changes to the document files or mkdocs.yml will be automatically updated when being displayed locally, with a page refresh, on the local server view each time you save, so allows you to see the changes as you make them.
+
+## Adding Diagrams using Mermaid
+
+See official [mermaid documentation](https://mermaid-js.github.io/mermaid/#/) for further instructions on how to make a diagrams.
+
+````markdown
+```mermaid
+graph TD
+A[Client] --> B[Load Balancer]
+B --> C[Server01]
+B --> D[Server02]
+```
+````
+
+```mermaid
+graph TD
+A[Client] --> B[Load Balancer]
+B --> C[Server01]
+B --> D[Server02]
+```
