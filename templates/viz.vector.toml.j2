@@ -57,7 +57,7 @@
   drop_field = false
   field = "message"
   overwrite_target = true
-  patterns = ['(?P<action>^(?:\w+\s?){1,5}.*) (?P<src_ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) port (?P<src_port>[\d]+)']
+  patterns = ['(?P<action>^(?:\w+\s?){1,5}.*) (?P<source.ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) port (?P<source.port>[\d]+)']
 
 
 [transforms.tag_regex_sshd_log]
@@ -68,75 +68,75 @@
   #tags
   fields.tags = ["syslog", "json", "sshd"]
 
-[transforms.src_ip_geoip_sshd_log]
-  # GeoIP transform for src_ip
+[transforms.sourceip_geoip_sshd_log]
+  # GeoIP transform for source.ip
   type = "geoip"
   inputs = ["tag_regex_sshd_log"]
   database = "{{ hm_geoip__database_directory }}/GeoLite2-ASN.mmdb"
-  source = "src_ip"
-  target = "src"
+  source = "source.ip"
+  target = "source"
 
-[transforms.src_ip_geocity_sshd_log]
-  # GeoCity transform for dst_ip
+[transforms.sourceip_geocity_sshd_log]
+  # GeoCity transform for destination.ip
   type = "geoip"
   inputs = ["tag_regex_sshd_log"]
   database = "{{ hm_geoip__database_directory }}/GeoLite2-City.mmdb"
-  source = "src_ip"
-  target = "src"
+  source = "source.ip"
+  target = "source"
 
-[transforms.transform_src_ip_geoip_sshd_log]
-  # json flattening transform for src_ip
+[transforms.transform_sourceip_geoip_sshd_log]
+  # json flattening transform for source.ip
   type = "json_parser"
-  inputs = ["src_ip_geoip_sshd_log"]
+  inputs = ["sourceip_geoip_sshd_log"]
   drop_field = true
   drop_invalid = false
-  field = "src"
+  field = "source"
   overwrite_target = false #false
   #target_field = "src" # optional, no default
 
 
-[transforms.transform_src_ip_geocity_sshd_log]
+[transforms.transform_sourceip_geocity_sshd_log]
   # json flattening transform for src_ip
   type = "json_parser"
-  inputs = ["src_ip_geocity_sshd_log"]
+  inputs = ["sourceip_geocity_sshd_log"]
   drop_field = true
   drop_invalid = false
-  field = "src"
+  field = "source"
   overwrite_target = false #false
   #target_field = "src" # optional, no default
 
-[transforms.rename_transform_src_ip_geoip_sshd_log]
+[transforms.rename_transform_sourceip_geoip_sshd_log]
   # General
   type = "rename_fields"
-  inputs = ["transform_src_ip_geoip_sshd_log"]
+  inputs = ["transform_sourceip_geoip_sshd_log"]
 
   # Fields
-  fields.autonomous_system_number = "autonomous_system_number_src_ip"
-  fields.autonomous_system_organization = "autonomous_system_organization_src_ip"
-  fields.isp = "isp_src_ip"
-  fields.organization = "organization_src_ip"
+  fields.autonomous_system_number = "source.as.number"
+  fields.autonomous_system_organization = "source.as.organisation.name"
+  fields.isp = "source.isp.name"
+  fields.organization = "source.organisation.name"
 
 
-[transforms.rename_transform_src_ip_geocity_sshd_log]
+[transforms.rename_transform_sourceip_geocity_sshd_log]
   # General
   type = "rename_fields"
-  inputs = ["transform_src_ip_geocity_sshd_log"]
+  inputs = ["transform_sourceip_geocity_sshd_log"]
 
   # Fields
-  fields.city_name = "city_name_src_ip"
-  fields.continent_code = "continent_code_src_ip"
-  fields.country_code = "country_code_src_ip"
-  fields.latitude = "latitude_src_ip"
-  fields.longitude = "longitude_src_ip"
-  fields.postal_code = "postal_code_src_ip"
-  fields.timezone = "timezone_src_ip"
+  fields.city_name = "source.geo.city_name"
+  fields.continent_code = "source.geo.continent_iso_code"
+  fields.country_code = "source.geo.country_iso_code"
+  fields.latitude = "source.geo.latitude"
+  fields.longitude = "source.geo.longitude"
+  fields.postal_code = "source.geo.postal_code"
+  fields.timezone = "source.event.timezone"
 
 
 
 [transforms.reduce_sshd_log]
   # General
   type = "reduce"
-  inputs = ["rename_transform_src_ip_geoip_sshd_log", "rename_transform_src_ip_geocity_sshd_log"]
+  inputs = ["rename_transform_sourceip_geoip_sshd_log", "rename_transform_sourceip_geocity_sshd_log"]
   #group_by = []
 
   expire_after_ms = 10
@@ -160,7 +160,7 @@
   drop_field = false
   field = "message"
   overwrite_target = true
-  patterns = ['(?P<service>[\w]+),(?P<pid>[\d]+),(?P<src_ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})]\s(?P<dst_response>discarded direct-tcp forward request)\s[\d]+ to\s(?P<dst_ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}+):(?P<dst_port>[0-9]+)']
+  patterns = ['(?P<process.name>[\w]+),(?P<process.pid>[\d]+),(?P<source.ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})]\s(?P<event.action>discarded direct-tcp forward request)\s[\d]+ to\s(?P<destination.ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}+):(?P<destination.port>[0-9]+)']
 
 [transforms.tag_regex_cowrie_log]
   type="add_fields"
@@ -170,98 +170,98 @@
   #tags
   fields.tags = ["syslog", "json", "cowrie"]
 
-[transforms.src_ip_geoip_cowrie_log]
-  # GeoIP transform for src_ip
+[transforms.sourceip_geoip_cowrie_log]
+  # GeoIP transform for source.ip
   type = "geoip"
   inputs = ["tag_regex_cowrie_log"]
   database = "{{ hm_geoip__database_directory }}/GeoLite2-ASN.mmdb"
-  source = "src_ip"
-  target = "src"
+  source = "source.ip"
+  target = "source"
 
-[transforms.dst_ip_geoip_cowrie_log]
-  # GeoIP transform for dst_ip
+[transforms.destinationip_geoip_cowrie_log]
+  # GeoIP transform for destination.ip
   type = "geoip"
   inputs = ["tag_regex_cowrie_log"]
   database = "{{ hm_geoip__database_directory }}/GeoLite2-ASN.mmdb"
-  source = "dst_ip"
-  target = "dst"
+  source = "destination.ip"
+  target = "destination"
 
-[transforms.src_ip_geocity_cowrie_log]
-  # GeoCity transform for dst_ip
+[transforms.sourceip_geocity_cowrie_log]
+  # GeoCity transform for destination.ip
   type = "geoip"
   inputs = ["tag_regex_cowrie_log"]
   database = "{{ hm_geoip__database_directory }}/GeoLite2-City.mmdb"
-  source = "src_ip"
-  target = "src"
+  source = "source.ip"
+  target = "source"
 
-[transforms.dst_ip_geocity_cowrie_log]
-  # GeoCity transform for dst_ip
+[transforms.destinationip_geocity_cowrie_log]
+  # GeoCity transform for destination.ip
   type = "geoip"
   inputs = ["tag_regex_cowrie_log"]
   database = "{{ hm_geoip__database_directory }}/GeoLite2-City.mmdb"
-  source = "dst_ip"
-  target = "dst"
+  source = "destination.ip"
+  target = "destination"
 
-[transforms.transform_src_ip_geolite_cowrie_log]
-  # json flattening transform for src_ip
+[transforms.transform_sourceip_geolite_cowrie_log]
+  # json flattening transform for source.ip
   type = "json_parser"
-  inputs = ["src_ip_geoip_cowrie_log", "src_ip_geocity_cowrie_log"]
+  inputs = ["sourceip_geoip_cowrie_log", "sourceip_geocity_cowrie_log"]
   drop_field = true
   drop_invalid = false
-  field = "src"
+  field = "source"
   overwrite_target = false #false
   #target_field = "src" # optional, no default
 
-[transforms.transform_dst_ip_geolite_cowrie_log]
-  # json flattening transform for dst_ip
+[transforms.transform_destinationip_geolite_cowrie_log]
+  # json flattening transform for destination.ip
   type = "json_parser"
-  inputs = ["dst_ip_geoip_cowrie_log", "dst_ip_geocity_cowrie_log"]
+  inputs = ["destinationip_geoip_cowrie_log", "destinationip_geocity_cowrie_log"]
   drop_field = true
   drop_invalid = false
   field = "dst"
   overwrite_target = false #false
   #target_field = "dst"
 
-[transforms.rename_transform_src_ip_geolite_cowrie_log]
+[transforms.rename_transform_sourceip_geolite_cowrie_log]
   # General
   type = "rename_fields"
-  inputs = ["transform_src_ip_geolite_cowrie_log"]
+  inputs = ["transform_sourceip_geolite_cowrie_log"]
 
   # Fields
-  fields.autonomous_system_number = "autonomous_system_number_src_ip"
-  fields.autonomous_system_organization = "autonomous_system_organization_src_ip"
-  fields.isp = "isp_src_ip"
-  fields.organization = "organization_src_ip"
-  fields.city_name = "city_name_src_ip"
-  fields.continent_code = "continent_code_src_ip"
-  fields.country_code = "country_code_src_ip"
-  fields.latitude = "latitude_src_ip"
-  fields.longitude = "longitude_src_ip"
-  fields.postal_code = "postal_code_src_ip"
-  fields.timezone = "timezone_src_ip"
+  fields.autonomous_system_number = "source.as.number"
+  fields.autonomous_system_organization = "source.as.organisation.name"
+  fields.isp = "source.isp.name"
+  fields.organization = "source.organisation.name"
+  fields.city_name = "source.geo.city_name"
+  fields.continent_code = "source.geo.continent_iso_code"
+  fields.country_code = "source.geo.country_iso_code"
+  fields.latitude = "source.geo.latitude"
+  fields.longitude = "source.geo.longitude"
+  fields.postal_code = "source.geo.postal_code"
+  fields.timezone = "source.event.timezone"
 
-[transforms.rename_transform_dst_ip_geolite_cowrie_log]
+[transforms.rename_transform_destinationip_geolite_cowrie_log]
   # General
   type = "rename_fields"
-  inputs = ["transform_dst_ip_geolite_cowrie_log"]
+  inputs = ["transform_destinationip_geolite_cowrie_log"]
 
   # Fields
-  fields.autonomous_system_number = "autonomous_system_number_dst_ip"
-  fields.autonomous_system_organization = "autonomous_system_organization_dst_ip"
-  fields.isp = "isp_dst_ip"
-  fields.organization = "organization_dst_ip"
-  fields.city_name = "city_name_dst_ip"
-  fields.continent_code = "continent_code_dst_ip"
-  fields.country_code = "country_code_dst_ip"
-  fields.latitude = "latitude_dst_ip"
-  fields.longitude = "longitude_dst_ip"
-  fields.postal_code = "postal_code_dst_ip"
-  fields.timezone = "timezone_dst_ip"
+  fields.autonomous_system_number = "destination.as.number"
+  fields.autonomous_system_organization = "destination.as.organisation.name"
+  fields.isp = "destination.isp.name"
+  fields.organization = "destination.organisation.name"
+  fields.city_name = "destination.geo.city_name"
+  fields.continent_code = "destination.geo.continent_iso_code"
+  fields.country_code = "destination.geo.country_iso_code"
+  fields.latitude = "destination.geo.latitude"
+  fields.longitude = "destination.geo.longitude"
+  fields.postal_code = "destination.geo.postal_code"
+  fields.timezone = "destination.event.timezone"
 
 [transforms.reduce_cowrie_log]
   # General
   type = "reduce"
-  inputs = ["rename_transform_src_ip_geolite_cowrie_log", "rename_transform_dst_ip_geolite_cowrie_log"]
+  inputs = ["rename_transform_sourceip_geolite_cowrie_log", "rename_transform_destinationip_geolite_cowrie_log"]
   # group_by = []
 
   expire_after_ms = 10
